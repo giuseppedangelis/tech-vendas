@@ -49,24 +49,24 @@ const allMenuGroups: MenuGroup[] = [
     ],
   },
   {
-    label: "Comunicacao",
+    label: "Comunicação",
     items: [
       { title: "Inbox", icon: MessageSquare, path: "/inbox", badge: 5 },
       { title: "Agenda", icon: CalendarDays, path: "/schedule" },
     ],
   },
   {
-    label: "Gestao",
+    label: "Gestão",
     items: [
       { title: "Contatos", icon: Users, path: "/contacts" },
       { title: "Equipe", icon: UserCog, path: "/team" },
-      { title: "Relatorios", icon: BarChart3, path: "/reports" },
+      { title: "Relatórios", icon: BarChart3, path: "/reports" },
     ],
   },
   {
-    label: "Configuracao",
+    label: "Configuração",
     items: [
-      { title: "Configuracoes", icon: Settings, path: "/settings" },
+      { title: "Configurações", icon: Settings, path: "/settings" },
     ],
   },
 ]
@@ -112,24 +112,25 @@ export function AppSidebar() {
     <Sidebar>
       <SidebarHeader className="border-b border-white/[0.06] px-5 py-5">
         <Link to="/dashboard" className="flex items-center gap-3 group">
-          <div className="flex size-8 items-center justify-center rounded-lg bg-gradient-to-br from-primary to-orange-500 shadow-lg shadow-primary/10 transition-transform duration-200 group-hover:scale-[1.04]">
-            <Flame className="size-4 text-white" />
+          <div className="relative flex size-9 items-center justify-center rounded-xl bg-gradient-to-br from-primary to-orange-500 shadow-lg shadow-primary/15 transition-all duration-300 group-hover:scale-[1.06] group-hover:shadow-primary/25">
+            <Flame className="size-[18px] text-white" />
+            <div className="absolute inset-0 rounded-xl bg-gradient-to-br from-white/10 to-transparent" />
           </div>
-          <div className="flex flex-col gap-0">
-            <span className="font-display text-sm font-semibold tracking-tight text-white/95">
+          <div className="flex flex-col gap-0.5">
+            <span className="font-display text-[13px] font-bold tracking-tight text-white/95">
               Tech Vendas
             </span>
-            <span className="text-[9px] font-medium uppercase tracking-[0.18em] text-white/30">
-              Pro
+            <span className="text-[8px] font-semibold uppercase tracking-[0.2em] text-primary/60">
+              Pro Platform
             </span>
           </div>
         </Link>
       </SidebarHeader>
 
-      <SidebarContent className="px-3 py-3">
+      <SidebarContent className="px-3 py-4">
         {menuGroups.map((group, groupIndex) => (
           <SidebarGroup key={group.label}>
-            <SidebarGroupLabel className="px-3 mb-0.5 text-[10px] font-semibold uppercase tracking-[0.16em] text-white/25">
+            <SidebarGroupLabel className="px-3 mb-1 text-[10px] font-bold uppercase tracking-[0.18em] text-white/20">
               {group.label}
             </SidebarGroupLabel>
             <SidebarGroupContent>
@@ -141,19 +142,19 @@ export function AppSidebar() {
                       <SidebarMenuButton
                         asChild
                         isActive={active}
-                        className={`rounded-lg px-3 py-[7px] transition-all duration-150 ${
+                        className={`rounded-lg px-3 py-[8px] transition-all duration-200 ${
                           active
-                            ? "bg-white/[0.07] text-white font-medium"
-                            : "text-white/50 hover:bg-white/[0.04] hover:text-white/80"
+                            ? "sidebar-active-indicator bg-white/[0.08] text-white font-medium shadow-sm shadow-black/10"
+                            : "text-white/45 hover:bg-white/[0.05] hover:text-white/75"
                         }`}
                       >
                         <Link to={item.path}>
-                          <item.icon className={`size-4 ${active ? "text-primary" : ""}`} />
+                          <item.icon className={`size-[15px] transition-colors duration-200 ${active ? "text-primary" : ""}`} />
                           <span className="text-[13px]">{item.title}</span>
                         </Link>
                       </SidebarMenuButton>
                       {item.badge != null && item.badge > 0 && (
-                        <SidebarMenuBadge className="bg-primary text-white text-[10px] font-semibold min-w-5 h-5 rounded-md">
+                        <SidebarMenuBadge className="bg-gradient-to-br from-primary to-orange-600 text-white text-[10px] font-bold min-w-5 h-5 rounded-md shadow-sm shadow-primary/20">
                           {item.badge}
                         </SidebarMenuBadge>
                       )}
@@ -163,7 +164,7 @@ export function AppSidebar() {
               </SidebarMenu>
             </SidebarGroupContent>
             {groupIndex < menuGroups.length - 1 && (
-              <div className="mx-3 mt-2 mb-1 h-px bg-white/[0.04]" />
+              <div className="mx-3 mt-3 mb-1.5 h-px bg-gradient-to-r from-transparent via-white/[0.06] to-transparent" />
             )}
           </SidebarGroup>
         ))}
@@ -171,27 +172,27 @@ export function AppSidebar() {
 
       <SidebarFooter className="border-t border-white/[0.06] p-4">
         <div className="flex items-center gap-2.5">
-          <Avatar className="size-7">
-            <AvatarFallback className="bg-white/[0.07] text-[10px] font-semibold text-white/70">
+          <Avatar className="size-8 ring-1 ring-white/10">
+            <AvatarFallback className="bg-gradient-to-br from-white/[0.08] to-white/[0.04] text-[10px] font-semibold text-white/70">
               {user?.initials ?? "?"}
             </AvatarFallback>
           </Avatar>
           <div className="flex flex-1 flex-col min-w-0">
             <div className="flex items-center gap-1.5">
               <span className="text-[12px] font-medium text-white/80 truncate">
-                {user?.name ?? "Usuario"}
+                {user?.name ?? "Usuário"}
               </span>
               {user && (
-                <span className={`inline-flex items-center rounded-md px-1.5 py-[1px] text-[9px] font-semibold leading-none ${roleColors[user.role]}`}>
+                <span className={`inline-flex items-center rounded-md px-1.5 py-[2px] text-[9px] font-bold leading-none ${roleColors[user.role]}`}>
                   {roleLabels[user.role]}
                 </span>
               )}
             </div>
-            <span className="text-[10px] text-white/30 truncate">{user?.email}</span>
+            <span className="text-[10px] text-white/25 truncate">{user?.email}</span>
           </div>
           <button
             onClick={handleLogout}
-            className="rounded-md p-1.5 text-white/25 transition-colors duration-150 hover:bg-white/[0.05] hover:text-red-400 shrink-0"
+            className="rounded-lg p-1.5 text-white/20 transition-all duration-200 hover:bg-white/[0.06] hover:text-red-400 shrink-0"
             aria-label="Sair"
           >
             <LogOut className="size-3.5" />

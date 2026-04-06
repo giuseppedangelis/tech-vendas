@@ -33,7 +33,7 @@ import {
 } from "lucide-react"
 
 type LifecycleStage = "Lead" | "MQL" | "SQL" | "Oportunidade" | "Cliente"
-type Source = "WhatsApp" | "Instagram" | "Formulario" | "Manual"
+type Source = "WhatsApp" | "Instagram" | "Formulário" | "Manual"
 
 interface Contact {
   id: string
@@ -72,7 +72,7 @@ const contacts: Contact[] = [
     name: "Camila Rodrigues Ferreira",
     email: "camila.ferreira@tech.io",
     phone: "+55 31 96543-2109",
-    source: "Formulario",
+    source: "Formulário",
     stage: "SQL",
     score: 78,
     createdAt: "2026-03-25",
@@ -112,7 +112,7 @@ const contacts: Contact[] = [
     name: "Helena Martins Rocha",
     email: "helena.rocha@agencia.com.br",
     phone: "+55 71 92109-8765",
-    source: "Formulario",
+    source: "Formulário",
     stage: "MQL",
     score: 45,
     createdAt: "2026-03-30",
@@ -152,7 +152,7 @@ const contacts: Contact[] = [
     name: "Larissa Moreira Cunha",
     email: "larissa.cunha@saude.com.br",
     phone: "+55 19 98765-4320",
-    source: "Formulario",
+    source: "Formulário",
     stage: "Lead",
     score: 30,
     createdAt: "2026-04-02",
@@ -192,7 +192,7 @@ const contacts: Contact[] = [
     name: "Rafaela Duarte Campos",
     email: "rafaela.campos@midia.com.br",
     phone: "+55 47 94321-0986",
-    source: "Formulario",
+    source: "Formulário",
     stage: "Cliente",
     score: 88,
     createdAt: "2026-03-12",
@@ -212,14 +212,14 @@ const stageColors: Record<LifecycleStage, string> = {
 const sourceIcons: Record<Source, React.ReactNode> = {
   WhatsApp: <MessageCircle className="size-3.5 text-green-600" />,
   Instagram: <Aperture className="size-3.5 text-pink-600" />,
-  Formulario: <FileText className="size-3.5 text-blue-600" />,
+  Formulário: <FileText className="size-3.5 text-blue-600" />,
   Manual: <PenLine className="size-3.5 text-gray-600" />,
 }
 
 function getScoreColor(score: number): string {
-  if (score >= 80) return "bg-emerald-100 text-emerald-700 dark:bg-emerald-900 dark:text-emerald-300 shadow-sm shadow-emerald-500/20"
-  if (score >= 50) return "bg-amber-100 text-amber-700 dark:bg-amber-900 dark:text-amber-300"
-  return "bg-red-100 text-red-700 dark:bg-red-900 dark:text-red-300"
+  if (score >= 80) return "rounded-lg bg-emerald-100 text-emerald-700 dark:bg-emerald-900 dark:text-emerald-300 shadow-sm shadow-emerald-500/25 ring-1 ring-emerald-500/20"
+  if (score >= 50) return "rounded-lg bg-amber-100 text-amber-700 dark:bg-amber-900 dark:text-amber-300"
+  return "rounded-lg bg-red-100 text-red-700 dark:bg-red-900 dark:text-red-300"
 }
 
 function getInitials(name: string): string {
@@ -260,17 +260,17 @@ export function ContactsPage() {
       {/* Header */}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h2 className="text-gradient text-2xl font-bold tracking-tight">Contatos</h2>
-          <p className="text-muted-foreground">
+          <h2 className="text-gradient font-display text-2xl font-bold tracking-tight">Contatos</h2>
+          <p className="text-muted-foreground/60">
             Gerencie seus contatos e leads
           </p>
         </div>
         <div className="flex gap-2">
-          <Button variant="outline" className="transition-all duration-200 hover:border-primary/30">
+          <Button variant="outline" className="rounded-xl border-border/50 transition-all duration-200 hover:border-primary/30 hover:shadow-sm hover:shadow-primary/5">
             <Upload className="size-4" />
             Importar CSV
           </Button>
-          <Button className="btn-lift bg-gradient-to-r from-primary to-orange-600 text-primary-foreground shadow-md shadow-primary/10">
+          <Button variant="gradient" className="btn-lift rounded-xl shadow-md shadow-primary/10">
             <UserPlus className="size-4" />
             Novo Contato
           </Button>
@@ -279,25 +279,25 @@ export function ContactsPage() {
 
       {/* Filters */}
       <div className="space-y-4">
-        <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+        <div className="glass flex flex-col gap-3 rounded-xl border border-border/50 p-3 backdrop-blur-xl sm:flex-row sm:items-center">
           <div className="relative flex-1 max-w-sm">
-            <Search className="absolute left-2.5 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
+            <Search className="absolute left-2.5 top-1/2 size-4 -translate-y-1/2 text-muted-foreground/60" />
             <Input
               placeholder="Busca por nome, email ou telefone..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-8 transition-all duration-200 focus:ring-2 focus:ring-primary/20"
+              className="pl-8 rounded-lg border-border/50 transition-all duration-200 focus:ring-2 focus:ring-primary/20"
             />
           </div>
           <Select value={sourceFilter} onValueChange={setSourceFilter}>
-            <SelectTrigger className="w-[160px]">
+            <SelectTrigger className="w-[160px] rounded-lg border-border/50">
               <SelectValue placeholder="Origem" />
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="Todos">Todas as origens</SelectItem>
               <SelectItem value="WhatsApp">WhatsApp</SelectItem>
               <SelectItem value="Instagram">Instagram</SelectItem>
-              <SelectItem value="Formulario">Formulario</SelectItem>
+              <SelectItem value="Formulário">Formulário</SelectItem>
               <SelectItem value="Manual">Manual</SelectItem>
             </SelectContent>
           </Select>
@@ -315,8 +315,11 @@ export function ContactsPage() {
         </Tabs>
       </div>
 
+      {/* Gradient separator */}
+      <div className="h-px bg-gradient-to-r from-transparent via-border/50 to-transparent" />
+
       {/* Table */}
-      <div className="animate-card-in stagger-1 rounded-xl border bg-card">
+      <div className="animate-card-in stagger-1 glass rounded-xl border border-border/50 backdrop-blur-xl">
         <Table>
           <TableHeader>
             <TableRow>
@@ -324,7 +327,7 @@ export function ContactsPage() {
               <TableHead>Email</TableHead>
               <TableHead>Telefone</TableHead>
               <TableHead>Origem</TableHead>
-              <TableHead>Estagio</TableHead>
+              <TableHead>Estágio</TableHead>
               <TableHead>Score</TableHead>
               <TableHead>Criado em</TableHead>
             </TableRow>
@@ -340,10 +343,11 @@ export function ContactsPage() {
                 </TableCell>
               </TableRow>
             ) : (
-              filtered.map((contact) => (
+              filtered.map((contact, index) => (
                 <TableRow
                   key={contact.id}
-                  className="cursor-pointer transition-all duration-200 hover:bg-primary/[0.03]"
+                  className="animate-card-in cursor-pointer transition-all duration-200 hover:bg-primary/[0.04] hover:shadow-sm hover:shadow-primary/5"
+                  style={{ animationDelay: `${index * 30}ms` }}
                   onClick={() => navigate(`/contacts/${contact.id}`)}
                 >
                   <TableCell>
@@ -356,16 +360,16 @@ export function ContactsPage() {
                       <span className="font-medium">{contact.name}</span>
                     </div>
                   </TableCell>
-                  <TableCell className="text-muted-foreground">
+                  <TableCell className="text-muted-foreground/60">
                     {contact.email}
                   </TableCell>
-                  <TableCell className="text-muted-foreground">
+                  <TableCell className="text-muted-foreground/60">
                     {contact.phone}
                   </TableCell>
                   <TableCell>
                     <div className="flex items-center gap-1.5">
                       {sourceIcons[contact.source]}
-                      <span className="text-muted-foreground">
+                      <span className="text-muted-foreground/60">
                         {contact.source}
                       </span>
                     </div>
@@ -386,7 +390,7 @@ export function ContactsPage() {
                       {contact.score}
                     </Badge>
                   </TableCell>
-                  <TableCell className="text-muted-foreground">
+                  <TableCell className="text-muted-foreground/60">
                     {formatDate(contact.createdAt)}
                   </TableCell>
                 </TableRow>
@@ -398,16 +402,16 @@ export function ContactsPage() {
 
       {/* Pagination */}
       <div className="flex items-center justify-between">
-        <p className="text-sm text-muted-foreground">
+        <p className="text-sm text-muted-foreground/60">
           Mostrando 1-{filtered.length} de 127 contatos
         </p>
         <div className="flex gap-2">
-          <Button variant="outline" size="sm" disabled className="transition-all duration-200">
+          <Button variant="outline" size="sm" disabled className="rounded-lg border-border/50 transition-all duration-200">
             <ChevronLeft className="size-4" />
             Anterior
           </Button>
-          <Button variant="outline" size="sm" className="transition-all duration-200">
-            Proximo
+          <Button variant="outline" size="sm" className="rounded-lg border-border/50 transition-all duration-200 hover:shadow-sm hover:shadow-primary/5">
+            Próximo
             <ChevronRight className="size-4" />
           </Button>
         </div>

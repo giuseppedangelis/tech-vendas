@@ -35,11 +35,11 @@ import {
 import { cn } from "@/lib/utils"
 
 const steps = [
-  { id: 1, title: "Seu Negocio", icon: Building2 },
+  { id: 1, title: "Seu Negócio", icon: Building2 },
   { id: 2, title: "WhatsApp", icon: MessageSquare },
   { id: 3, title: "Pipeline", icon: Kanban },
   { id: 4, title: "Equipe", icon: Users },
-  { id: 5, title: "Concluido", icon: CheckCircle2 },
+  { id: 5, title: "Concluído", icon: CheckCircle2 },
 ]
 
 const pipelineTemplates = [
@@ -47,7 +47,7 @@ const pipelineTemplates = [
     id: "b2b",
     name: "Vendas B2B",
     description: "Pipeline para vendas empresariais com ciclo longo de vendas",
-    stages: ["Prospeccao", "Qualificacao", "Apresentacao", "Proposta", "Negociacao", "Fechamento"],
+    stages: ["Prospecção", "Qualificação", "Apresentação", "Proposta", "Negociação", "Fechamento"],
     color: "border-blue-500/50 bg-blue-500/5",
     iconColor: "text-blue-600",
   },
@@ -62,8 +62,8 @@ const pipelineTemplates = [
   {
     id: "info",
     name: "Infoprodutos",
-    description: "Pipeline para lancamentos e vendas de produtos digitais",
-    stages: ["Captacao", "Aquecimento", "Lancamento", "Carrinho Aberto", "Fechamento"],
+    description: "Pipeline para lançamentos e vendas de produtos digitais",
+    stages: ["Captação", "Aquecimento", "Lançamento", "Carrinho Aberto", "Fechamento"],
     color: "border-primary/50 bg-primary/5",
     iconColor: "text-primary",
   },
@@ -139,9 +139,9 @@ function StepSeuNegocio() {
   return (
     <div className="space-y-6">
       <div className="text-center">
-        <h3 className="text-xl font-semibold">Sobre seu Negocio</h3>
+        <h3 className="text-xl font-semibold">Sobre seu Negócio</h3>
         <p className="mt-1 text-sm text-muted-foreground">
-          Conte-nos um pouco sobre sua empresa para personalizar a experiencia
+          Conte-nos um pouco sobre sua empresa para personalizar a experiência
         </p>
       </div>
 
@@ -153,7 +153,7 @@ function StepSeuNegocio() {
           </div>
 
           <div className="space-y-2">
-            <Label>Nicho de Atuacao</Label>
+            <Label>Nicho de Atuação</Label>
             <Select value={niche} onValueChange={setNiche}>
               <SelectTrigger className="w-full">
                 <SelectValue placeholder="Selecione seu nicho" />
@@ -162,17 +162,17 @@ function StepSeuNegocio() {
                 <SelectItem value="saas">SaaS / Software</SelectItem>
                 <SelectItem value="ecommerce">E-commerce</SelectItem>
                 <SelectItem value="infoprodutos">Infoprodutos</SelectItem>
-                <SelectItem value="servicos">Servicos Profissionais</SelectItem>
-                <SelectItem value="educacao">Educacao</SelectItem>
-                <SelectItem value="saude">Saude e Bem-estar</SelectItem>
-                <SelectItem value="imobiliario">Imobiliario</SelectItem>
+                <SelectItem value="servicos">Serviços Profissionais</SelectItem>
+                <SelectItem value="educacao">Educação</SelectItem>
+                <SelectItem value="saude">Saúde e Bem-estar</SelectItem>
+                <SelectItem value="imobiliario">Imobiliário</SelectItem>
                 <SelectItem value="outro">Outro</SelectItem>
               </SelectContent>
             </Select>
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="products">Produtos / Servicos</Label>
+            <Label htmlFor="products">Produtos / Serviços</Label>
             <Input
               id="products"
               placeholder="Ex: Consultoria, Curso Online, Software"
@@ -211,14 +211,14 @@ function StepWhatsApp() {
       <Card>
         <CardContent className="space-y-6 pt-6">
           <div className="space-y-2">
-            <Label htmlFor="whatsapp-number">Numero do WhatsApp</Label>
+            <Label htmlFor="whatsapp-number">Número do WhatsApp</Label>
             <Input
               id="whatsapp-number"
               placeholder="+55 (11) 99999-9999"
               type="tel"
             />
             <p className="text-xs text-muted-foreground">
-              Informe o numero com DDD conectado ao WhatsApp Business
+              Informe o número com DDD conectado ao WhatsApp Business
             </p>
           </div>
 
@@ -231,8 +231,8 @@ function StepWhatsApp() {
               <div className="text-center">
                 <p className="text-sm font-medium">Escaneie o QR Code</p>
                 <p className="text-xs text-muted-foreground">
-                  Abra o WhatsApp no celular, va em Dispositivos Conectados e
-                  escaneie o codigo
+                  Abra o WhatsApp no celular, vá em Dispositivos Conectados e
+                  escaneie o código
                 </p>
               </div>
               <Button variant="outline" size="sm">
@@ -258,7 +258,7 @@ function StepPipeline() {
       <div className="text-center">
         <h3 className="text-xl font-semibold">Escolha seu Pipeline</h3>
         <p className="mt-1 text-sm text-muted-foreground">
-          Selecione um modelo de Kanban para comecar
+          Selecione um modelo de Kanban para começar
         </p>
       </div>
 
@@ -390,7 +390,7 @@ function StepEquipe() {
       </Card>
 
       <p className="text-center text-xs text-muted-foreground">
-        Voce pode pular esta etapa e convidar membros depois em Configuracoes.
+        Você pode pular esta etapa e convidar membros depois em Configurações.
       </p>
     </div>
   )
@@ -405,8 +405,8 @@ function StepConcluido() {
       <div>
         <h3 className="text-2xl font-bold">Tudo pronto!</h3>
         <p className="mx-auto mt-2 max-w-md text-sm text-muted-foreground">
-          Sua conta no Tech Vendas Pro esta configurada. Agora voce pode
-          comecar a gerenciar seus leads, conversas e pipeline de vendas.
+          Sua conta no Tech Vendas Pro está configurada. Agora você pode
+          começar a gerenciar seus leads, conversas e pipeline de vendas.
         </p>
       </div>
 
@@ -426,7 +426,7 @@ function StepConcluido() {
         <Card size="sm" className="card-hover animate-card-in stagger-3">
           <CardContent className="pt-4 text-center">
             <Users className="mx-auto mb-1 size-6 text-muted-foreground" />
-            <p className="text-xs font-medium">Gestao de Equipe</p>
+            <p className="text-xs font-medium">Gestão de Equipe</p>
           </CardContent>
         </Card>
       </div>
@@ -478,7 +478,7 @@ export function SetupPage() {
             Tech Vendas Pro
           </h1>
           <p className="text-sm text-muted-foreground">
-            Configuracao inicial da sua conta
+            Configuração inicial da sua conta
           </p>
         </div>
 
@@ -507,7 +507,7 @@ export function SetupPage() {
 
           {currentStep < 5 ? (
             <Button onClick={goNext} className="btn-lift bg-gradient-to-r from-primary to-orange-600 text-primary-foreground shadow-md shadow-primary/10">
-              Proximo
+              Próximo
               <ArrowRight className="ml-1.5 size-4" />
             </Button>
           ) : (

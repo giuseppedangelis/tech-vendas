@@ -48,16 +48,16 @@ const contact = {
   role: "Diretora de Tecnologia",
   avatar: "CF",
   stage: "SQL" as const,
-  source: "Formulario",
+  source: "Formulário",
   score: 78,
   dealsCount: 2,
   totalValue: "R$ 45.000",
   tags: ["Enterprise", "Tecnologia", "Decisor"],
   customFields: {
-    Setor: "Tecnologia da Informacao",
-    "Tamanho da Empresa": "50-200 funcionarios",
+    Setor: "Tecnologia da Informação",
+    "Tamanho da Empresa": "50-200 funcionários",
     Website: "techsolutions.com.br",
-    "Proximo Contato": "08/04/2026",
+    "Próximo Contato": "08/04/2026",
   },
 }
 
@@ -70,27 +70,27 @@ const activities = [
     title: "Email enviado: Proposta comercial Tech Pro",
     date: "05/04/2026 - 14:32",
     description:
-      "Proposta enviada com detalhamento do pacote Enterprise com desconto de 15% para fechamento ate fim do mes.",
+      "Proposta enviada com detalhamento do pacote Enterprise com desconto de 15% para fechamento até fim do mês.",
   },
   {
     id: "a2",
     type: "call",
     icon: PhoneCall,
     iconColor: "text-green-600",
-    title: "Ligacao realizada - 12 min",
+    title: "Ligação realizada - 12 min",
     date: "03/04/2026 - 10:15",
     description:
-      "Discutimos necessidades de integracao com o ERP atual. Camila demonstrou interesse no modulo de automacao.",
+      "Discutimos necessidades de integração com o ERP atual. Camila demonstrou interesse no módulo de automação.",
   },
   {
     id: "a3",
     type: "meeting",
     icon: Video,
     iconColor: "text-primary",
-    title: "Reuniao online - Demo do produto",
+    title: "Reunião online - Demo do produto",
     date: "01/04/2026 - 15:00",
     description:
-      "Demo realizada para Camila e equipe tecnica. Boa receptividade. Solicitaram proposta formal.",
+      "Demo realizada para Camila e equipe técnica. Boa receptividade. Solicitaram proposta formal.",
   },
   {
     id: "a4",
@@ -100,17 +100,17 @@ const activities = [
     title: "Mensagem via WhatsApp",
     date: "28/03/2026 - 09:45",
     description:
-      "Confirmacao de horario para demo. Camila informou que participarao mais 2 pessoas da equipe.",
+      "Confirmação de horário para demo. Camila informou que participarão mais 2 pessoas da equipe.",
   },
   {
     id: "a5",
     type: "form",
     icon: FileText,
     iconColor: "text-amber-600",
-    title: "Formulario preenchido - Solicitar Demo",
+    title: "Formulário preenchido - Solicitar Demo",
     date: "25/03/2026 - 16:20",
     description:
-      "Lead capturado via formulario do site. Interesse em automacao de vendas e integracao com CRM.",
+      "Lead capturado via formulário do site. Interesse em automação de vendas e integração com CRM.",
   },
 ]
 
@@ -124,7 +124,7 @@ const interactions = [
     subject: "Proposta comercial - Pacote Enterprise",
     date: "05/04/2026 - 14:32",
     preview:
-      "Ola Camila, conforme conversamos, segue em anexo a proposta comercial para o pacote Enterprise...",
+      "Olá Camila, conforme conversamos, segue em anexo a proposta comercial para o pacote Enterprise...",
   },
   {
     id: "i2",
@@ -132,10 +132,10 @@ const interactions = [
     icon: PhoneCall,
     iconColor: "text-green-600",
     direction: "Realizada",
-    subject: "Ligacao de follow-up",
+    subject: "Ligação de follow-up",
     date: "03/04/2026 - 10:15",
     preview:
-      "Duracao: 12 min. Discutimos integracao com ERP e timeline de implementacao.",
+      "Duração: 12 min. Discutimos integração com ERP e timeline de implementação.",
   },
   {
     id: "i3",
@@ -146,7 +146,7 @@ const interactions = [
     subject: "Demo do produto - Equipe Tech Solutions",
     date: "01/04/2026 - 15:00",
     preview:
-      "Participantes: Camila Ferreira, Rafael Lima, Julia Santos. Demo completa do modulo de vendas.",
+      "Participantes: Camila Ferreira, Rafael Lima, Júlia Santos. Demo completa do módulo de vendas.",
   },
   {
     id: "i4",
@@ -154,10 +154,10 @@ const interactions = [
     icon: MessageCircle,
     iconColor: "text-emerald-600",
     direction: "Recebido",
-    subject: "Confirmacao de horario",
+    subject: "Confirmação de horário",
     date: "28/03/2026 - 09:45",
     preview:
-      "Oi, tudo bem? Confirmando a demo para terca as 15h. Vao participar mais 2 pessoas da equipe.",
+      "Oi, tudo bem? Confirmando a demo para terça às 15h. Vão participar mais 2 pessoas da equipe.",
   },
   {
     id: "i5",
@@ -168,7 +168,7 @@ const interactions = [
     subject: "Primeiro contato",
     date: "26/03/2026 - 11:00",
     preview:
-      "Ola Camila! Vi que voce se interessou pela nossa solucao. Podemos agendar uma conversa?",
+      "Olá Camila! Vi que você se interessou pela nossa solução. Podemos agendar uma conversa?",
   },
   {
     id: "i6",
@@ -179,7 +179,7 @@ const interactions = [
     subject: "Bem-vinda ao Tech Vendas Pro",
     date: "25/03/2026 - 16:25",
     preview:
-      "Ola Camila, obrigado pelo interesse! Recebemos sua solicitacao de demo e entraremos em contato.",
+      "Olá Camila, obrigado pelo interesse! Recebemos sua solicitação de demo e entraremos em contato.",
   },
 ]
 
@@ -194,9 +194,9 @@ const deals = [
   },
   {
     id: "d2",
-    name: "Tech Solutions - Modulo Automacao",
+    name: "Tech Solutions - Módulo Automação",
     pipeline: "Upsell",
-    stage: "Negociacao",
+    stage: "Negociação",
     value: "R$ 13.000",
     status: "Aberto" as const,
   },
@@ -216,28 +216,28 @@ const notes = [
     author: "Ricardo Mendes",
     date: "05/04/2026 - 15:10",
     content:
-      "Camila tem urgencia para fechar ate fim de abril. Orcamento ja aprovado pela diretoria. Oferecer desconto de 10% se fechar nesta semana.",
+      "Camila tem urgência para fechar até fim de abril. Orçamento já aprovado pela diretoria. Oferecer desconto de 10% se fechar nesta semana.",
   },
   {
     id: "n2",
     author: "Juliana Martins",
     date: "01/04/2026 - 16:30",
     content:
-      "Demo foi muito bem recebida. Time tecnico ficou impressionado com as integracoes. Principal preocupacao: migracao de dados do sistema legado.",
+      "Demo foi muito bem recebida. Time técnico ficou impressionado com as integrações. Principal preocupação: migração de dados do sistema legado.",
   },
   {
     id: "n3",
     author: "Ricardo Mendes",
     date: "28/03/2026 - 10:00",
     content:
-      "Primeiro contato via WhatsApp. Camila e decisora final. Empresa usa atualmente planilhas para gestao de vendas. Dor principal: falta de visibilidade do funil.",
+      "Primeiro contato via WhatsApp. Camila é decisora final. Empresa usa atualmente planilhas para gestão de vendas. Dor principal: falta de visibilidade do funil.",
   },
   {
     id: "n4",
     author: "Juliana Martins",
     date: "25/03/2026 - 17:00",
     content:
-      "Lead qualificado via formulario do site. Perfil ideal: empresa de tecnologia, 50-200 funcionarios, decisora C-level. Prioridade alta.",
+      "Lead qualificado via formulário do site. Perfil ideal: empresa de tecnologia, 50-200 funcionários, decisora C-level. Prioridade alta.",
   },
 ]
 
@@ -271,10 +271,10 @@ export function ContactDetailPage() {
             <AvatarFallback className="bg-gradient-to-br from-primary/10 to-orange-500/10 text-primary text-lg">{contact.avatar}</AvatarFallback>
           </Avatar>
           <div className="space-y-1">
-            <h2 className="text-gradient text-2xl font-bold tracking-tight">
+            <h2 className="text-gradient font-display text-2xl font-bold tracking-tight">
               {contact.name}
             </h2>
-            <div className="flex flex-col gap-1 text-sm text-muted-foreground">
+            <div className="flex flex-col gap-1 text-sm text-muted-foreground/60">
               <div className="flex items-center gap-1.5">
                 <Mail className="size-3.5" />
                 {contact.email}
@@ -295,22 +295,22 @@ export function ContactDetailPage() {
           </div>
         </div>
         <div className="flex gap-2">
-          <Button variant="outline" className="transition-all duration-200 hover:border-primary/30">
+          <Button variant="outline" className="rounded-xl border-border/50 transition-all duration-200 hover:border-primary/30 hover:shadow-sm hover:shadow-primary/5">
             <Send className="size-4" />
             Enviar Email
           </Button>
-          <Button className="btn-lift bg-gradient-to-r from-primary to-orange-600 text-primary-foreground shadow-md shadow-primary/10">
+          <Button variant="gradient" className="btn-lift rounded-xl shadow-md shadow-primary/10">
             <Calendar className="size-4" />
-            Agendar Reuniao
+            Agendar Reunião
           </Button>
         </div>
       </div>
 
       {/* Stats Row */}
       <div className="grid gap-4 sm:grid-cols-3">
-        <Card className="animate-card-in stagger-1 card-hover">
+        <Card className="animate-card-in stagger-1 accent-top card-hover border-border/50 rounded-xl">
           <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium">Lead Score</CardTitle>
+            <CardTitle className="text-[10px] font-bold uppercase tracking-[0.12em] text-muted-foreground/60">Lead Score</CardTitle>
             <div className="flex size-8 items-center justify-center rounded-lg bg-gradient-to-br from-primary to-orange-500 text-white shadow-sm">
               <Sparkles className="size-4" />
             </div>
@@ -323,7 +323,7 @@ export function ContactDetailPage() {
                 Powered by AI
               </Badge>
             </div>
-            <p className="text-xs text-muted-foreground">+12 pontos este mes</p>
+            <p className="text-xs text-muted-foreground/60">+12 pontos este mês</p>
             <div className="space-y-1.5 border-t pt-2">
               <span className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">Por que este score?</span>
               <div className="space-y-1">
@@ -337,7 +337,7 @@ export function ContactDetailPage() {
                 </div>
                 <div className="flex items-center gap-1.5 text-[11px]">
                   <div className="size-1.5 rounded-full bg-blue-500" />
-                  <span>3 interacoes em 10 dias +18pts</span>
+                  <span>3 interações em 10 dias +18pts</span>
                 </div>
                 <div className="flex items-center gap-1.5 text-[11px]">
                   <div className="size-1.5 rounded-full bg-blue-500" />
@@ -347,30 +347,30 @@ export function ContactDetailPage() {
             </div>
           </CardContent>
         </Card>
-        <Card className="animate-card-in stagger-2 card-hover">
+        <Card className="animate-card-in stagger-2 accent-top card-hover border-border/50 rounded-xl">
           <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium">Deals Ativos</CardTitle>
+            <CardTitle className="text-[10px] font-bold uppercase tracking-[0.12em] text-muted-foreground/60">Deals Ativos</CardTitle>
             <div className="flex size-8 items-center justify-center rounded-lg bg-gradient-to-br from-primary/10 to-orange-500/10">
               <Target className="size-4 text-primary" />
             </div>
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{contact.dealsCount}</div>
-            <p className="text-xs text-muted-foreground">
-              1 em negociacao, 1 proposta
+            <p className="text-xs text-muted-foreground/60">
+              1 em negociação, 1 proposta
             </p>
           </CardContent>
         </Card>
-        <Card className="animate-card-in stagger-3 card-hover">
+        <Card className="animate-card-in stagger-3 accent-top card-hover border-border/50 rounded-xl">
           <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium">Valor Total</CardTitle>
+            <CardTitle className="text-[10px] font-bold uppercase tracking-[0.12em] text-muted-foreground/60">Valor Total</CardTitle>
             <div className="flex size-8 items-center justify-center rounded-lg bg-gradient-to-br from-primary/10 to-orange-500/10">
               <DollarSign className="size-4 text-primary" />
             </div>
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{contact.totalValue}</div>
-            <p className="text-xs text-muted-foreground">
+            <p className="text-xs text-muted-foreground/60">
               Em todos os deals
             </p>
           </CardContent>
@@ -381,36 +381,36 @@ export function ContactDetailPage() {
       <div className="animate-card-in stagger-4">
       <Tabs value={activeTab} onValueChange={setActiveTab}>
         <TabsList>
-          <TabsTrigger value="overview">Visao Geral</TabsTrigger>
-          <TabsTrigger value="interactions">Interacoes</TabsTrigger>
+          <TabsTrigger value="overview">Visão Geral</TabsTrigger>
+          <TabsTrigger value="interactions">Interações</TabsTrigger>
           <TabsTrigger value="deals">Deals</TabsTrigger>
           <TabsTrigger value="notes">Notas</TabsTrigger>
         </TabsList>
 
-        {/* Visao Geral Tab */}
+        {/* Visão Geral Tab */}
         <TabsContent value="overview" className="space-y-6 pt-4">
-          <div className="flex items-center gap-3 rounded-xl px-4 py-3 shadow-sm animate-card-in">
+          <div className="glass-strong flex items-center gap-3 rounded-xl border border-border/50 px-4 py-3 shadow-sm backdrop-blur-xl animate-card-in">
             <div className="flex size-8 items-center justify-center rounded-lg bg-gradient-to-br from-primary to-orange-500 text-white shadow-sm">
               <Sparkles className="size-4 animate-spin" style={{ animationDuration: "3s" }} />
             </div>
             <div className="flex-1">
               <div className="flex items-center gap-2">
-                <span className="text-xs font-semibold">Recomendacao da IA</span>
+                <span className="text-xs font-semibold">Recomendação da IA</span>
                 <span className="relative flex size-1.5"><span className="absolute inline-flex size-full animate-ping rounded-full bg-emerald-400 opacity-75" /><span className="relative inline-flex size-1.5 rounded-full bg-emerald-500" /></span>
               </div>
-              <p className="text-[11px] text-muted-foreground">Melhor horario para contato: Ter/Qui 10h-12h · Probabilidade de conversao: 72% · Proximo passo: Enviar proposta formal com desconto 15%</p>
+              <p className="text-[11px] text-muted-foreground/60">Melhor horário para contato: Ter/Qui 10h-12h · Probabilidade de conversão: 72% · Próximo passo: Enviar proposta formal com desconto 15%</p>
             </div>
           </div>
           <div className="grid gap-6 lg:grid-cols-2">
             {/* Info Card */}
-            <Card>
+            <Card className="glass border-border/50 rounded-xl backdrop-blur-xl">
               <CardHeader>
-                <CardTitle>Informacoes do Contato</CardTitle>
+                <CardTitle className="text-[10px] font-bold uppercase tracking-[0.12em] text-muted-foreground/60">Informações do Contato</CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="flex items-center justify-between">
-                  <span className="text-sm text-muted-foreground">
-                    Estagio do Ciclo de Vida
+                  <span className="text-sm text-muted-foreground/60">
+                    Estágio do Ciclo de Vida
                   </span>
                   <Badge
                     variant="secondary"
@@ -420,14 +420,14 @@ export function ContactDetailPage() {
                   </Badge>
                 </div>
                 <div className="flex items-center justify-between">
-                  <span className="text-sm text-muted-foreground">Origem</span>
+                  <span className="text-sm text-muted-foreground/60">Origem</span>
                   <div className="flex items-center gap-1.5 text-sm">
                     <Globe className="size-3.5 text-blue-600" />
                     {contact.source}
                   </div>
                 </div>
                 <div className="flex items-center justify-between">
-                  <span className="text-sm text-muted-foreground">Tags</span>
+                  <span className="text-sm text-muted-foreground/60">Tags</span>
                   <div className="flex gap-1.5">
                     {contact.tags.map((tag) => (
                       <Badge key={tag} variant="outline" className="text-xs">
@@ -437,8 +437,8 @@ export function ContactDetailPage() {
                     ))}
                   </div>
                 </div>
-                <div className="border-t pt-3">
-                  <p className="mb-2 text-sm font-medium">Campos Personalizados</p>
+                <div className="border-t border-border/50 pt-3">
+                  <p className="mb-2 text-[10px] font-bold uppercase tracking-[0.12em] text-muted-foreground/60">Campos Personalizados</p>
                   <div className="space-y-2">
                     {Object.entries(contact.customFields).map(
                       ([key, value]) => (
@@ -446,7 +446,7 @@ export function ContactDetailPage() {
                           key={key}
                           className="flex items-center justify-between text-sm"
                         >
-                          <span className="text-muted-foreground">{key}</span>
+                          <span className="text-muted-foreground/60">{key}</span>
                           <span>{value}</span>
                         </div>
                       )
@@ -457,32 +457,32 @@ export function ContactDetailPage() {
             </Card>
 
             {/* Recent Activity Timeline */}
-            <Card>
+            <Card className="glass border-border/50 rounded-xl backdrop-blur-xl">
               <CardHeader>
-                <CardTitle>Atividade Recente</CardTitle>
+                <CardTitle className="text-[10px] font-bold uppercase tracking-[0.12em] text-muted-foreground/60">Atividade Recente</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
                   {activities.map((activity, index) => (
-                    <div key={activity.id} className="flex gap-3">
+                    <div key={activity.id} className="animate-card-in flex gap-3" style={{ animationDelay: `${index * 50}ms` }}>
                       <div className="flex flex-col items-center">
-                        <div className="flex size-8 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-primary/5 to-orange-500/5 ring-4 ring-background">
+                        <div className="flex size-8 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-primary/10 to-orange-500/10 ring-4 ring-background shadow-sm">
                           <activity.icon
                             className={`size-4 ${activity.iconColor}`}
                           />
                         </div>
                         {index < activities.length - 1 && (
-                          <div className="mt-1 w-px flex-1 bg-border" />
+                          <div className="mt-1 w-px flex-1 bg-gradient-to-b from-border/60 to-transparent" />
                         )}
                       </div>
                       <div className="flex-1 pb-4">
                         <p className="text-sm font-medium leading-snug">
                           {activity.title}
                         </p>
-                        <p className="text-xs text-muted-foreground">
+                        <p className="text-xs text-muted-foreground/60">
                           {activity.date}
                         </p>
-                        <p className="mt-1 text-sm text-muted-foreground">
+                        <p className="mt-1 text-sm text-muted-foreground/60">
                           {activity.description}
                         </p>
                       </div>
@@ -494,12 +494,12 @@ export function ContactDetailPage() {
           </div>
         </TabsContent>
 
-        {/* Interacoes Tab */}
+        {/* Interações Tab */}
         <TabsContent value="interactions" className="space-y-4 pt-4">
-          {interactions.map((interaction) => (
-            <Card key={interaction.id} className="card-hover transition-all duration-200">
+          {interactions.map((interaction, index) => (
+            <Card key={interaction.id} className="animate-card-in card-hover border-border/50 rounded-xl transition-all duration-200" style={{ animationDelay: `${index * 40}ms` }}>
               <CardContent className="flex items-start gap-4 pt-4">
-                <div className="flex size-10 shrink-0 items-center justify-center rounded-full bg-muted">
+                <div className="flex size-10 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-primary/5 to-orange-500/5">
                   <interaction.icon
                     className={`size-5 ${interaction.iconColor}`}
                   />
@@ -517,11 +517,11 @@ export function ContactDetailPage() {
                         {interaction.direction}
                       </Badge>
                     </div>
-                    <span className="text-xs text-muted-foreground whitespace-nowrap">
+                    <span className="text-xs text-muted-foreground/60 whitespace-nowrap">
                       {interaction.date}
                     </span>
                   </div>
-                  <p className="text-sm text-muted-foreground">
+                  <p className="text-sm text-muted-foreground/60">
                     {interaction.preview}
                   </p>
                 </div>
@@ -532,13 +532,13 @@ export function ContactDetailPage() {
 
         {/* Deals Tab */}
         <TabsContent value="deals" className="pt-4">
-          <div className="rounded-xl border bg-card ring-1 ring-foreground/10">
+          <div className="glass rounded-xl border border-border/50 backdrop-blur-xl">
             <Table>
               <TableHeader>
                 <TableRow>
                   <TableHead>Nome do Deal</TableHead>
                   <TableHead>Pipeline</TableHead>
-                  <TableHead>Estagio</TableHead>
+                  <TableHead>Estágio</TableHead>
                   <TableHead>Valor</TableHead>
                   <TableHead>Status</TableHead>
                 </TableRow>
@@ -547,7 +547,7 @@ export function ContactDetailPage() {
                 {deals.map((deal) => (
                   <TableRow key={deal.id}>
                     <TableCell className="font-medium">{deal.name}</TableCell>
-                    <TableCell className="text-muted-foreground">
+                    <TableCell className="text-muted-foreground/60">
                       {deal.pipeline}
                     </TableCell>
                     <TableCell>
@@ -572,7 +572,7 @@ export function ContactDetailPage() {
         {/* Notas Tab */}
         <TabsContent value="notes" className="space-y-4 pt-4">
           <div className="flex justify-end">
-            <Button className="btn-lift bg-gradient-to-r from-primary to-orange-600 text-primary-foreground shadow-md shadow-primary/10">
+            <Button variant="gradient" className="btn-lift rounded-xl shadow-md shadow-primary/10">
               <FileText className="size-4" />
               Nova Nota
             </Button>

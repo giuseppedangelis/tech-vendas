@@ -123,7 +123,7 @@ const mockLeads: PipelineLead[] = [
   // Pipeline B2B
   { id: "l1", name: "Maria Silva", email: "maria@techcorp.com.br", phone: "(11) 99999-1111", company: "TechCorp", score: 92, value: 45000, tags: ["Enterprise", "Urgente"], channel: "whatsapp", stageId: "s1", assignedTo: "Rafael", status: "new", lastInteraction: new Date(Date.now() - 1000 * 60 * 30), createdAt: new Date(Date.now() - 1000 * 60 * 60 * 24 * 3) },
   { id: "l2", name: "Carlos Oliveira", email: "carlos@dataflow.com.br", phone: "(21) 98888-2222", company: "DataFlow", score: 78, value: 32000, tags: ["PME"], channel: "email", stageId: "s1", assignedTo: "Juliana", status: "contacted", lastInteraction: new Date(Date.now() - 1000 * 60 * 60 * 2), createdAt: new Date(Date.now() - 1000 * 60 * 60 * 24 * 5) },
-  { id: "l3", name: "Fernanda Costa", email: "fernanda@inovatech.com.br", phone: "(31) 97777-3333", company: "InovaTech", score: 85, value: 67000, tags: ["Enterprise", "Referencia"], channel: "phone", stageId: "s2", assignedTo: "Rafael", status: "qualified", lastInteraction: new Date(Date.now() - 1000 * 60 * 60 * 4), createdAt: new Date(Date.now() - 1000 * 60 * 60 * 24 * 7) },
+  { id: "l3", name: "Fernanda Costa", email: "fernanda@inovatech.com.br", phone: "(31) 97777-3333", company: "InovaTech", score: 85, value: 67000, tags: ["Enterprise", "Referência"], channel: "phone", stageId: "s2", assignedTo: "Rafael", status: "qualified", lastInteraction: new Date(Date.now() - 1000 * 60 * 60 * 4), createdAt: new Date(Date.now() - 1000 * 60 * 60 * 24 * 7) },
   { id: "l4", name: "Ricardo Santos", email: "ricardo@megasoft.com.br", phone: "(41) 96666-4444", company: "MegaSoft", score: 65, value: 28000, tags: ["PME", "Retorno"], channel: "instagram", stageId: "s2", assignedTo: "Juliana", status: "qualified", lastInteraction: new Date(Date.now() - 1000 * 60 * 60 * 8), createdAt: new Date(Date.now() - 1000 * 60 * 60 * 24 * 10) },
   { id: "l5", name: "Patricia Lima", email: "patricia@cloudbase.com.br", phone: "(51) 95555-5555", company: "CloudBase", score: 90, value: 95000, tags: ["Enterprise", "Urgente"], channel: "whatsapp", stageId: "s3", assignedTo: "Rafael", status: "proposal", lastInteraction: new Date(Date.now() - 1000 * 60 * 45), createdAt: new Date(Date.now() - 1000 * 60 * 60 * 24 * 14) },
   { id: "l6", name: "Andre Moreira", email: "andre@nextgen.com.br", phone: "(61) 94444-6666", company: "NextGen", score: 42, value: 15000, tags: ["Startup"], channel: "email", stageId: "s3", assignedTo: "Juliana", status: "proposal", lastInteraction: new Date(Date.now() - 1000 * 60 * 60 * 24), createdAt: new Date(Date.now() - 1000 * 60 * 60 * 24 * 20) },
@@ -135,9 +135,9 @@ const mockLeads: PipelineLead[] = [
   { id: "l11", name: "Isabela Martins", email: "isabela@email.com", phone: "(21) 98000-1111", company: "", score: 75, value: 4800, tags: ["Plano Business"], channel: "whatsapp", stageId: "s7", assignedTo: "Rafael", status: "contacted", lastInteraction: new Date(Date.now() - 1000 * 60 * 90), createdAt: new Date(Date.now() - 1000 * 60 * 60 * 24 * 4) },
   { id: "l12", name: "Thiago Nascimento", email: "thiago@email.com", phone: "(31) 98000-1212", company: "", score: 83, value: 7200, tags: ["Plano Enterprise"], channel: "whatsapp", stageId: "s8", assignedTo: "Juliana", status: "proposal", lastInteraction: new Date(Date.now() - 1000 * 60 * 60 * 6), createdAt: new Date(Date.now() - 1000 * 60 * 60 * 24 * 8) },
   { id: "l13", name: "Amanda Souza", email: "amanda@email.com", phone: "(41) 98000-1313", company: "", score: 91, value: 4800, tags: ["Plano Business", "Urgente"], channel: "phone", stageId: "s9", assignedTo: "Rafael", status: "won", lastInteraction: new Date(Date.now() - 1000 * 60 * 20), createdAt: new Date(Date.now() - 1000 * 60 * 60 * 24 * 12) },
-  // Pipeline Pos-Venda
+  // Pipeline Pós-Venda
   { id: "l14", name: "Roberto Campos", email: "roberto@globaltech.com.br", phone: "(51) 98000-1414", company: "GlobalTech", score: 70, value: 55000, tags: ["Enterprise", "Onboarding"], channel: "email", stageId: "s10", assignedTo: "Juliana", status: "won", lastInteraction: new Date(Date.now() - 1000 * 60 * 60 * 5), createdAt: new Date(Date.now() - 1000 * 60 * 60 * 24 * 6) },
-  { id: "l15", name: "Daniela Lopes", email: "daniela@bitwise.com.br", phone: "(61) 98000-1515", company: "Bitwise", score: 82, value: 38000, tags: ["PME", "Implementacao"], channel: "whatsapp", stageId: "s11", assignedTo: "Rafael", status: "won", lastInteraction: new Date(Date.now() - 1000 * 60 * 60 * 10), createdAt: new Date(Date.now() - 1000 * 60 * 60 * 24 * 15) },
+  { id: "l15", name: "Daniela Lopes", email: "daniela@bitwise.com.br", phone: "(61) 98000-1515", company: "Bitwise", score: 82, value: 38000, tags: ["PME", "Implementação"], channel: "whatsapp", stageId: "s11", assignedTo: "Rafael", status: "won", lastInteraction: new Date(Date.now() - 1000 * 60 * 60 * 10), createdAt: new Date(Date.now() - 1000 * 60 * 60 * 24 * 15) },
   { id: "l16", name: "Felipe Carvalho", email: "felipe@netcore.com.br", phone: "(71) 98000-1616", company: "NetCore", score: 88, value: 42000, tags: ["Enterprise", "Ativo"], channel: "phone", stageId: "s12", assignedTo: "Juliana", status: "won", lastInteraction: new Date(Date.now() - 1000 * 60 * 60 * 24 * 2), createdAt: new Date(Date.now() - 1000 * 60 * 60 * 24 * 40) },
   { id: "l17", name: "Renata Pinto", email: "renata@webflow.com.br", phone: "(81) 98000-1717", company: "WebFlow", score: 96, value: 61000, tags: ["Enterprise", "Sucesso"], channel: "whatsapp", stageId: "s13", assignedTo: "Rafael", status: "won", lastInteraction: new Date(Date.now() - 1000 * 60 * 60 * 48), createdAt: new Date(Date.now() - 1000 * 60 * 60 * 24 * 60) },
 ]
@@ -248,21 +248,21 @@ function LeadCard({
     >
       <Card
         size="sm"
-        className="card-hover cursor-pointer transition-shadow hover:shadow-md"
+        className="card-hover cursor-pointer transition-all duration-200 hover:shadow-card-hover border-border/50"
         onClick={() => onOpen(lead)}
       >
-        <CardContent className="space-y-2 p-3">
+        <CardContent className="space-y-2.5 p-3">
           {/* Header: grip + name + score */}
           <div className="flex items-start justify-between gap-2">
             <div className="flex items-center gap-1.5 min-w-0">
               <button
-                className="shrink-0 cursor-grab touch-none text-muted-foreground opacity-0 transition-opacity group-hover:opacity-100"
+                className="shrink-0 cursor-grab touch-none text-muted-foreground/30 opacity-0 transition-opacity group-hover:opacity-100 hover:text-muted-foreground"
                 {...attributes}
                 {...listeners}
               >
                 <GripVertical className="size-3.5" />
               </button>
-              <span className="truncate text-sm font-medium">{lead.name}</span>
+              <span className="truncate text-[13px] font-semibold">{lead.name}</span>
             </div>
             <LeadScoreBadge score={lead.score} />
           </div>
@@ -312,7 +312,7 @@ function LeadCard({
             <div className="flex items-center gap-1.5 pt-1 border-t border-dashed border-primary/20 dark:border-primary/30">
               <Sparkles className="size-3 text-primary shrink-0" />
               <span className="text-[10px] text-primary dark:text-primary truncate">
-                {lead.score > 90 ? "IA: Prioridade maxima — alto potencial de fechamento" : "IA: Lead quente — recomendo contato imediato"}
+                {lead.score > 90 ? "IA: Prioridade máxima — alto potencial de fechamento" : "IA: Lead quente — recomendo contato imediato"}
               </span>
             </div>
           )}
@@ -320,7 +320,7 @@ function LeadCard({
             <div className="flex items-center gap-1.5 pt-1 border-t border-dashed">
               <Sparkles className="size-3 text-muted-foreground/60 shrink-0" />
               <span className="text-[10px] text-muted-foreground truncate">
-                IA: Nurturing recomendado — envie conteudo de valor
+                IA: Nurturing recomendado — envie conteúdo de valor
               </span>
             </div>
           )}
@@ -374,25 +374,22 @@ function KanbanColumn({
 
   return (
     <div
-      className="flex h-full w-[300px] min-w-[300px] flex-col rounded-lg bg-muted/50"
-      style={{ backgroundColor: `${stage.color}08` }}
+      className="kanban-column flex h-full w-[300px] min-w-[300px] flex-col"
+      style={{ backgroundColor: `${stage.color}05` }}
     >
       {/* Column Header */}
-      <div
-        className="flex items-center gap-2 rounded-t-lg px-3 py-3"
-        style={{ borderLeft: `3px solid ${stage.color}` }}
-      >
-        <span
-          className="size-2.5 shrink-0 rounded-full"
-          style={{ backgroundColor: stage.color }}
+      <div className="flex items-center gap-2.5 px-3.5 py-3.5">
+        <div
+          className="size-2.5 shrink-0 rounded-full shadow-sm"
+          style={{ backgroundColor: stage.color, boxShadow: `0 0 8px ${stage.color}40` }}
         />
-        <span className="text-sm font-semibold">{stage.name}</span>
-        <Badge variant="secondary" className="ml-auto text-[10px]">
+        <span className="text-[13px] font-semibold">{stage.name}</span>
+        <Badge variant="secondary" className="ml-auto text-[10px] font-bold">
           {leads.length}
         </Badge>
       </div>
-      <div className="px-3 pb-2">
-        <span className="text-xs text-muted-foreground">
+      <div className="px-3.5 pb-2.5">
+        <span className="text-xs font-medium text-muted-foreground/70">
           {formatBRL(totalValue)}
         </span>
       </div>
@@ -543,7 +540,7 @@ export function PipelinePage() {
     return filteredLeads
   }, [filteredLeads, userRole, userFirstName])
 
-  // "Proximo Lead" for closers: highest-score uncontacted lead assigned to them
+  // "Próximo Lead" for closers: highest-score uncontacted lead assigned to them
   const nextLeadForCloser = useMemo(() => {
     if (userRole !== "closer") return null
     const uncontacted = roleFilteredLeads
@@ -638,7 +635,7 @@ export function PipelinePage() {
         <div className="flex items-center gap-2 rounded-lg border border-amber-200 bg-amber-50 px-4 py-2 dark:border-amber-800 dark:bg-amber-950/40">
           <Eye className="size-4 text-amber-600 dark:text-amber-400" />
           <span className="text-sm font-medium text-amber-700 dark:text-amber-300">
-            Pipeline de Pre-qualificacao — {roleFilteredLeads.length} leads
+            Pipeline de Pré-qualificação — {roleFilteredLeads.length} leads
           </span>
         </div>
       )}
@@ -646,7 +643,7 @@ export function PipelinePage() {
         <div className="flex items-center gap-2 rounded-lg border border-gray-200 bg-gray-50 px-4 py-2 dark:border-gray-700 dark:bg-gray-900/40">
           <Eye className="size-4 text-gray-500 dark:text-gray-400" />
           <span className="text-sm text-gray-600 dark:text-gray-400">
-            Visao completa da equipe — {roleFilteredLeads.length} leads
+            Visão completa da equipe — {roleFilteredLeads.length} leads
           </span>
         </div>
       )}
@@ -662,7 +659,7 @@ export function PipelinePage() {
             <span className="relative flex size-2"><span className="absolute inline-flex size-full animate-ping rounded-full bg-emerald-400 opacity-75" /><span className="relative inline-flex size-2 rounded-full bg-emerald-500" /></span>
           </div>
           <p className="text-xs text-muted-foreground truncate">
-            3 leads em risco de esfriar · 2 prontos para avancar estagio · Score medio: 74 · Valor total no pipeline: R$ 612.000
+            3 leads em risco de esfriar · 2 prontos para avançar estágio · Score médio: 74 · Valor total no pipeline: R$ 612.000
           </p>
         </div>
         <Badge variant="secondary" className="bg-primary/10 text-primary dark:text-primary shrink-0">
@@ -671,7 +668,7 @@ export function PipelinePage() {
         </Badge>
       </div>
 
-      {/* Proximo Lead card for closers */}
+      {/* Próximo Lead card for closers */}
       {nextLeadForCloser && (
         <Card className="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-950/30 dark:to-indigo-950/30">
           <CardContent className="flex items-center gap-4 p-4">
@@ -681,7 +678,7 @@ export function PipelinePage() {
             <div className="min-w-0 flex-1">
               <div className="flex items-center gap-2">
                 <p className="text-xs font-semibold uppercase tracking-wider text-blue-600 dark:text-blue-400">
-                  Proximo Lead
+                  Próximo Lead
                 </p>
                 <Badge className="bg-gradient-to-r from-primary/10 to-orange-500/10 text-primary dark:text-primary border-primary/20 dark:border-primary/30 text-[10px]">
                   <Sparkles className="mr-1 size-2.5" />

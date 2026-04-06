@@ -48,10 +48,10 @@ const settingsSections = [
   { id: "pipelines", label: "Pipelines", icon: GitBranch },
   { id: "campos", label: "Campos", icon: ListFilter },
   { id: "tags", label: "Tags", icon: Tags },
-  { id: "automacoes", label: "Automacoes", icon: Zap },
+  { id: "automacoes", label: "Automações", icon: Zap },
   { id: "lead-scoring", label: "Lead Scoring", icon: Target },
   { id: "metodologias", label: "Metodologias", icon: BookOpen },
-  { id: "integracoes", label: "Integracoes", icon: Plug },
+  { id: "integracoes", label: "Integrações", icon: Plug },
   { id: "ia", label: "IA", icon: BrainCircuit },
 ]
 
@@ -62,18 +62,18 @@ const pipelinesData = [
     name: "Vendas Principal",
     stages: [
       { name: "Novos Leads", color: "#3b82f6", order: 1 },
-      { name: "Qualificacao", color: "#8b5cf6", order: 2 },
+      { name: "Qualificação", color: "#8b5cf6", order: 2 },
       { name: "Proposta", color: "#f59e0b", order: 3 },
-      { name: "Negociacao", color: "#f97316", order: 4 },
+      { name: "Negociação", color: "#f97316", order: 4 },
       { name: "Fechamento", color: "#22c55e", order: 5 },
     ],
   },
   {
     id: "2",
-    name: "Pos-Venda",
+    name: "Pós-Venda",
     stages: [
       { name: "Onboarding", color: "#06b6d4", order: 1 },
-      { name: "Implantacao", color: "#8b5cf6", order: 2 },
+      { name: "Implantação", color: "#8b5cf6", order: 2 },
       { name: "Acompanhamento", color: "#22c55e", order: 3 },
     ],
   },
@@ -116,7 +116,7 @@ const integrations = [
   {
     id: "activecampaign",
     name: "ActiveCampaign",
-    description: "Sincronize contatos e automacoes",
+    description: "Sincronize contatos e automações",
     icon: Mail,
     connected: false,
     color: "text-indigo-600",
@@ -124,7 +124,7 @@ const integrations = [
   {
     id: "google-calendar",
     name: "Google Calendar",
-    description: "Sincronize agendamentos e reunioes",
+    description: "Sincronize agendamentos e reuniões",
     icon: Calendar,
     connected: true,
     color: "text-blue-500",
@@ -144,13 +144,13 @@ function ContaSection() {
       <div>
         <h3 className="font-display text-base font-semibold">Conta</h3>
         <p className="text-sm text-muted-foreground">
-          Configuracoes gerais da sua conta e empresa
+          Configurações gerais da sua conta e empresa
         </p>
       </div>
 
       <Card className="animate-card-in">
         <CardHeader>
-          <CardTitle className="text-base">Informacoes da Empresa</CardTitle>
+          <CardTitle className="text-base">Informações da Empresa</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="space-y-2">
@@ -175,7 +175,7 @@ function ContaSection() {
 
       <Card className="animate-card-in">
         <CardHeader>
-          <CardTitle className="text-base">Aparencia</CardTitle>
+          <CardTitle className="text-base">Aparência</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="flex items-center justify-between">
@@ -205,7 +205,7 @@ function ContaSection() {
       </Card>
 
       <div className="flex justify-end">
-        <Button className="btn-lift bg-gradient-to-r from-primary to-orange-600 text-primary-foreground shadow-md shadow-primary/10">Salvar Alteracoes</Button>
+        <Button className="btn-lift bg-gradient-to-r from-primary to-orange-600 text-primary-foreground shadow-md shadow-primary/10">Salvar Alterações</Button>
       </div>
     </div>
   )
@@ -218,7 +218,7 @@ function PipelinesSection() {
         <div>
           <h3 className="font-display text-base font-semibold">Pipelines</h3>
           <p className="text-sm text-muted-foreground">
-            Gerencie seus pipelines e estagios de venda
+            Gerencie seus pipelines e estágios de venda
           </p>
         </div>
         <Button className="btn-lift bg-gradient-to-r from-primary to-orange-600 text-primary-foreground shadow-md shadow-primary/10">
@@ -270,7 +270,7 @@ function IntegracoesSection() {
   return (
     <div className="space-y-6">
       <div>
-        <h3 className="font-display text-base font-semibold">Integracoes</h3>
+        <h3 className="font-display text-base font-semibold">Integrações</h3>
         <p className="text-sm text-muted-foreground">
           Conecte suas ferramentas favoritas ao CRM
         </p>
@@ -336,7 +336,7 @@ function IASection() {
   return (
     <div className="space-y-6">
       <div>
-        <h3 className="font-display text-base font-semibold">Inteligencia Artificial</h3>
+        <h3 className="font-display text-base font-semibold">Inteligência Artificial</h3>
         <p className="text-sm text-muted-foreground">
           Configure os recursos de IA do seu CRM
         </p>
@@ -346,7 +346,7 @@ function IASection() {
         <CardHeader>
           <CardTitle className="text-base">Provedor de IA</CardTitle>
           <CardDescription>
-            Selecione o provedor de inteligencia artificial
+            Selecione o provedor de inteligência artificial
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -366,7 +366,7 @@ function IASection() {
         <CardHeader>
           <CardTitle className="text-base">IA Copilot</CardTitle>
           <CardDescription>
-            Assistente de IA para sugestoes em tempo real durante conversas
+            Assistente de IA para sugestões em tempo real durante conversas
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
@@ -374,7 +374,7 @@ function IASection() {
             <div className="space-y-0.5">
               <Label>Ativar IA Copilot</Label>
               <p className="text-xs text-muted-foreground">
-                Receba sugestoes de resposta e proximos passos
+                Receba sugestões de resposta e próximos passos
               </p>
             </div>
             <Switch checked={copilotEnabled} onCheckedChange={setCopilotEnabled} />
@@ -404,7 +404,7 @@ function IASection() {
         <CardHeader>
           <CardTitle className="text-base">IA Gestora</CardTitle>
           <CardDescription>
-            IA autonoma para gestao de pipeline e follow-ups automaticos
+            IA autônoma para gestão de pipeline e follow-ups automáticos
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
@@ -421,14 +421,14 @@ function IASection() {
             <>
               <Separator />
               <div className="space-y-2">
-                <Label>Frequencia de Analise</Label>
+                <Label>Frequência de Análise</Label>
                 <Select defaultValue="diario">
                   <SelectTrigger className="w-full">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="tempo-real">Tempo Real</SelectItem>
-                    <SelectItem value="diario">Diario</SelectItem>
+                    <SelectItem value="diario">Diário</SelectItem>
                     <SelectItem value="semanal">Semanal</SelectItem>
                   </SelectContent>
                 </Select>
@@ -460,7 +460,7 @@ function IASection() {
       </Card>
 
       <div className="flex justify-end">
-        <Button className="btn-lift bg-gradient-to-r from-primary to-orange-600 text-primary-foreground shadow-md shadow-primary/10">Salvar Configuracoes de IA</Button>
+        <Button className="btn-lift bg-gradient-to-r from-primary to-orange-600 text-primary-foreground shadow-md shadow-primary/10">Salvar Configurações de IA</Button>
       </div>
     </div>
   )
@@ -480,7 +480,7 @@ function PlaceholderSection({ title }: { title: string }) {
             </div>
             <p className="text-lg font-medium">Em breve</p>
             <p className="text-sm text-muted-foreground">
-              Esta secao esta em desenvolvimento e estara disponivel em breve.
+              Esta seção está em desenvolvimento e estará disponível em breve.
             </p>
           </div>
         </CardContent>
@@ -504,7 +504,7 @@ function SettingsContent({ section }: { section: string }) {
     case "tags":
       return <PlaceholderSection title="Tags" />
     case "automacoes":
-      return <PlaceholderSection title="Automacoes" />
+      return <PlaceholderSection title="Automações" />
     case "lead-scoring":
       return <PlaceholderSection title="Lead Scoring" />
     case "metodologias":
@@ -521,9 +521,9 @@ export function SettingsPage() {
   return (
     <div className="animate-page-in space-y-6">
       <div>
-        <h2 className="text-gradient text-2xl font-bold tracking-tight">Configuracoes</h2>
+        <h2 className="text-gradient text-2xl font-bold tracking-tight">Configurações</h2>
         <p className="text-muted-foreground">
-          Configure pipelines, integracoes, equipe e preferencias
+          Configure pipelines, integrações, equipe e preferências
         </p>
       </div>
 

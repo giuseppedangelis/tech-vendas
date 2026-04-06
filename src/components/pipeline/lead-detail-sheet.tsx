@@ -204,34 +204,40 @@ export function LeadDetailSheet({
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
-      <SheetContent className="w-full sm:max-w-lg p-0 flex flex-col">
-        <SheetHeader className="px-6 pt-6 pb-2">
-          <SheetTitle className="text-lg">{lead.name}</SheetTitle>
-          <SheetDescription>
-            {lead.company ? `${lead.company} - ` : ""}
-            {formatBRL(lead.value)}
+      <SheetContent className="w-full sm:max-w-lg p-0 flex flex-col bg-background/95 backdrop-blur-xl">
+        <SheetHeader className="px-6 pt-6 pb-3 border-b border-border/40">
+          <SheetTitle className="font-display text-lg font-bold">{lead.name}</SheetTitle>
+          <SheetDescription className="text-[13px]">
+            {lead.company ? `${lead.company} — ` : ""}
+            <span className="font-semibold text-foreground/80">{formatBRL(lead.value)}</span>
           </SheetDescription>
         </SheetHeader>
 
         <ScrollArea className="flex-1 px-6">
-          <div className="animate-page-in space-y-6 pb-6">
+          <div className="animate-page-in space-y-6 pb-6 pt-2">
             {/* Contact Info */}
             <section className="space-y-3">
-              <h3 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+              <h3 className="text-[10px] font-bold uppercase tracking-[0.12em] text-muted-foreground/60">
                 Informações de Contato
               </h3>
-              <div className="space-y-2">
-                <div className="flex items-center gap-2 text-sm">
-                  <Mail className="size-4 text-muted-foreground" />
+              <div className="space-y-2.5">
+                <div className="flex items-center gap-2.5 text-sm">
+                  <div className="flex size-7 items-center justify-center rounded-lg bg-muted/60">
+                    <Mail className="size-3.5 text-muted-foreground" />
+                  </div>
                   <span>{lead.email}</span>
                 </div>
-                <div className="flex items-center gap-2 text-sm">
-                  <Phone className="size-4 text-muted-foreground" />
+                <div className="flex items-center gap-2.5 text-sm">
+                  <div className="flex size-7 items-center justify-center rounded-lg bg-muted/60">
+                    <Phone className="size-3.5 text-muted-foreground" />
+                  </div>
                   <span>{lead.phone}</span>
                 </div>
                 {lead.company && (
-                  <div className="flex items-center gap-2 text-sm">
-                    <Building2 className="size-4 text-muted-foreground" />
+                  <div className="flex items-center gap-2.5 text-sm">
+                    <div className="flex size-7 items-center justify-center rounded-lg bg-muted/60">
+                      <Building2 className="size-3.5 text-muted-foreground" />
+                    </div>
                     <span>{lead.company}</span>
                   </div>
                 )}

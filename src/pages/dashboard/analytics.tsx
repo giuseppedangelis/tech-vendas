@@ -10,9 +10,9 @@ import { BarChart3, GitBranch, Repeat, Users } from "lucide-react"
 
 const tabs = [
   { value: "funil", label: "Funil", icon: GitBranch },
-  { value: "atribuicao", label: "Atribuicao", icon: Users },
+  { value: "atribuicao", label: "Atribuição", icon: Users },
   { value: "rfm", label: "RFM", icon: BarChart3 },
-  { value: "recorrencia", label: "Recorrencia", icon: Repeat },
+  { value: "recorrencia", label: "Recorrência", icon: Repeat },
 ]
 
 export function DashboardAnalytics() {
@@ -20,10 +20,10 @@ export function DashboardAnalytics() {
     <div className="space-y-6">
       <div>
         <h2 className="text-2xl font-bold tracking-tight">
-          Metricas Avancadas
+          Métricas Avançadas
         </h2>
         <p className="text-muted-foreground">
-          Analise detalhada de metricas e KPIs do seu pipeline
+          Análise detalhada de métricas e KPIs do seu pipeline
         </p>
       </div>
 
@@ -46,7 +46,7 @@ export function DashboardAnalytics() {
                   {tab.label}
                 </CardTitle>
                 <CardDescription>
-                  Metricas detalhadas de {tab.label.toLowerCase()}
+                  Métricas detalhadas de {tab.label.toLowerCase()}
                 </CardDescription>
               </CardHeader>
               <CardContent>
@@ -54,11 +54,11 @@ export function DashboardAnalytics() {
                   <div className="text-center">
                     <tab.icon className="mx-auto size-12 text-muted-foreground/40" />
                     <p className="mt-4 text-lg font-medium text-muted-foreground">
-                      Metricas Avancadas - Em breve
+                      Métricas Avançadas - Em breve
                     </p>
                     <p className="mt-1 text-sm text-muted-foreground/70">
-                      A analise de {tab.label.toLowerCase()} estara disponivel
-                      na proxima atualizacao
+                      A análise de {tab.label.toLowerCase()} estará disponível
+                      na próxima atualização
                     </p>
                   </div>
                 </div>

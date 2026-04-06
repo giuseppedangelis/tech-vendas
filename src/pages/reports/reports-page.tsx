@@ -38,20 +38,20 @@ const funnelData = [
   { stage: "Novos Leads", count: 320, color: "hsl(var(--chart-1))" },
   { stage: "Qualificados", count: 210, color: "hsl(var(--chart-2))" },
   { stage: "Proposta", count: 125, color: "hsl(var(--chart-3))" },
-  { stage: "Negociacao", count: 78, color: "hsl(var(--chart-4))" },
+  { stage: "Negociação", count: 78, color: "hsl(var(--chart-4))" },
   { stage: "Fechados", count: 42, color: "hsl(var(--chart-5))" },
 ]
 
 const conversionRates = [
   { from: "Novos Leads", to: "Qualificados", rate: 65.6 },
   { from: "Qualificados", to: "Proposta", rate: 59.5 },
-  { from: "Proposta", to: "Negociacao", rate: 62.4 },
-  { from: "Negociacao", to: "Fechados", rate: 53.8 },
+  { from: "Proposta", to: "Negociação", rate: 62.4 },
+  { from: "Negociação", to: "Fechados", rate: 53.8 },
 ]
 
 const lossReasons = [
-  { name: "Preco alto", value: 35, color: "#ef4444" },
-  { name: "Concorrencia", value: 25, color: "#f97316" },
+  { name: "Preço alto", value: 35, color: "#ef4444" },
+  { name: "Concorrência", value: 25, color: "#f97316" },
   { name: "Sem resposta", value: 20, color: "#eab308" },
   { name: "Timing ruim", value: 12, color: "#6366f1" },
   { name: "Sem fit", value: 8, color: "#8b5cf6" },
@@ -74,11 +74,11 @@ const sellerRevenueChart = [
   { name: "Pedro H.", receita: 45000 },
 ]
 
-// --- Atribuicao data ---
+// --- Atribuição data ---
 const sourceData = [
   { source: "WhatsApp", percentage: 45, leads: 144, color: "#25d366" },
   { source: "Instagram", percentage: 25, leads: 80, color: "#e1306c" },
-  { source: "Formulario", percentage: 20, leads: 64, color: "#3b82f6" },
+  { source: "Formulário", percentage: 20, leads: 64, color: "#3b82f6" },
   { source: "Manual", percentage: 10, leads: 32, color: "#8b5cf6" },
 ]
 
@@ -232,11 +232,11 @@ function SourcePieChart() {
 function FunnelTab() {
   return (
     <div className="space-y-6">
-      <Card className="animate-card-in border-t-2 border-t-primary/20">
+      <Card className="animate-card-in accent-top rounded-xl border-border/50">
         <CardHeader>
-          <CardTitle>Funil de Vendas</CardTitle>
+          <CardTitle className="font-display">Funil de Vendas</CardTitle>
           <CardDescription>
-            Volume de leads por estagio do funil
+            Volume de leads por estágio do funil
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -245,11 +245,11 @@ function FunnelTab() {
       </Card>
 
       <div className="grid gap-4 md:grid-cols-2">
-        <Card className="animate-card-in">
+        <Card className="animate-card-in card-hover rounded-xl border-border/50">
           <CardHeader>
-            <CardTitle className="text-base">Taxas de Conversao</CardTitle>
+            <CardTitle className="font-display text-base">Taxas de Conversão</CardTitle>
             <CardDescription>
-              Conversao entre estagios do funil
+              Conversão entre estágios do funil
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -268,11 +268,11 @@ function FunnelTab() {
           </CardContent>
         </Card>
 
-        <Card className="animate-card-in">
+        <Card className="animate-card-in card-hover rounded-xl border-border/50">
           <CardHeader>
-            <CardTitle className="text-base">Motivos de Perda</CardTitle>
+            <CardTitle className="font-display text-base">Motivos de Perda</CardTitle>
             <CardDescription>
-              Principais razoes de perda de deals
+              Principais razões de perda de deals
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -287,11 +287,11 @@ function FunnelTab() {
 function TimeTab() {
   return (
     <div className="space-y-6">
-      <Card className="animate-card-in">
+      <Card className="animate-card-in accent-top rounded-xl border-border/50">
         <CardHeader>
-          <CardTitle>Ranking de Vendedores</CardTitle>
+          <CardTitle className="font-display">Ranking de Vendedores</CardTitle>
           <CardDescription>
-            Classificacao por numero de deals fechados
+            Classificação por número de deals fechados
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -302,7 +302,7 @@ function TimeTab() {
                 <TableHead>Vendedor</TableHead>
                 <TableHead className="text-right">Deals</TableHead>
                 <TableHead className="text-right">Receita</TableHead>
-                <TableHead className="text-right">Conversao</TableHead>
+                <TableHead className="text-right">Conversão</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -383,9 +383,9 @@ function AtribuicaoTab() {
       <div className="grid gap-4 md:grid-cols-2">
         <Card className="animate-card-in">
           <CardHeader>
-            <CardTitle className="text-base">Distribuicao por Fonte</CardTitle>
+            <CardTitle className="text-base">Distribuição por Fonte</CardTitle>
             <CardDescription>
-              Origem dos leads no periodo
+              Origem dos leads no período
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -410,7 +410,7 @@ function AtribuicaoTab() {
                   Rastreamento UTM
                 </p>
                 <p className="text-xs text-muted-foreground">
-                  Configure parametros UTM nas suas campanhas para rastrear a
+                  Configure parâmetros UTM nas suas campanhas para rastrear a
                   origem dos leads.
                 </p>
               </div>
@@ -482,7 +482,7 @@ function RecorrenciaTab() {
                 >
                   {metric.change}
                 </Badge>
-                <span className="text-xs text-muted-foreground">vs. mes anterior</span>
+                <span className="text-xs text-muted-foreground">vs. mês anterior</span>
               </div>
               <p className="mt-1 text-xs text-muted-foreground">
                 {metric.description}
@@ -494,9 +494,9 @@ function RecorrenciaTab() {
 
       <Card className="animate-card-in">
         <CardHeader>
-          <CardTitle>Evolucao do MRR</CardTitle>
+          <CardTitle>Evolução do MRR</CardTitle>
           <CardDescription>
-            Historico de receita recorrente mensal
+            Histórico de receita recorrente mensal
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -506,7 +506,7 @@ function RecorrenciaTab() {
                 <BarChart3 className="size-6 text-primary" />
               </div>
               <p className="text-sm text-muted-foreground">
-                Grafico de evolucao do MRR disponivel em breve
+                Gráfico de evolução do MRR disponível em breve
               </p>
             </div>
           </div>
@@ -520,9 +520,9 @@ export function ReportsPage() {
   return (
     <div className="animate-page-in space-y-6">
       <div>
-        <h2 className="text-gradient text-2xl font-bold tracking-tight">Relatorios</h2>
-        <p className="text-muted-foreground">
-          Relatorios detalhados de vendas, equipe e conversao
+        <h2 className="text-gradient font-display text-2xl font-bold tracking-tight">Relatórios</h2>
+        <p className="text-muted-foreground/60">
+          Relatórios detalhados de vendas, equipe e conversão
         </p>
       </div>
 
@@ -538,17 +538,17 @@ export function ReportsPage() {
           </TabsTrigger>
           <TabsTrigger value="atribuicao">
             <Share2 className="mr-1.5 size-4" />
-            Atribuicao
+            Atribuição
           </TabsTrigger>
           <TabsTrigger value="recorrencia">
             <Repeat className="mr-1.5 size-4" />
-            Recorrencia
+            Recorrência
           </TabsTrigger>
         </TabsList>
 
         <TabsContent value="funil" className="pt-4">
           <p className="mb-4 text-sm text-muted-foreground">
-            Analise detalhada do funil de vendas
+            Análise detalhada do funil de vendas
           </p>
           <FunnelTab />
         </TabsContent>
@@ -562,14 +562,14 @@ export function ReportsPage() {
 
         <TabsContent value="atribuicao" className="pt-4">
           <p className="mb-4 text-sm text-muted-foreground">
-            Origem e atribuicao de leads
+            Origem e atribuição de leads
           </p>
           <AtribuicaoTab />
         </TabsContent>
 
         <TabsContent value="recorrencia" className="pt-4">
           <p className="mb-4 text-sm text-muted-foreground">
-            Metricas de recorrencia e churn
+            Métricas de recorrência e churn
           </p>
           <RecorrenciaTab />
         </TabsContent>

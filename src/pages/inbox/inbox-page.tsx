@@ -102,7 +102,7 @@ const mockConversations: Conversation[] = [
     id: "c3",
     contactName: "Fernanda Costa",
     contactInitials: "FC",
-    lastMessage: "Perfeito, vou analisar e retorno amanha",
+    lastMessage: "Perfeito, vou analisar e retorno amanhã",
     lastMessageTime: new Date(Date.now() - 1000 * 60 * 45),
     unreadCount: 0,
     channel: "instagram",
@@ -115,7 +115,7 @@ const mockConversations: Conversation[] = [
     id: "c4",
     contactName: "Ricardo Santos",
     contactInitials: "RS",
-    lastMessage: "Voces fazem integracao com Salesforce?",
+    lastMessage: "Vocês fazem integração com Salesforce?",
     lastMessageTime: new Date(Date.now() - 1000 * 60 * 60 * 2),
     unreadCount: 2,
     channel: "whatsapp",
@@ -129,7 +129,7 @@ const mockConversations: Conversation[] = [
     id: "c5",
     contactName: "Patricia Lima",
     contactInitials: "PL",
-    lastMessage: "Obrigada! Fechamos entao",
+    lastMessage: "Obrigada! Fechamos então",
     lastMessageTime: new Date(Date.now() - 1000 * 60 * 60 * 3),
     unreadCount: 0,
     channel: "whatsapp",
@@ -142,7 +142,7 @@ const mockConversations: Conversation[] = [
     id: "c6",
     contactName: "Andre Moreira",
     contactInitials: "AM",
-    lastMessage: "Vi o post de voces sobre IA, muito bom!",
+    lastMessage: "Vi o post de vocês sobre IA, muito bom!",
     lastMessageTime: new Date(Date.now() - 1000 * 60 * 60 * 5),
     unreadCount: 0,
     channel: "instagram",
@@ -155,7 +155,7 @@ const mockConversations: Conversation[] = [
     id: "c7",
     contactName: "Juliana Ferreira",
     contactInitials: "JF",
-    lastMessage: "Qual o prazo de implementacao?",
+    lastMessage: "Qual o prazo de implementação?",
     lastMessageTime: new Date(Date.now() - 1000 * 60 * 60 * 8),
     unreadCount: 1,
     channel: "whatsapp",
@@ -168,7 +168,7 @@ const mockConversations: Conversation[] = [
     id: "c8",
     contactName: "Bruno Almeida",
     contactInitials: "BA",
-    lastMessage: "Temos reuniao marcada para sexta as 14h",
+    lastMessage: "Temos reunião marcada para sexta às 14h",
     lastMessageTime: new Date(Date.now() - 1000 * 60 * 60 * 24),
     unreadCount: 0,
     channel: "instagram",
@@ -182,7 +182,7 @@ const mockConversations: Conversation[] = [
     id: "c9",
     contactName: "Lucas Mendes",
     contactInitials: "LM",
-    lastMessage: "Oi, vi o anuncio de voces. Como funciona?",
+    lastMessage: "Oi, vi o anúncio de vocês. Como funciona?",
     lastMessageTime: new Date(Date.now() - 1000 * 60 * 10),
     unreadCount: 2,
     channel: "whatsapp",
@@ -195,7 +195,7 @@ const mockConversations: Conversation[] = [
     id: "c10",
     contactName: "Camila Rocha",
     contactInitials: "CR",
-    lastMessage: "Gostaria de saber os precos de voces",
+    lastMessage: "Gostaria de saber os preços de vocês",
     lastMessageTime: new Date(Date.now() - 1000 * 60 * 25),
     unreadCount: 1,
     channel: "instagram",
@@ -208,7 +208,7 @@ const mockConversations: Conversation[] = [
     id: "c11",
     contactName: "Thiago Barbosa",
     contactInitials: "TB",
-    lastMessage: "Estou procurando uma solucao de CRM acessivel",
+    lastMessage: "Estou procurando uma solução de CRM acessível",
     lastMessageTime: new Date(Date.now() - 1000 * 60 * 60),
     unreadCount: 1,
     channel: "whatsapp",
@@ -237,7 +237,7 @@ function generateMessages(conversationId: string): Message[] {
     {
       id: `${conversationId}-m1`,
       conversationId,
-      content: "Ola! Tudo bem? Vi que voces oferecem solucoes de CRM.",
+      content: "Olá! Tudo bem? Vi que vocês oferecem soluções de CRM.",
       timestamp: new Date(Date.now() - 1000 * 60 * 60 * 24),
       direction: "inbound",
       status: "read",
@@ -246,7 +246,7 @@ function generateMessages(conversationId: string): Message[] {
     {
       id: `${conversationId}-m2`,
       conversationId,
-      content: "Ola! Tudo otimo, obrigado pelo contato! Sim, temos diversas solucoes de CRM. Como posso ajudar?",
+      content: "Olá! Tudo ótimo, obrigado pelo contato! Sim, temos diversas soluções de CRM. Como posso ajudar?",
       timestamp: new Date(Date.now() - 1000 * 60 * 60 * 23),
       direction: "outbound",
       status: "read",
@@ -254,7 +254,7 @@ function generateMessages(conversationId: string): Message[] {
     {
       id: `${conversationId}-m3`,
       conversationId,
-      content: "Estamos procurando uma solucao completa para gerenciar nossos leads e pipeline de vendas.",
+      content: "Estamos procurando uma solução completa para gerenciar nossos leads e pipeline de vendas.",
       timestamp: new Date(Date.now() - 1000 * 60 * 60 * 22),
       direction: "inbound",
       status: "read",
@@ -263,7 +263,7 @@ function generateMessages(conversationId: string): Message[] {
     {
       id: `${conversationId}-m4`,
       conversationId,
-      content: "Entendi! Nosso plano Enterprise e perfeito para isso. Inclui pipeline personalizado, automacao de follow-up e relatorios avancados.",
+      content: "Entendi! Nosso plano Enterprise é perfeito para isso. Inclui pipeline personalizado, automação de follow-up e relatórios avançados.",
       timestamp: new Date(Date.now() - 1000 * 60 * 60 * 21),
       direction: "outbound",
       status: "read",
@@ -280,7 +280,7 @@ function generateMessages(conversationId: string): Message[] {
     {
       id: `${conversationId}-m6`,
       conversationId,
-      content: "O plano Enterprise comeca em R$ 299/mes por usuario, com desconto progressivo para equipes maiores. Quantas pessoas usariam a ferramenta?",
+      content: "O plano Enterprise começa em R$ 299/mês por usuário, com desconto progressivo para equipes maiores. Quantas pessoas usariam a ferramenta?",
       timestamp: new Date(Date.now() - 1000 * 60 * 60 * 19),
       direction: "outbound",
       status: "read",
@@ -297,7 +297,7 @@ function generateMessages(conversationId: string): Message[] {
     {
       id: `${conversationId}-m8`,
       conversationId,
-      content: "Otimo! Para 15 usuarios, conseguimos um valor especial de R$ 249/mes por usuario. Posso preparar uma proposta formal?",
+      content: "Ótimo! Para 15 usuários, conseguimos um valor especial de R$ 249/mês por usuário. Posso preparar uma proposta formal?",
       timestamp: new Date(Date.now() - 1000 * 60 * 60 * 4),
       direction: "outbound",
       status: "read",
@@ -305,7 +305,7 @@ function generateMessages(conversationId: string): Message[] {
     {
       id: `${conversationId}-m9`,
       conversationId,
-      content: "Sim, por favor! Pode incluir as opcoes de pagamento anual tambem?",
+      content: "Sim, por favor! Pode incluir as opções de pagamento anual também?",
       timestamp: new Date(Date.now() - 1000 * 60 * 60 * 3),
       direction: "inbound",
       status: "read",
@@ -314,7 +314,7 @@ function generateMessages(conversationId: string): Message[] {
     {
       id: `${conversationId}-m10`,
       conversationId,
-      content: "Claro! No pagamento anual oferecemos 20% de desconto. Vou preparar a proposta e envio ate amanha.",
+      content: "Claro! No pagamento anual oferecemos 20% de desconto. Vou preparar a proposta e envio até amanhã.",
       timestamp: new Date(Date.now() - 1000 * 60 * 60 * 2),
       direction: "outbound",
       status: "delivered",
@@ -322,7 +322,7 @@ function generateMessages(conversationId: string): Message[] {
     {
       id: `${conversationId}-m11`,
       conversationId,
-      content: "Perfeito! Voces tambem oferecem treinamento para a equipe?",
+      content: "Perfeito! Vocês também oferecem treinamento para a equipe?",
       timestamp: new Date(Date.now() - 1000 * 60 * 30),
       direction: "inbound",
       status: "read",
@@ -331,7 +331,7 @@ function generateMessages(conversationId: string): Message[] {
     {
       id: `${conversationId}-m12`,
       conversationId,
-      content: "Sim! Oferecemos treinamento online completo, com sessoes ao vivo e material gravado. Esta incluso no plano Enterprise.",
+      content: "Sim! Oferecemos treinamento online completo, com sessões ao vivo e material gravado. Está incluso no plano Enterprise.",
       timestamp: new Date(Date.now() - 1000 * 60 * 15),
       direction: "outbound",
       status: "delivered",
@@ -432,8 +432,8 @@ function ConversationItem({
   return (
     <button
       onClick={onSelect}
-      className={`flex w-full items-start gap-3 px-4 py-3 text-left transition-all duration-200 hover:bg-muted/60 ${
-        isSelected ? "border-l-3 border-l-primary bg-muted" : "border-l-3 border-l-transparent"
+      className={`flex w-full items-start gap-3 px-4 py-3 text-left transition-all duration-200 hover:bg-primary/[0.04] ${
+        isSelected ? "border-l-3 border-l-primary bg-primary/[0.06] backdrop-blur-sm" : "border-l-3 border-l-transparent"
       }`}
     >
       <div className="relative">
@@ -497,11 +497,11 @@ function ConversationList({
   )
 
   return (
-    <div className="flex h-full w-full flex-col border-r bg-gradient-to-b from-primary/[0.03] to-transparent md:w-[320px]">
+    <div className="flex h-full w-full flex-col border-r border-border/50 glass md:w-[320px]">
       {/* Header */}
-      <div className="flex flex-col border-b px-4 py-3 gap-2">
+      <div className="flex flex-col border-b border-border/50 px-4 py-3 gap-2">
         <div className="flex items-center justify-between">
-          <h2 className="text-base font-semibold">Conversas</h2>
+          <h2 className="font-display text-base font-semibold">Conversas</h2>
           <Badge variant="secondary" className="text-xs">
             {conversations.filter((c) => c.unreadCount > 0).length} novas
           </Badge>
@@ -517,7 +517,7 @@ function ConversationList({
             placeholder="Buscar conversas..."
             value={searchQuery}
             onChange={(e) => onSearchChange(e.target.value)}
-            className="pl-8"
+            className="pl-8 glass border-border/50"
           />
         </div>
       </div>
@@ -556,8 +556,8 @@ function MessageBubble({ message }: { message: Message }) {
       <div
         className={`max-w-[75%] rounded-2xl px-3.5 py-2 ${
           isOutbound
-            ? "rounded-br-md bg-gradient-to-br from-primary to-primary/90 text-primary-foreground"
-            : "rounded-bl-md bg-card text-foreground shadow-sm"
+            ? "chat-bubble-out rounded-br-md bg-gradient-to-br from-primary to-primary/90 text-primary-foreground"
+            : "chat-bubble-in rounded-bl-md bg-card text-foreground shadow-sm border border-border/30"
         }`}
       >
         <p className="text-sm leading-relaxed whitespace-pre-wrap">{message.content}</p>
@@ -603,7 +603,7 @@ function MessageInput({
   }
 
   return (
-    <form onSubmit={handleSubmit} className="flex items-end gap-2 border-t p-3">
+    <form onSubmit={handleSubmit} className="flex items-end gap-2 border-t border-border/50 p-3">
       <Button type="button" variant="ghost" size="icon-sm">
         <Paperclip className="size-4" />
       </Button>
@@ -659,7 +659,7 @@ function MessagePanel({
   return (
     <div className="flex flex-1 flex-col">
       {/* Header */}
-      <div className="flex items-center gap-3 border-b px-4 py-3">
+      <div className="flex items-center gap-3 border-b border-border/50 px-4 py-3">
         <Button
           variant="ghost"
           size="icon-sm"
@@ -708,7 +708,7 @@ function MessagePanel({
           <Button variant="ghost" size="icon-sm" title="Ligar">
             <Phone className="size-4" />
           </Button>
-          <Button variant="ghost" size="icon-sm" title="Mais opcoes">
+          <Button variant="ghost" size="icon-sm" title="Mais opções">
             <MoreVertical className="size-4" />
           </Button>
         </div>
@@ -719,11 +719,11 @@ function MessagePanel({
         <div className="mx-auto max-w-2xl space-y-3">
           {/* Date divider */}
           <div className="flex items-center gap-3 py-2">
-            <Separator className="flex-1" />
-            <span className="shrink-0 text-[11px] text-muted-foreground">
+            <div className="h-px flex-1 bg-gradient-to-r from-transparent via-border/50 to-transparent" />
+            <span className="shrink-0 text-[10px] font-bold uppercase tracking-[0.12em] text-muted-foreground/60">
               Hoje
             </span>
-            <Separator className="flex-1" />
+            <div className="h-px flex-1 bg-gradient-to-r from-transparent via-border/50 to-transparent" />
           </div>
           {messages.map((msg) => (
             <MessageBubble key={msg.id} message={msg} />
@@ -751,7 +751,7 @@ function EmptyState() {
         Selecione uma conversa
       </h3>
       <p className="text-sm">
-        Escolha uma conversa na lista ao lado para comecar
+        Escolha uma conversa na lista ao lado para começar
       </p>
     </div>
   )
@@ -766,7 +766,7 @@ function AICopilotPanel({ conversation }: { conversation: Conversation }) {
 
   if (!expanded) {
     return (
-      <div className="hidden lg:flex flex-col items-center border-l bg-gradient-to-b from-primary/[0.03] to-transparent px-2 py-4">
+      <div className="hidden lg:flex flex-col items-center border-l border-border/50 glass px-2 py-4">
         <button onClick={() => setExpanded(true)} className="flex size-10 items-center justify-center rounded-xl bg-gradient-to-br from-primary to-orange-500 text-white shadow-lg shadow-primary/25 transition-transform hover:scale-105">
           <Sparkles className="size-5" />
         </button>
@@ -775,9 +775,9 @@ function AICopilotPanel({ conversation }: { conversation: Conversation }) {
   }
 
   return (
-    <div className="hidden lg:flex w-[280px] shrink-0 flex-col border-l bg-gradient-to-b from-primary/[0.03] to-transparent">
+    <div className="hidden lg:flex w-[280px] shrink-0 flex-col border-l border-border/50 glass">
       {/* Header */}
-      <div className="flex items-center justify-between border-b px-4 py-3">
+      <div className="flex items-center justify-between border-b border-border/50 px-4 py-3">
         <div className="flex items-center gap-2">
           <div className="flex size-7 items-center justify-center rounded-lg bg-gradient-to-br from-primary to-orange-500 text-white shadow-sm">
             <Sparkles className="size-3.5 animate-spin" style={{ animationDuration: "3s" }} />
@@ -799,7 +799,7 @@ function AICopilotPanel({ conversation }: { conversation: Conversation }) {
         <div className="space-y-4 p-4">
           {/* Sentiment Analysis */}
           <div className="space-y-2">
-            <span className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">Sentimento</span>
+            <span className="text-[10px] font-bold uppercase tracking-[0.12em] text-muted-foreground/60">Sentimento</span>
             <div className="flex items-center gap-2 rounded-lg bg-emerald-500/10 px-3 py-2">
               <div className="size-2 rounded-full bg-emerald-500" />
               <span className="text-xs font-medium text-emerald-700 dark:text-emerald-400">Positivo — Interessado</span>
@@ -808,11 +808,11 @@ function AICopilotPanel({ conversation }: { conversation: Conversation }) {
 
           {/* Buying Signals */}
           <div className="space-y-2">
-            <span className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">Sinais de Compra Detectados</span>
+            <span className="text-[10px] font-bold uppercase tracking-[0.12em] text-muted-foreground/60">Sinais de Compra Detectados</span>
             <div className="space-y-1.5">
               <div className="flex items-center gap-2 text-xs">
                 <Check className="size-3 text-emerald-500 shrink-0" />
-                <span>Perguntou sobre precos</span>
+                <span>Perguntou sobre preços</span>
               </div>
               <div className="flex items-center gap-2 text-xs">
                 <Check className="size-3 text-emerald-500 shrink-0" />
@@ -827,10 +827,10 @@ function AICopilotPanel({ conversation }: { conversation: Conversation }) {
 
           {/* Suggested Response */}
           <div className="space-y-2">
-            <span className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">Resposta Sugerida</span>
-            <div className="rounded-lg border border-primary/20 dark:border-primary/30 bg-primary/5 p-3 space-y-2">
+            <span className="text-[10px] font-bold uppercase tracking-[0.12em] text-muted-foreground/60">Resposta Sugerida</span>
+            <div className="ai-shimmer rounded-lg border border-primary/20 dark:border-primary/30 bg-primary/5 p-3 space-y-2">
               <p className="text-xs leading-relaxed text-foreground">
-                "Sim, {conversation.contactName.split(" ")[0]}! O treinamento online esta incluso no plano Enterprise. Inclui sessoes ao vivo semanais e acesso ilimitado ao material gravado. Posso preparar a proposta com o desconto de 20% no pagamento anual?"
+                "Sim, {conversation.contactName.split(" ")[0]}! O treinamento online está incluso no plano Enterprise. Inclui sessões ao vivo semanais e acesso ilimitado ao material gravado. Posso preparar a proposta com o desconto de 20% no pagamento anual?"
               </p>
               <div className="flex gap-2">
                 <Button size="sm" className="h-7 text-[11px] btn-lift bg-gradient-to-r from-primary to-orange-500 text-white">
@@ -846,7 +846,7 @@ function AICopilotPanel({ conversation }: { conversation: Conversation }) {
 
           {/* Methodology */}
           <div className="space-y-2">
-            <span className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">Metodologia DEF</span>
+            <span className="text-[10px] font-bold uppercase tracking-[0.12em] text-muted-foreground/60">Metodologia DEF</span>
             <div className="space-y-1.5">
               <div className="flex items-center justify-between text-xs">
                 <span>Dor</span>
@@ -858,20 +858,20 @@ function AICopilotPanel({ conversation }: { conversation: Conversation }) {
               </div>
               <div className="flex items-center justify-between text-xs">
                 <span>Fechamento</span>
-                <Badge variant="secondary" className="bg-amber-500/10 text-amber-700 dark:text-amber-400 text-[10px]">Proximo passo</Badge>
+                <Badge variant="secondary" className="bg-amber-500/10 text-amber-700 dark:text-amber-400 text-[10px]">Próximo passo</Badge>
               </div>
             </div>
           </div>
 
           {/* Objection Matrix */}
           <div className="space-y-2">
-            <span className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">Objecoes Previstas</span>
+            <span className="text-[10px] font-bold uppercase tracking-[0.12em] text-muted-foreground/60">Objeções Previstas</span>
             <div className="space-y-2">
-              <div className="rounded-lg border p-2.5 space-y-1">
-                <span className="text-[11px] font-medium">"Preco alto"</span>
+              <div className="rounded-lg border border-border/50 p-2.5 space-y-1">
+                <span className="text-[11px] font-medium">"Preço alto"</span>
                 <p className="text-[10px] text-muted-foreground">Resposta: Destaque o ROI com base no ganho de produtividade de 15 vendedores. Custo por vendedor: R$16/dia.</p>
               </div>
-              <div className="rounded-lg border p-2.5 space-y-1">
+              <div className="rounded-lg border border-border/50 p-2.5 space-y-1">
                 <span className="text-[11px] font-medium">"Preciso avaliar com o time"</span>
                 <p className="text-[10px] text-muted-foreground">Resposta: Ofereça demo personalizada para a equipe. Disponibilize trial de 14 dias sem compromisso.</p>
               </div>
@@ -880,14 +880,14 @@ function AICopilotPanel({ conversation }: { conversation: Conversation }) {
 
           {/* Lead Score */}
           <div className="space-y-2">
-            <span className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">Lead Score</span>
+            <span className="text-[10px] font-bold uppercase tracking-[0.12em] text-muted-foreground/60">Lead Score</span>
             <div className="flex items-center gap-3">
               <div className="flex size-12 items-center justify-center rounded-xl bg-gradient-to-br from-emerald-500/20 to-emerald-500/5">
                 <span className="text-lg font-bold text-emerald-700 dark:text-emerald-400">85</span>
               </div>
               <div className="text-xs space-y-0.5">
                 <p className="font-medium">Score Alto</p>
-                <p className="text-muted-foreground">Probabilidade de conversao: 78%</p>
+                <p className="text-muted-foreground">Probabilidade de conversão: 78%</p>
               </div>
             </div>
           </div>
@@ -1006,7 +1006,7 @@ export function InboxPage() {
   }
 
   return (
-    <div className="flex h-[calc(100vh-3.5rem-3rem)] overflow-hidden rounded-lg border bg-background">
+    <div className="flex h-[calc(100vh-3.5rem-3rem)] overflow-hidden rounded-xl border border-border/50 bg-background shadow-sm">
       {/* Conversation list - hidden on mobile when a conversation is selected */}
       <div className={`${selectedId ? "hidden md:flex" : "flex"} w-full md:w-auto`}>
         <ConversationList

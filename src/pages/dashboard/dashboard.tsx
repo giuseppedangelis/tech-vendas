@@ -82,7 +82,7 @@ const stats = [
     gradient: "from-primary to-orange-500",
   },
   {
-    title: "Taxa de Conversao",
+    title: "Taxa de Conversão",
     value: "23,4%",
     change: 2.1,
     icon: TrendingUp,
@@ -91,7 +91,7 @@ const stats = [
     gradient: "from-emerald-500 to-teal-500",
   },
   {
-    title: "Receita do Mes",
+    title: "Receita do Mês",
     value: "R$ 287.450,00",
     change: 15.7,
     icon: DollarSign,
@@ -105,7 +105,7 @@ const funnelData = [
   { stage: "Novos Leads", value: 1847, rate: null },
   { stage: "Qualificados", value: 892, rate: "48,3%" },
   { stage: "Propostas", value: 456, rate: "51,1%" },
-  { stage: "Negociacao", value: 234, rate: "51,3%" },
+  { stage: "Negociação", value: 234, rate: "51,3%" },
   { stage: "Fechados", value: 142, rate: "60,7%" },
 ]
 
@@ -168,11 +168,11 @@ const teamRanking = [
 const insights = [
   {
     type: "warning" as const,
-    title: "Leads parados em Negociacao",
+    title: "Leads parados em Negociação",
     description:
-      "3 leads estao ha mais de 7 dias sem interacao na fase de Negociacao",
+      "3 leads estão há mais de 7 dias sem interação na fase de Negociação",
     icon: AlertTriangle,
-    badgeLabel: "Atencao",
+    badgeLabel: "Atenção",
     badgeClass: "bg-amber-100 text-amber-700 dark:bg-amber-950 dark:text-amber-400",
     iconClass: "text-amber-600 dark:text-amber-400",
     accentColor: "border-l-amber-500",
@@ -181,9 +181,9 @@ const insights = [
     type: "recommendation" as const,
     title: "Redistribuir leads",
     description:
-      "Rafael Silva tem a melhor taxa de conversao (31,2%) - considere redistribuir leads",
+      "Rafael Silva tem a melhor taxa de conversão (31,2%) - considere redistribuir leads",
     icon: Lightbulb,
-    badgeLabel: "Recomendacao",
+    badgeLabel: "Recomendação",
     badgeClass: "bg-blue-100 text-blue-700 dark:bg-blue-950 dark:text-blue-400",
     iconClass: "text-blue-600 dark:text-blue-400",
     accentColor: "border-l-blue-500",
@@ -192,9 +192,9 @@ const insights = [
     type: "pattern" as const,
     title: "Instagram converte mais",
     description:
-      "Leads vindos do Instagram convertem 2,3x mais que WhatsApp neste mes",
+      "Leads vindos do Instagram convertem 2,3x mais que WhatsApp neste mês",
     icon: BarChart3,
-    badgeLabel: "Padrao detectado",
+    badgeLabel: "Padrão detectado",
     badgeClass:
       "bg-emerald-100 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-400",
     iconClass: "text-emerald-600 dark:text-emerald-400",
@@ -209,7 +209,7 @@ const recentActivity = [
     iconClass: "text-emerald-600 dark:text-emerald-400",
     bgClass: "bg-emerald-100 dark:bg-emerald-950",
     description: "Deal com Maria Fernanda foi ganho - R$ 12.400,00",
-    time: "2 min atras",
+    time: "2 min atrás",
   },
   {
     id: 2,
@@ -217,8 +217,8 @@ const recentActivity = [
     iconClass: "text-blue-600 dark:text-blue-400",
     bgClass: "bg-blue-100 dark:bg-blue-950",
     description:
-      "Lead Pedro Henrique movido para Negociacao",
-    time: "15 min atras",
+      "Lead Pedro Henrique movido para Negociação",
+    time: "15 min atrás",
   },
   {
     id: 3,
@@ -226,23 +226,23 @@ const recentActivity = [
     iconClass: "text-primary dark:text-primary",
     bgClass: "bg-primary/10 dark:bg-primary/15",
     description: "Camila Santos enviou proposta para Tech Solutions",
-    time: "1h atras",
+    time: "1h atrás",
   },
   {
     id: 4,
     icon: CalendarCheck,
     iconClass: "text-amber-600 dark:text-amber-400",
     bgClass: "bg-amber-100 dark:bg-amber-950",
-    description: "Reuniao agendada com DataCorp para amanha as 14h",
-    time: "2h atras",
+    description: "Reunião agendada com DataCorp para amanhã às 14h",
+    time: "2h atrás",
   },
   {
     id: 5,
     icon: Star,
     iconClass: "text-yellow-600 dark:text-yellow-400",
     bgClass: "bg-yellow-100 dark:bg-yellow-950",
-    description: "Novo lead qualificado: Logistica Express (Score 87)",
-    time: "3h atras",
+    description: "Novo lead qualificado: Logística Express (Score 87)",
+    time: "3h atrás",
   },
   {
     id: 6,
@@ -251,7 +251,7 @@ const recentActivity = [
     bgClass: "bg-primary/10 dark:bg-primary/15",
     description:
       "Bruno Oliveira respondeu mensagem de Ana Paula via WhatsApp",
-    time: "4h atras",
+    time: "4h atrás",
   },
 ]
 
@@ -269,7 +269,7 @@ const closerStats = [
     gradient: "from-sky-500 to-cyan-500",
   },
   {
-    title: "Deals em Negociacao",
+    title: "Deals em Negociação",
     value: "5",
     change: null,
     icon: Handshake,
@@ -277,7 +277,7 @@ const closerStats = [
     gradient: "from-primary to-orange-500",
   },
   {
-    title: "Minha Conversao",
+    title: "Minha Conversão",
     value: "28,7%",
     change: 3.2,
     icon: TrendingUp,
@@ -285,7 +285,7 @@ const closerStats = [
     gradient: "from-emerald-500 to-teal-500",
   },
   {
-    title: "Receita do Mes",
+    title: "Receita do Mês",
     value: "R$ 42.800",
     change: 12,
     icon: DollarSign,
@@ -297,7 +297,7 @@ const closerStats = [
 const closerTasks = [
   {
     id: 1,
-    description: "Retornar ligacao - Fernanda Costa (InovaTech)",
+    description: "Retornar ligação - Fernanda Costa (InovaTech)",
     deadline: "Vence em 2h",
     deadlineClass: "text-amber-600 dark:text-amber-400",
     badgeVariant: "secondary" as const,
@@ -305,7 +305,7 @@ const closerTasks = [
   },
   {
     id: 2,
-    description: "Enviar proposta - Patricia Lima (CloudBase)",
+    description: "Enviar proposta - Patrícia Lima (CloudBase)",
     deadline: "Vence hoje",
     deadlineClass: "text-amber-600 dark:text-amber-400",
     badgeVariant: "secondary" as const,
@@ -321,8 +321,8 @@ const closerTasks = [
   },
   {
     id: 4,
-    description: "Agendar demo - Andre Moreira (NextGen)",
-    deadline: "Amanha",
+    description: "Agendar demo - André Moreira (NextGen)",
+    deadline: "Amanhã",
     deadlineClass: "text-muted-foreground",
     badgeVariant: "secondary" as const,
     badgeClass: "",
@@ -332,14 +332,14 @@ const closerTasks = [
 const closerCopilotSuggestions = [
   {
     id: 1,
-    text: "Lead Maria Silva esta com score alto (92) e respondeu rapido. Recomendo proposta agressiva.",
+    text: "Lead Maria Silva está com score alto (92) e respondeu rápido. Recomendo proposta agressiva.",
     icon: Zap,
     iconClass: "text-amber-600 dark:text-amber-400",
     bgClass: "bg-amber-100 dark:bg-amber-950",
   },
   {
     id: 2,
-    text: "Ricardo Santos nao responde ha 8h. Considere enviar audio pelo WhatsApp.",
+    text: "Ricardo Santos não responde há 8h. Considere enviar áudio pelo WhatsApp.",
     icon: MessageCircle,
     iconClass: "text-blue-600 dark:text-blue-400",
     bgClass: "bg-blue-100 dark:bg-blue-950",
@@ -352,8 +352,8 @@ const closerRecentActivity = [
     icon: Phone,
     iconClass: "text-emerald-600 dark:text-emerald-400",
     bgClass: "bg-emerald-100 dark:bg-emerald-950",
-    description: "Ligacao de 12 min com Patricia Lima (CloudBase)",
-    time: "30 min atras",
+    description: "Ligação de 12 min com Patrícia Lima (CloudBase)",
+    time: "30 min atrás",
   },
   {
     id: 2,
@@ -361,23 +361,23 @@ const closerRecentActivity = [
     iconClass: "text-blue-600 dark:text-blue-400",
     bgClass: "bg-blue-100 dark:bg-blue-950",
     description: "Proposta enviada para Maria Fernanda (TechSol)",
-    time: "1h atras",
+    time: "1h atrás",
   },
   {
     id: 3,
     icon: MessageCircle,
     iconClass: "text-primary dark:text-primary",
     bgClass: "bg-primary/10 dark:bg-primary/15",
-    description: "Mensagem WhatsApp para Andre Moreira (NextGen)",
-    time: "2h atras",
+    description: "Mensagem WhatsApp para André Moreira (NextGen)",
+    time: "2h atrás",
   },
   {
     id: 4,
     icon: CalendarCheck,
     iconClass: "text-amber-600 dark:text-amber-400",
     bgClass: "bg-amber-100 dark:bg-amber-950",
-    description: "Demo agendada com Logistica Express para quinta",
-    time: "3h atras",
+    description: "Demo agendada com Logística Express para quinta",
+    time: "3h atrás",
   },
 ]
 
@@ -403,7 +403,7 @@ const sdrStats = [
     gradient: "from-emerald-500 to-teal-500",
   },
   {
-    title: "Taxa de Qualificacao",
+    title: "Taxa de Qualificação",
     value: "45,2%",
     change: null,
     icon: TrendingUp,
@@ -430,7 +430,7 @@ const qualificationQueue = [
     sourceClass: "text-emerald-600 bg-emerald-100 dark:text-emerald-400 dark:bg-emerald-950",
     score: 85,
     waiting: "5 min",
-    aiSuggestion: "IA: Perfil decisor, prioridade maxima",
+    aiSuggestion: "IA: Perfil decisor, prioridade máxima",
   },
   {
     id: 2,
@@ -447,12 +447,12 @@ const qualificationQueue = [
     id: 3,
     name: "Thiago Nascimento",
     phone: "(31) 97654-3210",
-    source: "Formulario",
+    source: "Formulário",
     sourceIcon: Globe,
     sourceClass: "text-blue-600 bg-blue-100 dark:text-blue-400 dark:bg-blue-950",
     score: 72,
     waiting: "25 min",
-    aiSuggestion: "IA: Formulario detalhado, interesse genuino",
+    aiSuggestion: "IA: Formulário detalhado, interesse genuíno",
   },
   {
     id: 4,
@@ -463,7 +463,7 @@ const qualificationQueue = [
     sourceClass: "text-emerald-600 bg-emerald-100 dark:text-emerald-400 dark:bg-emerald-950",
     score: 68,
     waiting: "40 min",
-    aiSuggestion: "IA: Segundo contato, ja conhece o produto",
+    aiSuggestion: "IA: Segundo contato, já conhece o produto",
   },
   {
     id: 5,
@@ -474,16 +474,16 @@ const qualificationQueue = [
     sourceClass: "text-pink-600 bg-pink-100 dark:text-pink-400 dark:bg-pink-950",
     score: 64,
     waiting: "1h 10min",
-    aiSuggestion: "IA: Score abaixo da media, qualificar com cautela",
+    aiSuggestion: "IA: Score abaixo da média, qualificar com cautela",
   },
 ]
 
 const sdrRecentLeads = [
-  { id: 1, name: "Beatriz Almeida", source: "WhatsApp", score: 91, time: "2 min atras", status: "Novo" },
-  { id: 2, name: "Gustavo Lima", source: "Instagram", score: 76, time: "8 min atras", status: "Novo" },
-  { id: 3, name: "Renata Campos", source: "Formulario", score: 82, time: "15 min atras", status: "Novo" },
-  { id: 4, name: "Diego Ferreira", source: "WhatsApp", score: 69, time: "22 min atras", status: "Novo" },
-  { id: 5, name: "Isabela Souza", source: "Instagram", score: 73, time: "35 min atras", status: "Novo" },
+  { id: 1, name: "Beatriz Almeida", source: "WhatsApp", score: 91, time: "2 min atrás", status: "Novo" },
+  { id: 2, name: "Gustavo Lima", source: "Instagram", score: 76, time: "8 min atrás", status: "Novo" },
+  { id: 3, name: "Renata Campos", source: "Formulário", score: 82, time: "15 min atrás", status: "Novo" },
+  { id: 4, name: "Diego Ferreira", source: "WhatsApp", score: 69, time: "22 min atrás", status: "Novo" },
+  { id: 5, name: "Isabela Souza", source: "Instagram", score: 73, time: "35 min atrás", status: "Novo" },
 ]
 
 // ---------------------------------------------------------------------------
@@ -513,13 +513,16 @@ const roleBadgeClass: Record<string, string> = {
 
 function Greeting({ user }: { user: AuthUser }) {
   return (
-    <div className="flex items-center gap-3">
+    <div className="flex items-center gap-4">
+      <div className="flex size-11 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-primary/10 to-orange-500/5 ring-1 ring-primary/10">
+        <span className="font-display text-sm font-bold text-primary">{user.initials}</span>
+      </div>
       <div>
-        <div className="flex items-center gap-2">
-          <h2 className="text-2xl font-semibold tracking-tight">
-            <span className="font-display text-gradient">Bom dia</span>, {user.name}
+        <div className="flex items-center gap-2.5">
+          <h2 className="font-display text-2xl font-bold tracking-tight">
+            <span className="text-gradient">Bom dia</span>, {user.name.split(" ")[0]}
           </h2>
-          <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-semibold leading-none ${roleBadgeClass[user.role] ?? ""}`}>
+          <span className={`inline-flex items-center rounded-lg px-2 py-0.5 text-[10px] font-bold leading-none backdrop-blur-sm ${roleBadgeClass[user.role] ?? ""}`}>
             {roleLabels[user.role] ?? user.role}
           </span>
         </div>
@@ -541,13 +544,13 @@ function FunnelTooltip({ active, payload }: FunnelTooltipProps) {
   if (!active || !payload?.length) return null
   const data = payload[0].payload
   return (
-    <div className="rounded-lg border bg-card px-3 py-2 text-sm shadow-md">
-      <p className="font-medium">{data.stage}</p>
-      <p className="text-muted-foreground">
+    <div className="rounded-xl border border-border/50 bg-card/95 backdrop-blur-xl px-4 py-3 text-sm shadow-elevated">
+      <p className="font-semibold">{data.stage}</p>
+      <p className="text-muted-foreground mt-0.5">
         {data.value.toLocaleString("pt-BR")} leads
       </p>
       {data.rate && (
-        <p className="text-muted-foreground">Conversao: {data.rate}</p>
+        <p className="text-primary font-medium mt-0.5">Conversão: {data.rate}</p>
       )}
     </div>
   )
@@ -564,25 +567,25 @@ function ActivityTimeline({
 }) {
   return (
     <ScrollArea className="h-[300px]">
-      <div className="space-y-0 px-4">
+      <div className="space-y-0 px-5">
         {events.map((event, idx) => (
           <div
             key={event.id}
-            className={`flex gap-3 py-3 animate-card-in stagger-${Math.min(idx + 1, 6)}`}
+            className={`flex gap-3 py-3.5 animate-card-in stagger-${Math.min(idx + 1, 6)}`}
           >
             <div className="flex flex-col items-center">
               <div
-                className={`flex size-8 shrink-0 items-center justify-center rounded-full ${event.bgClass} ring-2 ring-offset-2 ring-offset-card ring-transparent shadow-sm`}
+                className={`flex size-8 shrink-0 items-center justify-center rounded-xl ${event.bgClass} shadow-sm transition-transform duration-200 hover:scale-105`}
               >
-                <event.icon className={`size-4 ${event.iconClass}`} />
+                <event.icon className={`size-3.5 ${event.iconClass}`} />
               </div>
               {idx < events.length - 1 && (
-                <div className="mt-1 w-px flex-1 bg-border" />
+                <div className="mt-1.5 w-px flex-1 bg-gradient-to-b from-border to-transparent" />
               )}
             </div>
             <div className="flex-1 pb-1">
-              <p className="text-sm leading-snug">{event.description}</p>
-              <p className="mt-0.5 text-xs text-muted-foreground">
+              <p className="text-[13px] leading-snug">{event.description}</p>
+              <p className="mt-1 text-[11px] text-muted-foreground/60">
                 {event.time}
               </p>
             </div>
@@ -600,30 +603,30 @@ function ActivityTimeline({
 function AIBriefing({ role, userName }: { role: string; userName: string }) {
   const briefings = {
     gestor: {
-      title: "Briefing Diario da IA Gestora",
-      summary: "Bom dia! Analisei sua operacao nas ultimas 24h. Aqui esta o que precisa da sua atencao:",
+      title: "Briefing Diário da IA Gestora",
+      summary: "Bom dia! Analisei sua operação nas últimas 24h. Aqui está o que precisa da sua atenção:",
       items: [
-        { icon: AlertTriangle, text: "3 leads estao parados ha +7 dias em Negociacao. Risco de perda estimado: R$ 87.000", type: "warning" },
-        { icon: TrendingUp, text: "Rafael Silva esta 23% acima da meta. Considere redistribuir 2 leads de Fernando para ele", type: "success" },
+        { icon: AlertTriangle, text: "3 leads estão parados há +7 dias em Negociação. Risco de perda estimado: R$ 87.000", type: "warning" },
+        { icon: TrendingUp, text: "Rafael Silva está 23% acima da meta. Considere redistribuir 2 leads de Fernando para ele", type: "success" },
         { icon: Zap, text: "Instagram converteu 2.3x mais que WhatsApp esta semana. Recomendo aumentar investimento", type: "insight" },
       ],
     },
     closer: {
       title: "Seu Assistente IA Copilot",
-      summary: `${userName}, preparei sua estrategia para hoje baseada nos seus leads ativos:`,
+      summary: `${userName}, preparei sua estratégia para hoje baseada nos seus leads ativos:`,
       items: [
-        { icon: Target, text: "Maria Silva (Score 92) respondeu rapido ontem. Alta probabilidade de fechamento — envie proposta agressiva", type: "action" },
-        { icon: AlertTriangle, text: "Ricardo Santos nao responde ha 8h. Risco de esfriar. Envie um audio personalizado pelo WhatsApp", type: "warning" },
-        { icon: Sparkles, text: "Sua taxa de conversao subiu 3.2% este mes. Continue usando a abordagem DEF nos primeiros contatos", type: "success" },
+        { icon: Target, text: "Maria Silva (Score 92) respondeu rápido ontem. Alta probabilidade de fechamento — envie proposta agressiva", type: "action" },
+        { icon: AlertTriangle, text: "Ricardo Santos não responde há 8h. Risco de esfriar. Envie um áudio personalizado pelo WhatsApp", type: "warning" },
+        { icon: Sparkles, text: "Sua taxa de conversão subiu 3.2% este mês. Continue usando a abordagem DEF nos primeiros contatos", type: "success" },
       ],
     },
     sdr: {
-      title: "IA de Qualificacao",
-      summary: `${userName}, a IA pre-analisou seus leads da fila. Aqui estao as prioridades:`,
+      title: "IA de Qualificação",
+      summary: `${userName}, a IA pré-analisou seus leads da fila. Aqui estão as prioridades:`,
       items: [
         { icon: Star, text: "Marcos Pereira (Score 85) tem perfil ideal: empresa de tecnologia, 50+ func, decisor. Qualifique primeiro", type: "action" },
-        { icon: Lightbulb, text: "Leads do Instagram estao chegando com score medio 12 pontos acima do WhatsApp. Priorize-os", type: "insight" },
-        { icon: Target, text: "Voce esta a 7 qualificacoes da meta diaria. Ritmo atual: 5.3/hora — no caminho certo", type: "success" },
+        { icon: Lightbulb, text: "Leads do Instagram estão chegando com score médio 12 pontos acima do WhatsApp. Priorize-os", type: "insight" },
+        { icon: Target, text: "Você está a 7 qualificações da meta diária. Ritmo atual: 5.3/hora — no caminho certo", type: "success" },
       ],
     },
   }
@@ -638,34 +641,35 @@ function AIBriefing({ role, userName }: { role: string; userName: string }) {
   }
 
   return (
-    <Card className="animate-card-in stagger-1 overflow-hidden relative">
-      <div className="absolute left-0 top-0 bottom-0 w-[3px] rounded-l-xl bg-gradient-to-b from-primary to-orange-500" />
+    <Card className="animate-card-in stagger-1 overflow-hidden relative accent-line-left">
+      {/* Subtle gradient background */}
+      <div className="pointer-events-none absolute inset-0 bg-gradient-to-br from-primary/[0.02] via-transparent to-orange-500/[0.01]" />
 
-      <CardHeader className="pb-2">
-        <div className="flex items-center gap-2.5">
-          <div className="flex size-8 items-center justify-center rounded-lg bg-primary/10 text-primary">
-            <Sparkles className="size-4" />
+      <CardHeader className="relative pb-2">
+        <div className="flex items-center gap-3">
+          <div className="relative flex size-9 items-center justify-center rounded-xl bg-gradient-to-br from-primary/15 to-orange-500/10">
+            <Sparkles className="size-4 text-primary" />
           </div>
           <div>
             <div className="flex items-center gap-2">
               <CardTitle className="font-display text-[15px]">{data.title}</CardTitle>
-              <span className="inline-flex items-center rounded-md bg-primary/8 px-1.5 py-0.5 text-[9px] font-semibold text-primary">
+              <span className="inline-flex items-center rounded-lg ai-shimmer px-2 py-0.5 text-[9px] font-bold ai-text-shimmer">
                 AI
               </span>
             </div>
           </div>
         </div>
-        <p className="text-[13px] text-muted-foreground mt-1">{data.summary}</p>
+        <p className="text-[13px] text-muted-foreground/80 mt-1.5 leading-relaxed">{data.summary}</p>
       </CardHeader>
 
-      <CardContent className="space-y-2 pb-4">
+      <CardContent className="relative space-y-2.5 pb-5">
         {data.items.map((item, idx) => {
           const style = typeStyles[item.type] ?? typeStyles.insight
           const Icon = item.icon
           return (
             <div
               key={idx}
-              className={`flex items-start gap-3 rounded-lg border-l-[3px] ${style.border} ${style.bg} p-3 transition-all duration-200 hover:bg-primary/[0.03]`}
+              className={`flex items-start gap-3 rounded-xl border border-transparent border-l-[3px] ${style.border} ${style.bg} p-3.5 transition-all duration-200 hover:border-border/40 hover:shadow-sm`}
             >
               <Icon className={`mt-0.5 size-4 shrink-0 ${style.icon}`} />
               <p className="text-sm leading-relaxed">{item.text}</p>
@@ -673,10 +677,10 @@ function AIBriefing({ role, userName }: { role: string; userName: string }) {
           )
         })}
 
-        <div className="pt-2">
+        <div className="pt-3">
           <Button variant="outline" size="sm" className="btn-lift">
             <Sparkles className="size-3.5" />
-            Ver analise completa
+            Ver análise completa
             <ChevronRight className="size-3" />
           </Button>
         </div>
@@ -707,39 +711,38 @@ function StatCard({
   const isPositive = stat.change !== null ? stat.change >= 0 : true
   return (
     <Card
-      className={`card-hover animate-card-in stagger-${index + 1}`}
+      className={`card-hover accent-top animate-card-in stagger-${index + 1} group`}
     >
       <CardHeader className="flex flex-row items-center justify-between pb-1">
-        <CardTitle className="text-[12px] font-medium text-muted-foreground tracking-normal">
+        <CardTitle className="text-[11px] font-semibold text-muted-foreground/70 tracking-wide uppercase">
           {stat.title}
         </CardTitle>
-        <div className={`rounded-md p-1.5 ${stat.color}`}>
-          <Icon className="size-3.5" />
+        <div className={`rounded-xl p-2 ${stat.color} transition-transform duration-300 group-hover:scale-110`}>
+          <Icon className="size-4" />
         </div>
       </CardHeader>
       <CardContent>
-        <div className="font-display text-[1.625rem] font-semibold tracking-tight leading-none">{stat.value}</div>
+        <div className="font-display text-[1.75rem] font-bold tracking-tight leading-none">{stat.value}</div>
         {stat.change !== null && (
-          <div className="mt-1.5 flex items-center gap-1 text-xs">
-            {isPositive ? (
-              <ArrowUpRight className="size-3 text-emerald-600" />
-            ) : (
-              <ArrowDownRight className="size-3 text-red-600" />
-            )}
-            <span
-              className={
-                isPositive
-                  ? "font-semibold text-emerald-600"
-                  : "font-semibold text-red-600"
-              }
-            >
-              {isPositive ? "+" : ""}
-              {stat.change.toLocaleString("pt-BR", {
-                minimumFractionDigits: 1,
-              })}
-              %
-            </span>
-            <span className="text-muted-foreground">vs mes anterior</span>
+          <div className="mt-2 flex items-center gap-1.5 text-xs">
+            <div className={`flex items-center gap-0.5 rounded-md px-1.5 py-0.5 ${
+              isPositive
+                ? "bg-emerald-500/8 text-emerald-600 dark:bg-emerald-500/12 dark:text-emerald-400"
+                : "bg-red-500/8 text-red-600 dark:bg-red-500/12 dark:text-red-400"
+            }`}>
+              {isPositive ? (
+                <ArrowUpRight className="size-3" />
+              ) : (
+                <ArrowDownRight className="size-3" />
+              )}
+              <span className="font-bold">
+                {isPositive ? "+" : ""}
+                {stat.change.toLocaleString("pt-BR", {
+                  minimumFractionDigits: 1,
+                })}%
+              </span>
+            </div>
+            <span className="text-muted-foreground/60">vs mês anterior</span>
           </div>
         )}
       </CardContent>
@@ -759,17 +762,17 @@ function GestorDashboard({ user }: { user: AuthUser }) {
         <div className="space-y-1">
           <Greeting user={user} />
           <p className="text-muted-foreground">
-            Visao geral do seu CRM - Abril 2026
+            Visão geral do seu CRM - Abril 2026
           </p>
         </div>
         <Button variant="outline" size="sm" className="w-fit btn-lift">
           <Clock className="size-4" />
-          Ultimos 30 dias
+          Últimos 30 dias
         </Button>
       </div>
 
       {/* Divider */}
-      <div className="h-px bg-gradient-to-r from-transparent via-border to-transparent" />
+      <div className="h-px bg-gradient-to-r from-transparent via-border/50 to-transparent" />
 
       {/* AI Daily Briefing Hero */}
       <AIBriefing role="gestor" userName={user.name} />
@@ -782,7 +785,7 @@ function GestorDashboard({ user }: { user: AuthUser }) {
       </div>
 
       {/* Divider */}
-      <div className="h-px bg-gradient-to-r from-transparent via-border to-transparent" />
+      <div className="h-px bg-gradient-to-r from-transparent via-border/50 to-transparent" />
 
       {/* Middle Row: Funnel + Team */}
       <div className="grid gap-6 lg:grid-cols-5">
@@ -791,7 +794,7 @@ function GestorDashboard({ user }: { user: AuthUser }) {
           <CardHeader>
             <CardTitle className="font-display text-base font-semibold">Funil de Vendas</CardTitle>
             <CardDescription>
-              Conversao entre etapas do pipeline
+              Conversão entre etapas do pipeline
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -856,7 +859,7 @@ function GestorDashboard({ user }: { user: AuthUser }) {
               <Trophy className="size-4 text-amber-500" />
               <CardTitle className="font-display text-base font-semibold">Ranking do Time</CardTitle>
             </div>
-            <CardDescription>Desempenho dos vendedores este mes</CardDescription>
+            <CardDescription>Desempenho dos vendedores este mês</CardDescription>
           </CardHeader>
           <CardContent className="px-0">
             <ScrollArea className="h-[340px]">
@@ -921,7 +924,7 @@ function GestorDashboard({ user }: { user: AuthUser }) {
       </div>
 
       {/* Divider */}
-      <div className="h-px bg-gradient-to-r from-transparent via-border to-transparent" />
+      <div className="h-px bg-gradient-to-r from-transparent via-border/50 to-transparent" />
 
       {/* Bottom Row: AI Insights + Activity */}
       <div className="grid gap-6 lg:grid-cols-5">
@@ -930,14 +933,14 @@ function GestorDashboard({ user }: { user: AuthUser }) {
           <CardHeader>
             <div className="flex items-center gap-2">
               <Sparkles className="size-3.5 text-primary" />
-              <CardTitle className="font-display text-base font-semibold">IA Gestora — Analise em Tempo Real</CardTitle>
+              <CardTitle className="font-display text-base font-semibold">IA Gestora — Análise em Tempo Real</CardTitle>
               <span className="relative flex size-1.5">
                 <span className="absolute inline-flex size-full animate-ping rounded-full bg-emerald-400 opacity-60" />
                 <span className="relative inline-flex size-1.5 rounded-full bg-emerald-500" />
               </span>
             </div>
             <CardDescription>
-              Recomendacoes baseadas nos seus dados
+              Recomendações baseadas nos seus dados
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
@@ -984,7 +987,7 @@ function GestorDashboard({ user }: { user: AuthUser }) {
         <Card className="lg:col-span-2 animate-card-in stagger-6 overflow-hidden">
           <CardHeader>
             <CardTitle className="font-display text-base font-semibold">Atividade Recente</CardTitle>
-            <CardDescription>Ultimas interacoes do time</CardDescription>
+            <CardDescription>Últimas interações do time</CardDescription>
           </CardHeader>
           <CardContent className="px-0">
             <ActivityTimeline events={recentActivity} />
@@ -1012,7 +1015,7 @@ function CloserDashboard({ user }: { user: AuthUser }) {
       </div>
 
       {/* Divider */}
-      <div className="h-px bg-gradient-to-r from-transparent via-border to-transparent" />
+      <div className="h-px bg-gradient-to-r from-transparent via-border/50 to-transparent" />
 
       {/* AI Daily Briefing Hero */}
       <AIBriefing role="closer" userName={user.name.split(" ")[0]} />
@@ -1025,21 +1028,21 @@ function CloserDashboard({ user }: { user: AuthUser }) {
       </div>
 
       {/* Divider */}
-      <div className="h-px bg-gradient-to-r from-transparent via-border to-transparent" />
+      <div className="h-px bg-gradient-to-r from-transparent via-border/50 to-transparent" />
 
       {/* Middle Row: Lead Lock + Tasks */}
       <div className="grid gap-6 lg:grid-cols-5">
-        {/* Proximo Lead (Lead Lock) -- HERO element */}
+        {/* Próximo Lead (Lead Lock) -- HERO element */}
         <Card className="bg-gradient-to-br from-primary/[0.03] to-background dark:from-primary/[0.06] lg:col-span-2 animate-card-in stagger-5 overflow-hidden">
           <CardHeader className="pb-3">
             <div className="flex items-center gap-2">
               <div className="rounded-md bg-gradient-to-br from-primary to-orange-600 p-1.5">
                 <Target className="size-4 text-white" />
               </div>
-              <CardTitle className="font-display text-base font-semibold">Proximo Lead</CardTitle>
+              <CardTitle className="font-display text-base font-semibold">Próximo Lead</CardTitle>
             </div>
             <CardDescription>
-              Foque neste lead antes de avancar
+              Foque neste lead antes de avançar
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4 px-6 pb-6">
@@ -1067,7 +1070,7 @@ function CloserDashboard({ user }: { user: AuthUser }) {
 
             <div className="flex items-center gap-2 text-sm text-muted-foreground">
               <Clock className="size-3.5" />
-              <span>Ultimo contato: 30 min atras</span>
+              <span>Último contato: 30 min atrás</span>
             </div>
 
             <Button
@@ -1130,23 +1133,23 @@ function CloserDashboard({ user }: { user: AuthUser }) {
       </div>
 
       {/* Divider */}
-      <div className="h-px bg-gradient-to-r from-transparent via-border to-transparent" />
+      <div className="h-px bg-gradient-to-r from-transparent via-border/50 to-transparent" />
 
       {/* Bottom Row: IA Copilot + Activity */}
       <div className="grid gap-6 lg:grid-cols-5">
-        {/* IA Copilot Proximos Passos */}
+        {/* IA Copilot Próximos Passos */}
         <Card className="lg:col-span-3 animate-card-in stagger-5 overflow-hidden">
           <CardHeader>
             <div className="flex items-center gap-2">
               <Sparkles className="size-3.5 text-primary" />
-              <CardTitle className="font-display text-base font-semibold">IA Copilot — Proximos Passos</CardTitle>
+              <CardTitle className="font-display text-base font-semibold">IA Copilot — Próximos Passos</CardTitle>
               <span className="relative flex size-1.5">
                 <span className="absolute inline-flex size-full animate-ping rounded-full bg-emerald-400 opacity-60" />
                 <span className="relative inline-flex size-1.5 rounded-full bg-emerald-500" />
               </span>
             </div>
             <CardDescription>
-              Recomendacoes personalizadas para seus leads
+              Recomendações personalizadas para seus leads
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
@@ -1193,7 +1196,7 @@ function CloserDashboard({ user }: { user: AuthUser }) {
         <Card className="lg:col-span-2 animate-card-in stagger-6 overflow-hidden">
           <CardHeader>
             <CardTitle className="font-display text-base font-semibold">Minha Atividade Recente</CardTitle>
-            <CardDescription>Suas ultimas interacoes</CardDescription>
+            <CardDescription>Suas últimas interações</CardDescription>
           </CardHeader>
           <CardContent className="px-0">
             <ActivityTimeline events={closerRecentActivity} />
@@ -1221,7 +1224,7 @@ function SDRDashboard({ user }: { user: AuthUser }) {
       </div>
 
       {/* Divider */}
-      <div className="h-px bg-gradient-to-r from-transparent via-border to-transparent" />
+      <div className="h-px bg-gradient-to-r from-transparent via-border/50 to-transparent" />
 
       {/* AI Daily Briefing Hero */}
       <AIBriefing role="sdr" userName={user.name.split(" ")[0]} />
@@ -1234,19 +1237,19 @@ function SDRDashboard({ user }: { user: AuthUser }) {
       </div>
 
       {/* Divider */}
-      <div className="h-px bg-gradient-to-r from-transparent via-border to-transparent" />
+      <div className="h-px bg-gradient-to-r from-transparent via-border/50 to-transparent" />
 
       {/* Middle Row: Qualification Queue + Cadence */}
       <div className="grid gap-6 lg:grid-cols-5">
-        {/* Fila de Qualificacao */}
+        {/* Fila de Qualificação */}
         <Card className="lg:col-span-3 animate-card-in stagger-5 overflow-hidden">
           <CardHeader>
             <div className="flex items-center gap-2">
               <Filter className="size-4 text-sky-500" />
-              <CardTitle className="font-display text-base font-semibold">Fila de Qualificacao</CardTitle>
+              <CardTitle className="font-display text-base font-semibold">Fila de Qualificação</CardTitle>
             </div>
             <CardDescription>
-              {qualificationQueue.length} leads aguardando qualificacao
+              {qualificationQueue.length} leads aguardando qualificação
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-3">
@@ -1302,14 +1305,14 @@ function SDRDashboard({ user }: { user: AuthUser }) {
           </CardContent>
         </Card>
 
-        {/* Cadencia do Dia + Leads Recentes (stacked) */}
+        {/* Cadência do Dia + Leads Recentes (stacked) */}
         <div className="space-y-6 lg:col-span-2">
-          {/* Cadencia do Dia */}
+          {/* Cadência do Dia */}
           <Card className="animate-card-in stagger-5 overflow-hidden">
             <CardHeader>
               <div className="flex items-center gap-2">
                 <Zap className="size-4 text-amber-500" />
-                <CardTitle className="font-display text-base font-semibold">Cadencia do Dia</CardTitle>
+                <CardTitle className="font-display text-base font-semibold">Cadência do Dia</CardTitle>
               </div>
               <CardDescription>Progresso de contatos hoje</CardDescription>
             </CardHeader>
@@ -1330,7 +1333,7 @@ function SDRDashboard({ user }: { user: AuthUser }) {
                 />
               </div>
               <div className="flex justify-between text-xs text-muted-foreground">
-                <span className="font-medium">53% concluido</span>
+                <span className="font-medium">53% concluído</span>
                 <span>Faltam 7 contatos</span>
               </div>
             </CardContent>
@@ -1340,7 +1343,7 @@ function SDRDashboard({ user }: { user: AuthUser }) {
           <Card className="animate-card-in stagger-6 overflow-hidden">
             <CardHeader>
               <CardTitle className="font-display text-base font-semibold">Leads Recentes</CardTitle>
-              <CardDescription>Ultimos leads que chegaram</CardDescription>
+              <CardDescription>Últimos leads que chegaram</CardDescription>
             </CardHeader>
             <CardContent className="px-0">
               <Table>

@@ -20,8 +20,8 @@ import {
   Sparkles,
 } from "lucide-react"
 
-type AppointmentType = "Reuniao" | "Ligacao" | "Demo" | "Follow-up"
-type AppointmentStatus = "Agendado" | "Confirmado" | "Concluido" | "No-show"
+type AppointmentType = "Reunião" | "Ligação" | "Demo" | "Follow-up"
+type AppointmentStatus = "Agendado" | "Confirmado" | "Concluído" | "No-show"
 
 interface Appointment {
   id: string
@@ -45,8 +45,8 @@ const appointments: Appointment[] = [
     timeEnd: "09:30",
     leadName: "Ana Carolina Silva",
     leadCompany: "Silva & Associados",
-    type: "Ligacao",
-    status: "Concluido",
+    type: "Ligação",
+    status: "Concluído",
     closerName: "Ricardo Mendes",
     date: today,
     dayLabel: "Hoje",
@@ -57,7 +57,7 @@ const appointments: Appointment[] = [
     timeEnd: "10:45",
     leadName: "Bruno Oliveira Santos",
     leadCompany: "Oliveira Digital",
-    type: "Reuniao",
+    type: "Reunião",
     status: "No-show",
     closerName: "Juliana Martins",
     date: today,
@@ -93,7 +93,7 @@ const appointments: Appointment[] = [
     timeEnd: "16:00",
     leadName: "Gustavo Pereira Souza",
     leadCompany: "GP Marketing",
-    type: "Reuniao",
+    type: "Reunião",
     status: "No-show",
     closerName: "Juliana Martins",
     date: today,
@@ -104,12 +104,12 @@ const appointments: Appointment[] = [
     timeStart: "09:00",
     timeEnd: "09:45",
     leadName: "Helena Martins Rocha",
-    leadCompany: "Agencia Rocha",
+    leadCompany: "Agência Rocha",
     type: "Demo",
     status: "Agendado",
     closerName: "Ricardo Mendes",
     date: "2026-04-07",
-    dayLabel: "Amanha",
+    dayLabel: "Amanhã",
   },
   {
     id: "ap7",
@@ -117,11 +117,11 @@ const appointments: Appointment[] = [
     timeEnd: "11:30",
     leadName: "Igor Nascimento Dias",
     leadCompany: "Dias Consultoria",
-    type: "Ligacao",
+    type: "Ligação",
     status: "Confirmado",
     closerName: "Fernanda Lima",
     date: "2026-04-07",
-    dayLabel: "Amanha",
+    dayLabel: "Amanhã",
   },
   {
     id: "ap8",
@@ -129,7 +129,7 @@ const appointments: Appointment[] = [
     timeEnd: "15:00",
     leadName: "Juliana Teixeira Gomes",
     leadCompany: "Varejo Gomes",
-    type: "Reuniao",
+    type: "Reunião",
     status: "Agendado",
     closerName: "Juliana Martins",
     date: "2026-04-08",
@@ -152,7 +152,7 @@ const appointments: Appointment[] = [
     timeStart: "16:00",
     timeEnd: "16:45",
     leadName: "Larissa Moreira Cunha",
-    leadCompany: "Saude Cunha",
+    leadCompany: "Saúde Cunha",
     type: "Demo",
     status: "Confirmado",
     closerName: "Fernanda Lima",
@@ -165,12 +165,12 @@ const typeConfig: Record<
   AppointmentType,
   { icon: typeof Video; color: string; bgColor: string }
 > = {
-  Reuniao: {
+  Reunião: {
     icon: Video,
     color: "text-blue-700 dark:text-blue-300",
     bgColor: "bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300",
   },
-  Ligacao: {
+  Ligação: {
     icon: PhoneCall,
     color: "text-green-700 dark:text-green-300",
     bgColor:
@@ -199,7 +199,7 @@ const statusConfig: Record<AppointmentStatus, { color: string; icon: typeof Chec
     color: "bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300",
     icon: Check,
   },
-  Concluido: {
+  Concluído: {
     color:
       "bg-emerald-100 text-emerald-700 dark:bg-emerald-900 dark:text-emerald-300",
     icon: Check,
@@ -221,7 +221,7 @@ function AppointmentCard({ appointment }: { appointment: Appointment }) {
   const TypeIcon = typeConf.icon
 
   return (
-    <Card className="card-hover animate-card-in">
+    <Card className="card-hover animate-card-in glass border-border/50 rounded-xl">
       <CardContent className="pt-4">
         <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
           <div className="flex gap-3">
@@ -270,7 +270,7 @@ function AppointmentCard({ appointment }: { appointment: Appointment }) {
                 </span>
               </div>
               {/* AI Prediction */}
-              {appointment.status !== "Concluido" && appointment.status !== "No-show" && (
+              {appointment.status !== "Concluído" && appointment.status !== "No-show" && (
                 <div className="flex items-center gap-1.5 pt-2 mt-2 border-t border-dashed border-primary/20 dark:border-primary/30">
                   <Sparkles className="size-3 text-primary shrink-0" />
                   <span className="text-[10px] text-primary dark:text-primary">
@@ -309,7 +309,7 @@ function AppointmentCard({ appointment }: { appointment: Appointment }) {
                 Remarcar
               </Button>
             )}
-            {appointment.status !== "Concluido" &&
+            {appointment.status !== "Concluído" &&
               appointment.status !== "No-show" && (
                 <Button variant="destructive" size="sm" className="gap-1.5 transition-all duration-200">
                   <X className="size-3.5" />
@@ -351,12 +351,12 @@ export function SchedulePage() {
       {/* Header */}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h2 className="text-2xl font-bold tracking-tight text-gradient">Agenda</h2>
-          <p className="text-muted-foreground">
+          <h2 className="font-display text-2xl font-bold tracking-tight text-gradient">Agenda</h2>
+          <p className="text-muted-foreground/60">
             Gerencie seus agendamentos
           </p>
         </div>
-        <Button className="btn-lift bg-gradient-to-r from-primary to-orange-600 text-primary-foreground shadow-md shadow-primary/10">
+        <Button variant="gradient" className="btn-lift shadow-md shadow-primary/10">
           <CalendarPlus className="size-4" />
           Novo Agendamento
         </Button>
@@ -384,17 +384,17 @@ export function SchedulePage() {
       )}
 
       {/* AI Summary Banner */}
-      <div className="flex items-center gap-3 rounded-xl px-4 py-3 shadow-sm animate-card-in">
+      <div className="ai-shimmer flex items-center gap-3 rounded-xl px-4 py-3 shadow-sm animate-card-in glass border border-border/50">
         <div className="flex size-8 items-center justify-center rounded-lg bg-gradient-to-br from-primary to-orange-500 text-white shadow-sm">
           <Sparkles className="size-4 animate-spin" style={{ animationDuration: "3s" }} />
         </div>
         <div className="flex-1">
           <div className="flex items-center gap-2">
-            <span className="text-xs font-semibold">Analise da IA</span>
+            <span className="text-xs font-semibold ai-text-shimmer">Análise da IA</span>
             <span className="relative flex size-1.5"><span className="absolute inline-flex size-full animate-ping rounded-full bg-emerald-400 opacity-75" /><span className="relative inline-flex size-1.5 rounded-full bg-emerald-500" /></span>
           </div>
           <p className="text-[11px] text-muted-foreground">
-            Hoje: 5 agendamentos · 2 no-shows detectados · Proxima reuniao em 45min (Camila - Demo confirmada) · Recomendacao: envie briefing para a reuniao das 14h
+            Hoje: 5 agendamentos · 2 no-shows detectados · Próxima reunião em 45min (Camila - Demo confirmada) · Recomendação: envie briefing para a reunião das 14h
           </p>
         </div>
       </div>
@@ -404,7 +404,7 @@ export function SchedulePage() {
         <TabsList>
           <TabsTrigger value="today">Hoje</TabsTrigger>
           <TabsTrigger value="week">Semana</TabsTrigger>
-          <TabsTrigger value="month">Mes</TabsTrigger>
+          <TabsTrigger value="month">Mês</TabsTrigger>
         </TabsList>
 
         {/* Hoje Tab */}
@@ -432,10 +432,10 @@ export function SchedulePage() {
           {Object.entries(groupedByDay).map(([dayLabel, dayAppointments], index) => (
             <div key={dayLabel} className="space-y-3">
               {index > 0 && (
-                <div className="h-px bg-gradient-to-r from-transparent via-primary/20 to-transparent" />
+                <div className="h-px bg-gradient-to-r from-transparent via-border/50 to-transparent" />
               )}
               <div className="flex items-center gap-2">
-                <h3 className="text-sm font-semibold">{dayLabel}</h3>
+                <h3 className="font-display text-sm font-semibold">{dayLabel}</h3>
                 <Badge variant="secondary" className="text-xs">
                   {dayAppointments.length} agendamento
                   {dayAppointments.length > 1 ? "s" : ""}
@@ -453,17 +453,17 @@ export function SchedulePage() {
           ))}
         </TabsContent>
 
-        {/* Mes Tab */}
+        {/* Mês Tab */}
         <TabsContent value="month" className="pt-4">
-          <Card>
+          <Card className="glass border-border/50 rounded-xl">
             <CardContent className="flex h-64 items-center justify-center pt-4">
               <div className="text-center">
                 <CalendarPlus className="mx-auto mb-3 size-10 text-muted-foreground/50" />
-                <p className="text-sm font-medium text-muted-foreground">
-                  Visualizacao mensal
+                <p className="text-sm font-medium text-muted-foreground/60">
+                  Visualização mensal
                 </p>
-                <p className="text-xs text-muted-foreground">
-                  {displayedAppointments.length} agendamentos neste mes
+                <p className="text-xs text-muted-foreground/60">
+                  {displayedAppointments.length} agendamentos neste mês
                 </p>
               </div>
             </CardContent>
@@ -472,7 +472,7 @@ export function SchedulePage() {
       </Tabs>
 
       {/* Summary Footer */}
-      <div className="flex flex-wrap gap-4 rounded-lg border px-4 py-3 shadow-sm">
+      <div className="flex flex-wrap gap-4 rounded-xl glass border border-border/50 px-4 py-3 shadow-sm">
         <div className="flex items-center gap-2">
           <div className="size-2 rounded-full bg-slate-500" />
           <span className="text-xs text-muted-foreground">
@@ -493,9 +493,9 @@ export function SchedulePage() {
         <div className="flex items-center gap-2">
           <div className="size-2 rounded-full bg-emerald-500" />
           <span className="text-xs text-muted-foreground">
-            Concluidos:{" "}
+            Concluídos:{" "}
             {
-              displayedAppointments.filter((a) => a.status === "Concluido")
+              displayedAppointments.filter((a) => a.status === "Concluído")
                 .length
             }
           </span>
