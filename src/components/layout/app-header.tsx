@@ -17,7 +17,7 @@ import {
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { Bell, Settings, LogOut, User } from "lucide-react"
+import { Bell, Settings, LogOut, User, Sparkles } from "lucide-react"
 import { useLocation, useNavigate } from "react-router-dom"
 import { useAuth } from "@/hooks/use-auth"
 
@@ -74,6 +74,20 @@ export function AppHeader() {
       </Breadcrumb>
 
       <div className="flex-1" />
+
+      {/* AI Status Indicator */}
+      <div className="hidden sm:flex items-center gap-2 rounded-full border border-violet-200 dark:border-violet-800 bg-gradient-to-r from-violet-500/5 to-primary/5 px-3 py-1.5 mr-2">
+        <div className="glow-primary flex size-5 items-center justify-center rounded-md bg-gradient-to-br from-violet-500 to-primary text-white">
+          <Sparkles className="size-3 animate-spin" style={{ animationDuration: "3s" }} />
+        </div>
+        <div className="flex flex-col">
+          <span className="text-[10px] font-semibold leading-tight">IA Ativa</span>
+          <div className="flex items-center gap-1">
+            <span className="relative flex size-1"><span className="absolute inline-flex size-full animate-ping rounded-full bg-emerald-400 opacity-75" /><span className="relative inline-flex size-1 rounded-full bg-emerald-500" /></span>
+            <span className="text-[9px] text-emerald-600 dark:text-emerald-400 leading-tight">Monitorando</span>
+          </div>
+        </div>
+      </div>
 
       <div className="flex items-center gap-2">
         <Button

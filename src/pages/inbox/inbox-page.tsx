@@ -28,6 +28,7 @@ import {
   ArrowLeft,
   Filter,
   ShieldCheck,
+  ChevronRight,
 } from "lucide-react"
 import { useAuth } from "@/hooks/use-auth"
 
@@ -700,22 +701,10 @@ function MessagePanel({
               Qualificar
             </Button>
           )}
-          {userRole === "closer" ? (
-            <Button variant="ghost" size="sm" className="glow-primary gap-1.5" title="IA Copilot">
-              <Sparkles className="size-4 text-amber-500" />
-              <span className="hidden sm:inline text-xs">IA Copilot</span>
-            </Button>
-          ) : userRole === "sdr" ? (
-            <Button variant="ghost" size="sm" className="gap-1.5" title="Sugestao de Qualificacao">
-              <Sparkles className="size-4" />
-              <span className="hidden sm:inline text-xs">Sugestao de Qualificacao</span>
-            </Button>
-          ) : (
-            <Button variant="ghost" size="sm" className="gap-1.5" title="Monitoramento">
-              <Sparkles className="size-4" />
-              <span className="hidden sm:inline text-xs">Monitoramento</span>
-            </Button>
-          )}
+          <Badge className="bg-gradient-to-r from-violet-500/10 to-primary/10 text-violet-700 dark:text-violet-300 text-[10px]">
+            <Sparkles className="mr-1 size-2.5 animate-spin" style={{ animationDuration: "3s" }} />
+            IA Ativa
+          </Badge>
           <Button variant="ghost" size="icon-sm" title="Ligar">
             <Phone className="size-4" />
           </Button>
@@ -764,6 +753,146 @@ function EmptyState() {
       <p className="text-sm">
         Escolha uma conversa na lista ao lado para comecar
       </p>
+    </div>
+  )
+}
+
+// ---------------------------------------------------------------------------
+// AICopilotPanel
+// ---------------------------------------------------------------------------
+
+function AICopilotPanel({ conversation }: { conversation: Conversation }) {
+  const [expanded, setExpanded] = useState(true)
+
+  if (!expanded) {
+    return (
+      <div className="hidden lg:flex flex-col items-center border-l bg-gradient-to-b from-violet-500/[0.03] to-transparent px-2 py-4">
+        <button onClick={() => setExpanded(true)} className="glow-primary flex size-10 items-center justify-center rounded-xl bg-gradient-to-br from-violet-500 to-primary text-white shadow-lg shadow-violet-500/25 transition-transform hover:scale-105">
+          <Sparkles className="size-5" />
+        </button>
+      </div>
+    )
+  }
+
+  return (
+    <div className="hidden lg:flex w-[280px] shrink-0 flex-col border-l bg-gradient-to-b from-violet-500/[0.03] to-transparent">
+      {/* Header */}
+      <div className="flex items-center justify-between border-b px-4 py-3">
+        <div className="flex items-center gap-2">
+          <div className="glow-primary flex size-7 items-center justify-center rounded-lg bg-gradient-to-br from-violet-500 to-primary text-white shadow-sm">
+            <Sparkles className="size-3.5 animate-spin" style={{ animationDuration: "3s" }} />
+          </div>
+          <div>
+            <span className="text-sm font-bold">IA Copilot</span>
+            <div className="flex items-center gap-1">
+              <span className="relative flex size-1.5"><span className="absolute inline-flex size-full animate-ping rounded-full bg-emerald-400 opacity-75" /><span className="relative inline-flex size-1.5 rounded-full bg-emerald-500" /></span>
+              <span className="text-[10px] text-emerald-600">Analisando</span>
+            </div>
+          </div>
+        </div>
+        <button onClick={() => setExpanded(false)} className="text-muted-foreground hover:text-foreground transition-colors">
+          <ChevronRight className="size-4" />
+        </button>
+      </div>
+
+      <ScrollArea className="flex-1">
+        <div className="space-y-4 p-4">
+          {/* Sentiment Analysis */}
+          <div className="space-y-2">
+            <span className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">Sentimento</span>
+            <div className="flex items-center gap-2 rounded-lg bg-emerald-500/10 px-3 py-2">
+              <div className="size-2 rounded-full bg-emerald-500" />
+              <span className="text-xs font-medium text-emerald-700 dark:text-emerald-400">Positivo — Interessado</span>
+            </div>
+          </div>
+
+          {/* Buying Signals */}
+          <div className="space-y-2">
+            <span className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">Sinais de Compra Detectados</span>
+            <div className="space-y-1.5">
+              <div className="flex items-center gap-2 text-xs">
+                <Check className="size-3 text-emerald-500 shrink-0" />
+                <span>Perguntou sobre precos</span>
+              </div>
+              <div className="flex items-center gap-2 text-xs">
+                <Check className="size-3 text-emerald-500 shrink-0" />
+                <span>Mencionou tamanho da equipe</span>
+              </div>
+              <div className="flex items-center gap-2 text-xs">
+                <Check className="size-3 text-emerald-500 shrink-0" />
+                <span>Pediu proposta formal</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Suggested Response */}
+          <div className="space-y-2">
+            <span className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">Resposta Sugerida</span>
+            <div className="rounded-lg border border-violet-200 dark:border-violet-800 bg-violet-500/5 p-3 space-y-2">
+              <p className="text-xs leading-relaxed text-foreground">
+                "Sim, {conversation.contactName.split(" ")[0]}! O treinamento online esta incluso no plano Enterprise. Inclui sessoes ao vivo semanais e acesso ilimitado ao material gravado. Posso preparar a proposta com o desconto de 20% no pagamento anual?"
+              </p>
+              <div className="flex gap-2">
+                <Button size="sm" className="h-7 text-[11px] btn-lift bg-gradient-to-r from-violet-500 to-primary text-white">
+                  <Check className="size-3 mr-1" />
+                  Usar
+                </Button>
+                <Button size="sm" variant="ghost" className="h-7 text-[11px]">
+                  Editar
+                </Button>
+              </div>
+            </div>
+          </div>
+
+          {/* Methodology */}
+          <div className="space-y-2">
+            <span className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">Metodologia DEF</span>
+            <div className="space-y-1.5">
+              <div className="flex items-center justify-between text-xs">
+                <span>Dor</span>
+                <Badge variant="secondary" className="bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 text-[10px]">Identificada</Badge>
+              </div>
+              <div className="flex items-center justify-between text-xs">
+                <span>Expectativa</span>
+                <Badge variant="secondary" className="bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 text-[10px]">Alinhada</Badge>
+              </div>
+              <div className="flex items-center justify-between text-xs">
+                <span>Fechamento</span>
+                <Badge variant="secondary" className="bg-amber-500/10 text-amber-700 dark:text-amber-400 text-[10px]">Proximo passo</Badge>
+              </div>
+            </div>
+          </div>
+
+          {/* Objection Matrix */}
+          <div className="space-y-2">
+            <span className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">Objecoes Previstas</span>
+            <div className="space-y-2">
+              <div className="rounded-lg border p-2.5 space-y-1">
+                <span className="text-[11px] font-medium">"Preco alto"</span>
+                <p className="text-[10px] text-muted-foreground">Resposta: Destaque o ROI com base no ganho de produtividade de 15 vendedores. Custo por vendedor: R$16/dia.</p>
+              </div>
+              <div className="rounded-lg border p-2.5 space-y-1">
+                <span className="text-[11px] font-medium">"Preciso avaliar com o time"</span>
+                <p className="text-[10px] text-muted-foreground">Resposta: Ofereça demo personalizada para a equipe. Disponibilize trial de 14 dias sem compromisso.</p>
+              </div>
+            </div>
+          </div>
+
+          {/* Lead Score */}
+          <div className="space-y-2">
+            <span className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">Lead Score</span>
+            <div className="flex items-center gap-3">
+              <div className="flex size-12 items-center justify-center rounded-xl bg-gradient-to-br from-emerald-500/20 to-emerald-500/5">
+                <span className="text-lg font-bold text-emerald-700 dark:text-emerald-400">85</span>
+              </div>
+              <div className="text-xs space-y-0.5">
+                <p className="font-medium">Score Alto</p>
+                <p className="text-muted-foreground">Probabilidade de conversao: 78%</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </ScrollArea>
     </div>
   )
 }
@@ -900,6 +1029,7 @@ export function InboxPage() {
             onBack={handleBack}
             userRole={userRole}
           />
+          <AICopilotPanel conversation={selectedConversation} />
         </div>
       ) : (
         <EmptyState />

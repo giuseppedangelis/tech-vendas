@@ -17,6 +17,7 @@ import {
   RefreshCw,
   Eye,
   User,
+  Sparkles,
 } from "lucide-react"
 
 type AppointmentType = "Reuniao" | "Ligacao" | "Demo" | "Follow-up"
@@ -268,6 +269,28 @@ function AppointmentCard({ appointment }: { appointment: Appointment }) {
                   Closer: {appointment.closerName}
                 </span>
               </div>
+              {/* AI Prediction */}
+              {appointment.status !== "Concluido" && appointment.status !== "No-show" && (
+                <div className="flex items-center gap-1.5 pt-2 mt-2 border-t border-dashed border-violet-200 dark:border-violet-800">
+                  <Sparkles className="size-3 text-violet-500 shrink-0" />
+                  <span className="text-[10px] text-violet-600 dark:text-violet-400">
+                    {appointment.status === "Confirmado"
+                      ? "IA: 95% chance de comparecimento — lead engajado"
+                      : appointment.type === "Demo"
+                        ? "IA: 78% chance de comparecimento — envie lembrete 1h antes"
+                        : "IA: 65% chance — considere confirmar por WhatsApp"
+                    }
+                  </span>
+                </div>
+              )}
+              {appointment.status === "No-show" && (
+                <div className="flex items-center gap-1.5 pt-2 mt-2 border-t border-dashed border-red-200 dark:border-red-800">
+                  <Sparkles className="size-3 text-red-500 shrink-0" />
+                  <span className="text-[10px] text-red-600 dark:text-red-400">
+                    IA: Reagendar automaticamente em 48h? Lead ainda tem score alto
+                  </span>
+                </div>
+              )}
             </div>
           </div>
 
@@ -359,6 +382,22 @@ export function SchedulePage() {
           </Button>
         </div>
       )}
+
+      {/* AI Summary Banner */}
+      <div className="flex items-center gap-3 rounded-xl border-gradient glass px-4 py-3 shadow-sm animate-card-in">
+        <div className="flex size-8 items-center justify-center rounded-lg bg-gradient-to-br from-violet-500 to-primary text-white shadow-sm">
+          <Sparkles className="size-4 animate-spin" style={{ animationDuration: "3s" }} />
+        </div>
+        <div className="flex-1">
+          <div className="flex items-center gap-2">
+            <span className="text-xs font-semibold">Analise da IA</span>
+            <span className="relative flex size-1.5"><span className="absolute inline-flex size-full animate-ping rounded-full bg-emerald-400 opacity-75" /><span className="relative inline-flex size-1.5 rounded-full bg-emerald-500" /></span>
+          </div>
+          <p className="text-[11px] text-muted-foreground">
+            Hoje: 5 agendamentos · 2 no-shows detectados · Proxima reuniao em 45min (Camila - Demo confirmada) · Recomendacao: envie briefing para a reuniao das 14h
+          </p>
+        </div>
+      </div>
 
       {/* View Tabs */}
       <Tabs value={viewTab} onValueChange={setViewTab}>

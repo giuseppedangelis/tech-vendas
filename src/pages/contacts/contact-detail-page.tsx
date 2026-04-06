@@ -35,6 +35,7 @@ import {
   Calendar,
   FileText,
   Send,
+  Sparkles,
 } from "lucide-react"
 
 // --- Mock Data ---
@@ -308,18 +309,43 @@ export function ContactDetailPage() {
 
       {/* Stats Row */}
       <div className="grid gap-4 sm:grid-cols-3">
-        <Card className="animate-card-in stagger-1 card-hover shadow-lg shadow-primary/[0.03]">
+        <Card className="animate-card-in stagger-1 card-hover shadow-lg shadow-primary/[0.03] border-gradient">
           <CardHeader className="flex flex-row items-center justify-between pb-2">
             <CardTitle className="text-sm font-medium">Lead Score</CardTitle>
-            <div className="flex size-8 items-center justify-center rounded-lg bg-gradient-to-br from-primary/10 to-violet-500/10">
-              <TrendingUp className="size-4 text-primary" />
+            <div className="flex size-8 items-center justify-center rounded-lg bg-gradient-to-br from-violet-500 to-primary text-white shadow-sm">
+              <Sparkles className="size-4" />
             </div>
           </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{contact.score}</div>
-            <p className="text-xs text-muted-foreground">
-              +12 pontos este mes
-            </p>
+          <CardContent className="space-y-3">
+            <div className="flex items-center gap-3">
+              <div className="text-2xl font-bold">{contact.score}</div>
+              <Badge className="bg-gradient-to-r from-violet-500/10 to-primary/10 text-violet-700 dark:text-violet-300 text-[10px] border-violet-200 dark:border-violet-800">
+                <Sparkles className="mr-1 size-2.5" />
+                Powered by AI
+              </Badge>
+            </div>
+            <p className="text-xs text-muted-foreground">+12 pontos este mes</p>
+            <div className="space-y-1.5 border-t pt-2">
+              <span className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">Por que este score?</span>
+              <div className="space-y-1">
+                <div className="flex items-center gap-1.5 text-[11px]">
+                  <div className="size-1.5 rounded-full bg-emerald-500" />
+                  <span>Perfil decisor (C-level) +25pts</span>
+                </div>
+                <div className="flex items-center gap-1.5 text-[11px]">
+                  <div className="size-1.5 rounded-full bg-emerald-500" />
+                  <span>Empresa 50-200 func (ICP) +20pts</span>
+                </div>
+                <div className="flex items-center gap-1.5 text-[11px]">
+                  <div className="size-1.5 rounded-full bg-blue-500" />
+                  <span>3 interacoes em 10 dias +18pts</span>
+                </div>
+                <div className="flex items-center gap-1.5 text-[11px]">
+                  <div className="size-1.5 rounded-full bg-blue-500" />
+                  <span>Pediu proposta formal +15pts</span>
+                </div>
+              </div>
+            </div>
           </CardContent>
         </Card>
         <Card className="animate-card-in stagger-2 card-hover shadow-lg shadow-primary/[0.03]">
@@ -364,6 +390,18 @@ export function ContactDetailPage() {
 
         {/* Visao Geral Tab */}
         <TabsContent value="overview" className="space-y-6 pt-4">
+          <div className="flex items-center gap-3 rounded-xl border-gradient glass px-4 py-3 shadow-sm animate-card-in">
+            <div className="flex size-8 items-center justify-center rounded-lg bg-gradient-to-br from-violet-500 to-primary text-white shadow-sm">
+              <Sparkles className="size-4 animate-spin" style={{ animationDuration: "3s" }} />
+            </div>
+            <div className="flex-1">
+              <div className="flex items-center gap-2">
+                <span className="text-xs font-semibold">Recomendacao da IA</span>
+                <span className="relative flex size-1.5"><span className="absolute inline-flex size-full animate-ping rounded-full bg-emerald-400 opacity-75" /><span className="relative inline-flex size-1.5 rounded-full bg-emerald-500" /></span>
+              </div>
+              <p className="text-[11px] text-muted-foreground">Melhor horario para contato: Ter/Qui 10h-12h · Probabilidade de conversao: 72% · Proximo passo: Enviar proposta formal com desconto 15%</p>
+            </div>
+          </div>
           <div className="grid gap-6 lg:grid-cols-2">
             {/* Info Card */}
             <Card>

@@ -43,6 +43,7 @@ import {
   User,
   Eye,
   Zap,
+  Sparkles,
 } from "lucide-react"
 import { toast } from "sonner"
 
@@ -305,6 +306,24 @@ function LeadCard({
               {timeAgo(lead.lastInteraction)}
             </span>
           </div>
+
+          {/* AI Recommendation */}
+          {lead.score > 80 && (
+            <div className="flex items-center gap-1.5 pt-1 border-t border-dashed border-violet-200 dark:border-violet-800">
+              <Sparkles className="size-3 text-violet-500 shrink-0" />
+              <span className="text-[10px] text-violet-600 dark:text-violet-400 truncate">
+                {lead.score > 90 ? "IA: Prioridade maxima — alto potencial de fechamento" : "IA: Lead quente — recomendo contato imediato"}
+              </span>
+            </div>
+          )}
+          {lead.score <= 80 && lead.score > 50 && (
+            <div className="flex items-center gap-1.5 pt-1 border-t border-dashed border-border/50">
+              <Sparkles className="size-3 text-muted-foreground/60 shrink-0" />
+              <span className="text-[10px] text-muted-foreground truncate">
+                IA: Nurturing recomendado — envie conteudo de valor
+              </span>
+            </div>
+          )}
         </CardContent>
       </Card>
     </div>
@@ -632,6 +651,26 @@ export function PipelinePage() {
         </div>
       )}
 
+      {/* AI Pipeline Analysis */}
+      <div className="animate-card-in flex items-center gap-3 rounded-xl border-gradient glass px-4 py-3 shadow-lg shadow-primary/[0.04]">
+        <div className="flex size-8 items-center justify-center rounded-lg bg-gradient-to-br from-violet-500 to-primary text-white shadow-sm">
+          <Sparkles className="size-4 animate-spin" style={{ animationDuration: "3s" }} />
+        </div>
+        <div className="flex-1 min-w-0">
+          <div className="flex items-center gap-2">
+            <span className="text-sm font-semibold">IA Pipeline Analysis</span>
+            <span className="relative flex size-2"><span className="absolute inline-flex size-full animate-ping rounded-full bg-emerald-400 opacity-75" /><span className="relative inline-flex size-2 rounded-full bg-emerald-500" /></span>
+          </div>
+          <p className="text-xs text-muted-foreground truncate">
+            3 leads em risco de esfriar · 2 prontos para avancar estagio · Score medio: 74 · Valor total no pipeline: R$ 612.000
+          </p>
+        </div>
+        <Badge variant="secondary" className="bg-violet-500/10 text-violet-700 dark:text-violet-300 shrink-0">
+          <Sparkles className="mr-1 size-3" />
+          AI Insights
+        </Badge>
+      </div>
+
       {/* Proximo Lead card for closers */}
       {nextLeadForCloser && (
         <Card className="border-gradient bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-950/30 dark:to-indigo-950/30">
@@ -640,9 +679,15 @@ export function PipelinePage() {
               <Zap className="size-5 text-blue-600 dark:text-blue-400" />
             </div>
             <div className="min-w-0 flex-1">
-              <p className="text-xs font-semibold uppercase tracking-wider text-blue-600 dark:text-blue-400">
-                Proximo Lead
-              </p>
+              <div className="flex items-center gap-2">
+                <p className="text-xs font-semibold uppercase tracking-wider text-blue-600 dark:text-blue-400">
+                  Proximo Lead
+                </p>
+                <Badge className="bg-gradient-to-r from-violet-500/10 to-primary/10 text-violet-700 dark:text-violet-300 border-violet-200 dark:border-violet-800 text-[10px]">
+                  <Sparkles className="mr-1 size-2.5" />
+                  Recomendado pela IA
+                </Badge>
+              </div>
               <p className="truncate text-sm font-medium">
                 {nextLeadForCloser.name}
                 {nextLeadForCloser.company && (

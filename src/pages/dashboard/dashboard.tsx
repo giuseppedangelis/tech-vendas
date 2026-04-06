@@ -437,6 +437,7 @@ const qualificationQueue = [
     sourceClass: "text-emerald-600 bg-emerald-100 dark:text-emerald-400 dark:bg-emerald-950",
     score: 85,
     waiting: "5 min",
+    aiSuggestion: "IA: Perfil decisor, prioridade maxima",
   },
   {
     id: 2,
@@ -447,6 +448,7 @@ const qualificationQueue = [
     sourceClass: "text-pink-600 bg-pink-100 dark:text-pink-400 dark:bg-pink-950",
     score: 78,
     waiting: "12 min",
+    aiSuggestion: "IA: Engajamento alto no Instagram, boa receptividade",
   },
   {
     id: 3,
@@ -457,6 +459,7 @@ const qualificationQueue = [
     sourceClass: "text-blue-600 bg-blue-100 dark:text-blue-400 dark:bg-blue-950",
     score: 72,
     waiting: "25 min",
+    aiSuggestion: "IA: Formulario detalhado, interesse genuino",
   },
   {
     id: 4,
@@ -467,6 +470,7 @@ const qualificationQueue = [
     sourceClass: "text-emerald-600 bg-emerald-100 dark:text-emerald-400 dark:bg-emerald-950",
     score: 68,
     waiting: "40 min",
+    aiSuggestion: "IA: Segundo contato, ja conhece o produto",
   },
   {
     id: 5,
@@ -477,6 +481,7 @@ const qualificationQueue = [
     sourceClass: "text-pink-600 bg-pink-100 dark:text-pink-400 dark:bg-pink-950",
     score: 64,
     waiting: "1h 10min",
+    aiSuggestion: "IA: Score abaixo da media, qualificar com cautela",
   },
 ]
 
@@ -599,6 +604,98 @@ function ActivityTimeline({
 }
 
 // ---------------------------------------------------------------------------
+// AI Daily Briefing Hero Component
+// ---------------------------------------------------------------------------
+
+function AIBriefing({ role, userName }: { role: string; userName: string }) {
+  const briefings = {
+    gestor: {
+      title: "Briefing Diario da IA Gestora",
+      summary: "Bom dia! Analisei sua operacao nas ultimas 24h. Aqui esta o que precisa da sua atencao:",
+      items: [
+        { icon: AlertTriangle, text: "3 leads estao parados ha +7 dias em Negociacao. Risco de perda estimado: R$ 87.000", type: "warning" },
+        { icon: TrendingUp, text: "Rafael Silva esta 23% acima da meta. Considere redistribuir 2 leads de Fernando para ele", type: "success" },
+        { icon: Zap, text: "Instagram converteu 2.3x mais que WhatsApp esta semana. Recomendo aumentar investimento", type: "insight" },
+      ],
+    },
+    closer: {
+      title: "Seu Assistente IA Copilot",
+      summary: `${userName}, preparei sua estrategia para hoje baseada nos seus leads ativos:`,
+      items: [
+        { icon: Target, text: "Maria Silva (Score 92) respondeu rapido ontem. Alta probabilidade de fechamento — envie proposta agressiva", type: "action" },
+        { icon: AlertTriangle, text: "Ricardo Santos nao responde ha 8h. Risco de esfriar. Envie um audio personalizado pelo WhatsApp", type: "warning" },
+        { icon: Sparkles, text: "Sua taxa de conversao subiu 3.2% este mes. Continue usando a abordagem DEF nos primeiros contatos", type: "success" },
+      ],
+    },
+    sdr: {
+      title: "IA de Qualificacao",
+      summary: `${userName}, a IA pre-analisou seus leads da fila. Aqui estao as prioridades:`,
+      items: [
+        { icon: Star, text: "Marcos Pereira (Score 85) tem perfil ideal: empresa de tecnologia, 50+ func, decisor. Qualifique primeiro", type: "action" },
+        { icon: Lightbulb, text: "Leads do Instagram estao chegando com score medio 12 pontos acima do WhatsApp. Priorize-os", type: "insight" },
+        { icon: Target, text: "Voce esta a 7 qualificacoes da meta diaria. Ritmo atual: 5.3/hora — no caminho certo", type: "success" },
+      ],
+    },
+  }
+
+  const data = briefings[role as keyof typeof briefings] ?? briefings.gestor
+
+  const typeStyles: Record<string, { bg: string; border: string; icon: string }> = {
+    warning: { bg: "bg-amber-500/10", border: "border-l-amber-500", icon: "text-amber-600 dark:text-amber-400" },
+    success: { bg: "bg-emerald-500/10", border: "border-l-emerald-500", icon: "text-emerald-600 dark:text-emerald-400" },
+    insight: { bg: "bg-blue-500/10", border: "border-l-blue-500", icon: "text-blue-600 dark:text-blue-400" },
+    action: { bg: "bg-violet-500/10", border: "border-l-violet-500", icon: "text-violet-600 dark:text-violet-400" },
+  }
+
+  return (
+    <Card className="border-gradient glass shadow-xl shadow-primary/[0.06] animate-card-in stagger-1 overflow-hidden">
+      {/* Animated gradient stripe */}
+      <div className="h-0.5 bg-gradient-to-r from-violet-500 via-primary to-emerald-500" />
+
+      <CardHeader className="pb-3">
+        <div className="flex items-center gap-3">
+          {/* Sparkle icon in gradient circle */}
+          <div className="flex size-10 items-center justify-center rounded-xl bg-gradient-to-br from-violet-500 to-primary text-white shadow-lg shadow-violet-500/25 glow-primary">
+            <Sparkles className="size-5 animate-spin" style={{ animationDuration: "3s" }} />
+          </div>
+          <div className="flex items-center gap-2">
+            <CardTitle className="text-lg font-semibold text-gradient">{data.title}</CardTitle>
+            <Badge className="bg-gradient-to-r from-violet-500/10 to-primary/10 text-violet-700 dark:text-violet-300 border-violet-200 dark:border-violet-800">
+              Powered by AI
+            </Badge>
+          </div>
+        </div>
+        <p className="text-sm text-muted-foreground mt-1">{data.summary}</p>
+      </CardHeader>
+
+      <CardContent className="space-y-2 pb-4">
+        {data.items.map((item, idx) => {
+          const style = typeStyles[item.type] ?? typeStyles.insight
+          const Icon = item.icon
+          return (
+            <div
+              key={idx}
+              className={`flex items-start gap-3 rounded-lg border-l-[3px] ${style.border} ${style.bg} p-3 transition-all duration-200 hover:bg-primary/[0.03]`}
+            >
+              <Icon className={`mt-0.5 size-4 shrink-0 ${style.icon}`} />
+              <p className="text-sm leading-relaxed">{item.text}</p>
+            </div>
+          )
+        })}
+
+        <div className="pt-2">
+          <Button variant="outline" size="sm" className="btn-lift">
+            <Sparkles className="size-3.5" />
+            Ver analise completa
+            <ChevronRight className="size-3" />
+          </Button>
+        </div>
+      </CardContent>
+    </Card>
+  )
+}
+
+// ---------------------------------------------------------------------------
 // Reusable stat card with gradient icon background
 // ---------------------------------------------------------------------------
 
@@ -685,6 +782,9 @@ function GestorDashboard({ user }: { user: AuthUser }) {
 
       {/* Divider */}
       <div className="h-px bg-gradient-to-r from-transparent via-border to-transparent" />
+
+      {/* AI Daily Briefing Hero */}
+      <AIBriefing role="gestor" userName={user.name} />
 
       {/* Stats Row */}
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
@@ -841,11 +941,15 @@ function GestorDashboard({ user }: { user: AuthUser }) {
       {/* Bottom Row: AI Insights + Activity */}
       <div className="grid gap-6 lg:grid-cols-5">
         {/* AI Insights */}
-        <Card className="lg:col-span-3 animate-card-in stagger-5">
+        <Card className="border-gradient lg:col-span-3 animate-card-in stagger-5">
           <CardHeader>
             <div className="flex items-center gap-2">
               <Sparkles className="size-4 text-violet-500 animate-spin" style={{ animationDuration: "4s" }} />
-              <CardTitle className="text-lg font-semibold">Insights da IA</CardTitle>
+              <CardTitle className="text-lg font-semibold">IA Gestora — Analise em Tempo Real</CardTitle>
+              <span className="relative flex size-2">
+                <span className="absolute inline-flex size-full animate-ping rounded-full bg-emerald-400 opacity-75" />
+                <span className="relative inline-flex size-2 rounded-full bg-emerald-500" />
+              </span>
             </div>
             <CardDescription>
               Recomendacoes baseadas nos seus dados
@@ -924,6 +1028,9 @@ function CloserDashboard({ user }: { user: AuthUser }) {
 
       {/* Divider */}
       <div className="h-px bg-gradient-to-r from-transparent via-border to-transparent" />
+
+      {/* AI Daily Briefing Hero */}
+      <AIBriefing role="closer" userName={user.name.split(" ")[0]} />
 
       {/* Personal Stats */}
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
@@ -1042,12 +1149,16 @@ function CloserDashboard({ user }: { user: AuthUser }) {
 
       {/* Bottom Row: IA Copilot + Activity */}
       <div className="grid gap-6 lg:grid-cols-5">
-        {/* IA Copilot Sugestoes */}
-        <Card className="lg:col-span-3 animate-card-in stagger-5">
+        {/* IA Copilot Proximos Passos */}
+        <Card className="border-gradient lg:col-span-3 animate-card-in stagger-5">
           <CardHeader>
             <div className="flex items-center gap-2">
               <Sparkles className="size-4 text-violet-500 animate-spin" style={{ animationDuration: "4s" }} />
-              <CardTitle className="text-lg font-semibold">IA Copilot - Sugestoes</CardTitle>
+              <CardTitle className="text-lg font-semibold">IA Copilot — Proximos Passos</CardTitle>
+              <span className="relative flex size-2">
+                <span className="absolute inline-flex size-full animate-ping rounded-full bg-emerald-400 opacity-75" />
+                <span className="relative inline-flex size-2 rounded-full bg-emerald-500" />
+              </span>
             </div>
             <CardDescription>
               Recomendacoes personalizadas para seus leads
@@ -1073,14 +1184,21 @@ function CloserDashboard({ user }: { user: AuthUser }) {
                 <p className="flex-1 text-sm leading-relaxed text-muted-foreground">
                   {suggestion.text}
                 </p>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="shrink-0 self-center"
-                >
-                  Agir
-                  <ChevronRight className="size-3" />
-                </Button>
+                <div className="flex shrink-0 items-center gap-1.5 self-center">
+                  <Button
+                    size="sm"
+                    className="btn-lift bg-gradient-to-r from-violet-600 to-primary text-white text-xs h-7 px-3"
+                  >
+                    Aceitar
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="text-xs h-7 px-3"
+                  >
+                    Ignorar
+                  </Button>
+                </div>
               </div>
             ))}
           </CardContent>
@@ -1119,6 +1237,9 @@ function SDRDashboard({ user }: { user: AuthUser }) {
 
       {/* Divider */}
       <div className="h-px bg-gradient-to-r from-transparent via-border to-transparent" />
+
+      {/* AI Daily Briefing Hero */}
+      <AIBriefing role="sdr" userName={user.name.split(" ")[0]} />
 
       {/* Personal Stats */}
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
@@ -1177,6 +1298,10 @@ function SDRDashboard({ user }: { user: AuthUser }) {
                         <Clock className="size-3" />
                         {lead.waiting}
                       </span>
+                    </div>
+                    <div className="flex items-center gap-1 pt-0.5">
+                      <Sparkles className="size-3 text-violet-500" />
+                      <span className="text-xs text-violet-600 dark:text-violet-400">{lead.aiSuggestion}</span>
                     </div>
                   </div>
                 </div>
