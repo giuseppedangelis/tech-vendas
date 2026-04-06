@@ -64,8 +64,8 @@ const pipelineTemplates = [
     name: "Infoprodutos",
     description: "Pipeline para lancamentos e vendas de produtos digitais",
     stages: ["Captacao", "Aquecimento", "Lancamento", "Carrinho Aberto", "Fechamento"],
-    color: "border-violet-500/50 bg-violet-500/5",
-    iconColor: "text-violet-600",
+    color: "border-primary/50 bg-primary/5",
+    iconColor: "text-primary",
   },
 ]
 
@@ -101,9 +101,9 @@ function StepIndicator({
                 className={cn(
                   "flex size-9 items-center justify-center rounded-full border-2 transition-colors",
                   isCompleted
-                    ? "border-transparent bg-gradient-to-br from-primary to-violet-600 text-primary-foreground shadow-md shadow-primary/20"
+                    ? "border-transparent bg-gradient-to-br from-primary to-orange-600 text-primary-foreground shadow-md shadow-primary/10"
                     : isActive
-                    ? "border-primary bg-primary/10 text-primary glow-primary"
+                    ? "border-primary bg-primary/10 text-primary"
                     : "border-muted bg-muted text-muted-foreground"
                 )}
               >
@@ -145,7 +145,7 @@ function StepSeuNegocio() {
         </p>
       </div>
 
-      <Card className="glass shadow-xl shadow-primary/[0.04] border-border/50">
+      <Card>
         <CardContent className="space-y-4 pt-6">
           <div className="space-y-2">
             <Label htmlFor="business-name">Nome da Empresa</Label>
@@ -208,7 +208,7 @@ function StepWhatsApp() {
         </p>
       </div>
 
-      <Card className="glass shadow-xl shadow-primary/[0.04] border-border/50">
+      <Card>
         <CardContent className="space-y-6 pt-6">
           <div className="space-y-2">
             <Label htmlFor="whatsapp-number">Numero do WhatsApp</Label>
@@ -339,7 +339,7 @@ function StepEquipe() {
         </p>
       </div>
 
-      <Card className="glass shadow-xl shadow-primary/[0.04] border-border/50">
+      <Card>
         <CardContent className="space-y-4 pt-6">
           {invites.map((invite, index) => (
             <div key={invite.id} className="flex items-end gap-2">
@@ -399,7 +399,7 @@ function StepEquipe() {
 function StepConcluido() {
   return (
     <div className="space-y-6 text-center">
-      <div className="glow-primary mx-auto flex size-20 items-center justify-center rounded-full bg-emerald-500/10">
+      <div className="mx-auto flex size-20 items-center justify-center rounded-full bg-emerald-500/10">
         <Rocket className="bounce-gentle size-10 text-emerald-600" />
       </div>
       <div>
@@ -411,19 +411,19 @@ function StepConcluido() {
       </div>
 
       <div className="mx-auto grid max-w-md gap-3 sm:grid-cols-3">
-        <Card size="sm" className="card-hover animate-card-in stagger-1 glass">
+        <Card size="sm" className="card-hover animate-card-in stagger-1">
           <CardContent className="pt-4 text-center">
             <MessageSquare className="mx-auto mb-1 size-6 text-muted-foreground" />
             <p className="text-xs font-medium">Inbox Unificado</p>
           </CardContent>
         </Card>
-        <Card size="sm" className="card-hover animate-card-in stagger-2 glass">
+        <Card size="sm" className="card-hover animate-card-in stagger-2">
           <CardContent className="pt-4 text-center">
             <Kanban className="mx-auto mb-1 size-6 text-muted-foreground" />
             <p className="text-xs font-medium">Pipeline Visual</p>
           </CardContent>
         </Card>
-        <Card size="sm" className="card-hover animate-card-in stagger-3 glass">
+        <Card size="sm" className="card-hover animate-card-in stagger-3">
           <CardContent className="pt-4 text-center">
             <Users className="mx-auto mb-1 size-6 text-muted-foreground" />
             <p className="text-xs font-medium">Gestao de Equipe</p>
@@ -471,7 +471,7 @@ export function SetupPage() {
       <div className="relative mx-auto w-full max-w-2xl space-y-8">
         {/* Logo / Title */}
         <div className="text-center">
-          <div className="flex size-12 items-center justify-center rounded-2xl bg-gradient-to-br from-primary to-violet-600 text-primary-foreground shadow-lg shadow-primary/20 mx-auto mb-2">
+          <div className="flex size-12 items-center justify-center rounded-2xl bg-gradient-to-br from-primary to-orange-600 text-primary-foreground shadow-lg shadow-primary/10 mx-auto mb-2">
             <Kanban className="size-6" />
           </div>
           <h1 className="text-gradient text-2xl font-bold tracking-tight">
@@ -506,12 +506,12 @@ export function SetupPage() {
           )}
 
           {currentStep < 5 ? (
-            <Button onClick={goNext} className="btn-lift bg-gradient-to-r from-primary to-violet-600 text-primary-foreground shadow-md shadow-primary/20">
+            <Button onClick={goNext} className="btn-lift bg-gradient-to-r from-primary to-orange-600 text-primary-foreground shadow-md shadow-primary/10">
               Proximo
               <ArrowRight className="ml-1.5 size-4" />
             </Button>
           ) : (
-            <Button onClick={goToDashboard} className="btn-lift mx-auto bg-gradient-to-r from-primary to-violet-600 text-primary-foreground shadow-lg shadow-primary/20">
+            <Button onClick={goToDashboard} className="btn-lift mx-auto bg-gradient-to-r from-primary to-orange-600 text-primary-foreground shadow-lg shadow-primary/10">
               <Rocket className="mr-1.5 size-4" />
               Ir para o Dashboard
             </Button>

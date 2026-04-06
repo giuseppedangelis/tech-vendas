@@ -204,7 +204,7 @@ export function LeadDetailSheet({
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
-      <SheetContent className="glass w-full sm:max-w-lg p-0 flex flex-col">
+      <SheetContent className="w-full sm:max-w-lg p-0 flex flex-col">
         <SheetHeader className="px-6 pt-6 pb-2">
           <SheetTitle className="text-lg">{lead.name}</SheetTitle>
           <SheetDescription>
@@ -355,7 +355,7 @@ export function LeadDetailSheet({
                   <div key={item.id} className="flex gap-3">
                     {/* Line connector */}
                     <div className="flex flex-col items-center">
-                      <div className="flex size-7 shrink-0 items-center justify-center rounded-full bg-muted ring-2 ring-primary/10 ring-offset-2 ring-offset-background">
+                      <div className="flex size-7 shrink-0 items-center justify-center rounded-full bg-muted ring-offset-2 ring-offset-background">
                         {getTimelineIcon(item.type)}
                       </div>
                       {idx < timeline.length - 1 && (

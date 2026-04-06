@@ -142,13 +142,13 @@ function ContaSection() {
   return (
     <div className="space-y-6">
       <div>
-        <h3 className="text-lg font-semibold">Conta</h3>
+        <h3 className="font-display text-base font-semibold">Conta</h3>
         <p className="text-sm text-muted-foreground">
           Configuracoes gerais da sua conta e empresa
         </p>
       </div>
 
-      <Card className="animate-card-in shadow-lg shadow-primary/[0.03]">
+      <Card className="animate-card-in">
         <CardHeader>
           <CardTitle className="text-base">Informacoes da Empresa</CardTitle>
         </CardHeader>
@@ -173,7 +173,7 @@ function ContaSection() {
         </CardContent>
       </Card>
 
-      <Card className="animate-card-in shadow-lg shadow-primary/[0.03]">
+      <Card className="animate-card-in">
         <CardHeader>
           <CardTitle className="text-base">Aparencia</CardTitle>
         </CardHeader>
@@ -205,7 +205,7 @@ function ContaSection() {
       </Card>
 
       <div className="flex justify-end">
-        <Button className="btn-lift bg-gradient-to-r from-primary to-violet-600 text-primary-foreground shadow-md shadow-primary/20">Salvar Alteracoes</Button>
+        <Button className="btn-lift bg-gradient-to-r from-primary to-orange-600 text-primary-foreground shadow-md shadow-primary/10">Salvar Alteracoes</Button>
       </div>
     </div>
   )
@@ -216,12 +216,12 @@ function PipelinesSection() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h3 className="text-lg font-semibold">Pipelines</h3>
+          <h3 className="font-display text-base font-semibold">Pipelines</h3>
           <p className="text-sm text-muted-foreground">
             Gerencie seus pipelines e estagios de venda
           </p>
         </div>
-        <Button className="btn-lift bg-gradient-to-r from-primary to-violet-600 text-primary-foreground shadow-md shadow-primary/20">
+        <Button className="btn-lift bg-gradient-to-r from-primary to-orange-600 text-primary-foreground shadow-md shadow-primary/10">
           <Plus className="mr-1.5 size-4" />
           Adicionar Pipeline
         </Button>
@@ -229,7 +229,7 @@ function PipelinesSection() {
 
       <div className="space-y-4">
         {pipelinesData.map((pipeline) => (
-          <Card key={pipeline.id} className="animate-card-in shadow-lg shadow-primary/[0.03]">
+          <Card key={pipeline.id} className="animate-card-in">
             <CardHeader>
               <div className="flex items-center justify-between">
                 <CardTitle className="text-base">{pipeline.name}</CardTitle>
@@ -270,7 +270,7 @@ function IntegracoesSection() {
   return (
     <div className="space-y-6">
       <div>
-        <h3 className="text-lg font-semibold">Integracoes</h3>
+        <h3 className="font-display text-base font-semibold">Integracoes</h3>
         <p className="text-sm text-muted-foreground">
           Conecte suas ferramentas favoritas ao CRM
         </p>
@@ -282,7 +282,7 @@ function IntegracoesSection() {
             <CardHeader>
               <div className="flex items-start justify-between">
                 <div className="flex items-center gap-3">
-                  <div className="flex size-10 items-center justify-center rounded-lg bg-gradient-to-br from-primary/5 to-violet-500/5">
+                  <div className="flex size-10 items-center justify-center rounded-lg bg-gradient-to-br from-primary/5 to-orange-500/5">
                     <integration.icon
                       className={cn("size-5", integration.color)}
                     />
@@ -314,7 +314,7 @@ function IntegracoesSection() {
                 size="sm"
                 className={cn(
                   "w-full",
-                  !integration.connected && "btn-lift bg-gradient-to-r from-primary to-violet-600 text-primary-foreground shadow-md shadow-primary/20"
+                  !integration.connected && "btn-lift bg-gradient-to-r from-primary to-orange-600 text-primary-foreground shadow-md shadow-primary/10"
                 )}
               >
                 {integration.connected ? "Configurar" : "Conectar"}
@@ -336,13 +336,13 @@ function IASection() {
   return (
     <div className="space-y-6">
       <div>
-        <h3 className="text-lg font-semibold">Inteligencia Artificial</h3>
+        <h3 className="font-display text-base font-semibold">Inteligencia Artificial</h3>
         <p className="text-sm text-muted-foreground">
           Configure os recursos de IA do seu CRM
         </p>
       </div>
 
-      <Card className="animate-card-in shadow-lg shadow-primary/[0.03]">
+      <Card className="animate-card-in">
         <CardHeader>
           <CardTitle className="text-base">Provedor de IA</CardTitle>
           <CardDescription>
@@ -362,7 +362,7 @@ function IASection() {
         </CardContent>
       </Card>
 
-      <Card className="animate-card-in shadow-lg shadow-primary/[0.03]">
+      <Card className="animate-card-in">
         <CardHeader>
           <CardTitle className="text-base">IA Copilot</CardTitle>
           <CardDescription>
@@ -400,7 +400,7 @@ function IASection() {
         </CardContent>
       </Card>
 
-      <Card className="animate-card-in shadow-lg shadow-primary/[0.03]">
+      <Card className="animate-card-in">
         <CardHeader>
           <CardTitle className="text-base">IA Gestora</CardTitle>
           <CardDescription>
@@ -438,7 +438,7 @@ function IASection() {
         </CardContent>
       </Card>
 
-      <Card className="animate-card-in shadow-lg shadow-primary/[0.03]">
+      <Card className="animate-card-in">
         <CardHeader>
           <CardTitle className="text-base">Metodologia de Vendas</CardTitle>
           <CardDescription>
@@ -460,7 +460,7 @@ function IASection() {
       </Card>
 
       <div className="flex justify-end">
-        <Button className="btn-lift bg-gradient-to-r from-primary to-violet-600 text-primary-foreground shadow-md shadow-primary/20">Salvar Configuracoes de IA</Button>
+        <Button className="btn-lift bg-gradient-to-r from-primary to-orange-600 text-primary-foreground shadow-md shadow-primary/10">Salvar Configuracoes de IA</Button>
       </div>
     </div>
   )
@@ -470,12 +470,12 @@ function PlaceholderSection({ title }: { title: string }) {
   return (
     <div className="space-y-6">
       <div>
-        <h3 className="text-lg font-semibold">{title}</h3>
+        <h3 className="font-display text-base font-semibold">{title}</h3>
       </div>
-      <Card className="animate-card-in shadow-lg shadow-primary/[0.03]">
+      <Card className="animate-card-in">
         <CardContent className="flex h-[300px] items-center justify-center">
           <div className="text-center">
-            <div className="flex size-14 items-center justify-center rounded-full bg-gradient-to-br from-primary/10 to-violet-500/10 mx-auto mb-3">
+            <div className="flex size-14 items-center justify-center rounded-full bg-gradient-to-br from-primary/10 to-orange-500/10 mx-auto mb-3">
               <Construction className="size-7 text-primary" />
             </div>
             <p className="text-lg font-medium">Em breve</p>

@@ -462,7 +462,7 @@ function ConversationItem({
           <div className="flex shrink-0 items-center gap-1.5">
             <ChannelBadge channel={conversation.channel} />
             {conversation.unreadCount > 0 && (
-              <Badge className="size-5 justify-center rounded-full px-0 text-[10px] shadow-[0_0_8px_2px_oklch(0.55_0.24_265/0.3)]">
+              <Badge className="size-5 justify-center rounded-md px-0 text-[10px] shadow-[0_0_8px_2px_oklch(0.55_0.24_265/0.3)]">
                 {conversation.unreadCount}
               </Badge>
             )}
@@ -603,7 +603,7 @@ function MessageInput({
   }
 
   return (
-    <form onSubmit={handleSubmit} className="glass flex items-end gap-2 border-t p-3">
+    <form onSubmit={handleSubmit} className="flex items-end gap-2 border-t p-3">
       <Button type="button" variant="ghost" size="icon-sm">
         <Paperclip className="size-4" />
       </Button>
@@ -701,7 +701,7 @@ function MessagePanel({
               Qualificar
             </Button>
           )}
-          <Badge className="bg-gradient-to-r from-violet-500/10 to-primary/10 text-violet-700 dark:text-violet-300 text-[10px]">
+          <Badge className="bg-gradient-to-r from-primary/10 to-orange-500/10 text-primary dark:text-primary text-[10px]">
             <Sparkles className="mr-1 size-2.5 animate-spin" style={{ animationDuration: "3s" }} />
             IA Ativa
           </Badge>
@@ -766,8 +766,8 @@ function AICopilotPanel({ conversation }: { conversation: Conversation }) {
 
   if (!expanded) {
     return (
-      <div className="hidden lg:flex flex-col items-center border-l bg-gradient-to-b from-violet-500/[0.03] to-transparent px-2 py-4">
-        <button onClick={() => setExpanded(true)} className="glow-primary flex size-10 items-center justify-center rounded-xl bg-gradient-to-br from-violet-500 to-primary text-white shadow-lg shadow-violet-500/25 transition-transform hover:scale-105">
+      <div className="hidden lg:flex flex-col items-center border-l bg-gradient-to-b from-primary/[0.03] to-transparent px-2 py-4">
+        <button onClick={() => setExpanded(true)} className="flex size-10 items-center justify-center rounded-xl bg-gradient-to-br from-primary to-orange-500 text-white shadow-lg shadow-primary/25 transition-transform hover:scale-105">
           <Sparkles className="size-5" />
         </button>
       </div>
@@ -775,11 +775,11 @@ function AICopilotPanel({ conversation }: { conversation: Conversation }) {
   }
 
   return (
-    <div className="hidden lg:flex w-[280px] shrink-0 flex-col border-l bg-gradient-to-b from-violet-500/[0.03] to-transparent">
+    <div className="hidden lg:flex w-[280px] shrink-0 flex-col border-l bg-gradient-to-b from-primary/[0.03] to-transparent">
       {/* Header */}
       <div className="flex items-center justify-between border-b px-4 py-3">
         <div className="flex items-center gap-2">
-          <div className="glow-primary flex size-7 items-center justify-center rounded-lg bg-gradient-to-br from-violet-500 to-primary text-white shadow-sm">
+          <div className="flex size-7 items-center justify-center rounded-lg bg-gradient-to-br from-primary to-orange-500 text-white shadow-sm">
             <Sparkles className="size-3.5 animate-spin" style={{ animationDuration: "3s" }} />
           </div>
           <div>
@@ -828,12 +828,12 @@ function AICopilotPanel({ conversation }: { conversation: Conversation }) {
           {/* Suggested Response */}
           <div className="space-y-2">
             <span className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">Resposta Sugerida</span>
-            <div className="rounded-lg border border-violet-200 dark:border-violet-800 bg-violet-500/5 p-3 space-y-2">
+            <div className="rounded-lg border border-primary/20 dark:border-primary/30 bg-primary/5 p-3 space-y-2">
               <p className="text-xs leading-relaxed text-foreground">
                 "Sim, {conversation.contactName.split(" ")[0]}! O treinamento online esta incluso no plano Enterprise. Inclui sessoes ao vivo semanais e acesso ilimitado ao material gravado. Posso preparar a proposta com o desconto de 20% no pagamento anual?"
               </p>
               <div className="flex gap-2">
-                <Button size="sm" className="h-7 text-[11px] btn-lift bg-gradient-to-r from-violet-500 to-primary text-white">
+                <Button size="sm" className="h-7 text-[11px] btn-lift bg-gradient-to-r from-primary to-orange-500 text-white">
                   <Check className="size-3 mr-1" />
                   Usar
                 </Button>

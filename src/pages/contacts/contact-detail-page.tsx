@@ -24,7 +24,6 @@ import {
   Mail,
   Phone,
   Briefcase,
-  TrendingUp,
   DollarSign,
   Target,
   Tag,
@@ -87,7 +86,7 @@ const activities = [
     id: "a3",
     type: "meeting",
     icon: Video,
-    iconColor: "text-violet-600",
+    iconColor: "text-primary",
     title: "Reuniao online - Demo do produto",
     date: "01/04/2026 - 15:00",
     description:
@@ -142,7 +141,7 @@ const interactions = [
     id: "i3",
     channel: "Video",
     icon: Video,
-    iconColor: "text-violet-600",
+    iconColor: "text-primary",
     direction: "Realizada",
     subject: "Demo do produto - Equipe Tech Solutions",
     date: "01/04/2026 - 15:00",
@@ -269,7 +268,7 @@ export function ContactDetailPage() {
       <div className="flex flex-col gap-6 sm:flex-row sm:items-start sm:justify-between">
         <div className="flex items-start gap-4">
           <Avatar size="lg" className="size-16">
-            <AvatarFallback className="bg-gradient-to-br from-primary/10 to-violet-500/10 text-primary text-lg">{contact.avatar}</AvatarFallback>
+            <AvatarFallback className="bg-gradient-to-br from-primary/10 to-orange-500/10 text-primary text-lg">{contact.avatar}</AvatarFallback>
           </Avatar>
           <div className="space-y-1">
             <h2 className="text-gradient text-2xl font-bold tracking-tight">
@@ -300,7 +299,7 @@ export function ContactDetailPage() {
             <Send className="size-4" />
             Enviar Email
           </Button>
-          <Button className="btn-lift bg-gradient-to-r from-primary to-violet-600 text-primary-foreground shadow-md shadow-primary/20">
+          <Button className="btn-lift bg-gradient-to-r from-primary to-orange-600 text-primary-foreground shadow-md shadow-primary/10">
             <Calendar className="size-4" />
             Agendar Reuniao
           </Button>
@@ -309,17 +308,17 @@ export function ContactDetailPage() {
 
       {/* Stats Row */}
       <div className="grid gap-4 sm:grid-cols-3">
-        <Card className="animate-card-in stagger-1 card-hover shadow-lg shadow-primary/[0.03] border-gradient">
+        <Card className="animate-card-in stagger-1 card-hover">
           <CardHeader className="flex flex-row items-center justify-between pb-2">
             <CardTitle className="text-sm font-medium">Lead Score</CardTitle>
-            <div className="flex size-8 items-center justify-center rounded-lg bg-gradient-to-br from-violet-500 to-primary text-white shadow-sm">
+            <div className="flex size-8 items-center justify-center rounded-lg bg-gradient-to-br from-primary to-orange-500 text-white shadow-sm">
               <Sparkles className="size-4" />
             </div>
           </CardHeader>
           <CardContent className="space-y-3">
             <div className="flex items-center gap-3">
               <div className="text-2xl font-bold">{contact.score}</div>
-              <Badge className="bg-gradient-to-r from-violet-500/10 to-primary/10 text-violet-700 dark:text-violet-300 text-[10px] border-violet-200 dark:border-violet-800">
+              <Badge className="bg-gradient-to-r from-primary/10 to-primary/10 text-primary dark:text-primary text-[10px] border-primary/20 dark:border-primary/30">
                 <Sparkles className="mr-1 size-2.5" />
                 Powered by AI
               </Badge>
@@ -348,10 +347,10 @@ export function ContactDetailPage() {
             </div>
           </CardContent>
         </Card>
-        <Card className="animate-card-in stagger-2 card-hover shadow-lg shadow-primary/[0.03]">
+        <Card className="animate-card-in stagger-2 card-hover">
           <CardHeader className="flex flex-row items-center justify-between pb-2">
             <CardTitle className="text-sm font-medium">Deals Ativos</CardTitle>
-            <div className="flex size-8 items-center justify-center rounded-lg bg-gradient-to-br from-primary/10 to-violet-500/10">
+            <div className="flex size-8 items-center justify-center rounded-lg bg-gradient-to-br from-primary/10 to-orange-500/10">
               <Target className="size-4 text-primary" />
             </div>
           </CardHeader>
@@ -362,10 +361,10 @@ export function ContactDetailPage() {
             </p>
           </CardContent>
         </Card>
-        <Card className="animate-card-in stagger-3 card-hover shadow-lg shadow-primary/[0.03]">
+        <Card className="animate-card-in stagger-3 card-hover">
           <CardHeader className="flex flex-row items-center justify-between pb-2">
             <CardTitle className="text-sm font-medium">Valor Total</CardTitle>
-            <div className="flex size-8 items-center justify-center rounded-lg bg-gradient-to-br from-primary/10 to-violet-500/10">
+            <div className="flex size-8 items-center justify-center rounded-lg bg-gradient-to-br from-primary/10 to-orange-500/10">
               <DollarSign className="size-4 text-primary" />
             </div>
           </CardHeader>
@@ -390,8 +389,8 @@ export function ContactDetailPage() {
 
         {/* Visao Geral Tab */}
         <TabsContent value="overview" className="space-y-6 pt-4">
-          <div className="flex items-center gap-3 rounded-xl border-gradient glass px-4 py-3 shadow-sm animate-card-in">
-            <div className="flex size-8 items-center justify-center rounded-lg bg-gradient-to-br from-violet-500 to-primary text-white shadow-sm">
+          <div className="flex items-center gap-3 rounded-xl px-4 py-3 shadow-sm animate-card-in">
+            <div className="flex size-8 items-center justify-center rounded-lg bg-gradient-to-br from-primary to-orange-500 text-white shadow-sm">
               <Sparkles className="size-4 animate-spin" style={{ animationDuration: "3s" }} />
             </div>
             <div className="flex-1">
@@ -415,7 +414,7 @@ export function ContactDetailPage() {
                   </span>
                   <Badge
                     variant="secondary"
-                    className="bg-violet-100 text-violet-700 dark:bg-violet-900 dark:text-violet-300"
+                    className="bg-primary/10 text-primary dark:bg-primary/20 dark:text-primary"
                   >
                     {contact.stage}
                   </Badge>
@@ -467,7 +466,7 @@ export function ContactDetailPage() {
                   {activities.map((activity, index) => (
                     <div key={activity.id} className="flex gap-3">
                       <div className="flex flex-col items-center">
-                        <div className="flex size-8 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-primary/5 to-violet-500/5 ring-4 ring-background">
+                        <div className="flex size-8 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-primary/5 to-orange-500/5 ring-4 ring-background">
                           <activity.icon
                             className={`size-4 ${activity.iconColor}`}
                           />
@@ -573,7 +572,7 @@ export function ContactDetailPage() {
         {/* Notas Tab */}
         <TabsContent value="notes" className="space-y-4 pt-4">
           <div className="flex justify-end">
-            <Button className="btn-lift bg-gradient-to-r from-primary to-violet-600 text-primary-foreground shadow-md shadow-primary/20">
+            <Button className="btn-lift bg-gradient-to-r from-primary to-orange-600 text-primary-foreground shadow-md shadow-primary/10">
               <FileText className="size-4" />
               Nova Nota
             </Button>
@@ -584,7 +583,7 @@ export function ContactDetailPage() {
                 <div className="flex items-center justify-between mb-2">
                   <div className="flex items-center gap-2">
                     <Avatar size="sm">
-                      <AvatarFallback className="bg-gradient-to-br from-primary/10 to-violet-500/10 text-primary text-[10px]">
+                      <AvatarFallback className="bg-gradient-to-br from-primary/10 to-orange-500/10 text-primary text-[10px]">
                         {note.author
                           .split(" ")
                           .map((n) => n[0])

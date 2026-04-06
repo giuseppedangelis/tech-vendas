@@ -17,7 +17,6 @@ import {
 } from "@/components/ui/table"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
-import { Progress } from "@/components/ui/progress"
 import {
   BarChart,
   Bar,
@@ -70,8 +69,8 @@ const stats = [
     value: "1.847",
     change: 12.5,
     icon: Users,
-    color: "text-blue-600 bg-blue-100 dark:text-blue-400 dark:bg-blue-950",
-    gradient: "from-blue-500 to-indigo-500",
+    color: "text-sky-600 bg-sky-50 dark:text-sky-400 dark:bg-sky-950",
+    gradient: "from-sky-500 to-cyan-500",
   },
   {
     title: "Deals Ativos",
@@ -79,8 +78,8 @@ const stats = [
     change: 8.3,
     icon: Handshake,
     color:
-      "text-violet-600 bg-violet-100 dark:text-violet-400 dark:bg-violet-950",
-    gradient: "from-violet-500 to-purple-500",
+      "text-primary bg-primary/10 dark:text-primary dark:bg-primary/15",
+    gradient: "from-primary to-orange-500",
   },
   {
     title: "Taxa de Conversao",
@@ -88,7 +87,7 @@ const stats = [
     change: 2.1,
     icon: TrendingUp,
     color:
-      "text-emerald-600 bg-emerald-100 dark:text-emerald-400 dark:bg-emerald-950",
+      "text-emerald-600 bg-emerald-50 dark:text-emerald-400 dark:bg-emerald-950",
     gradient: "from-emerald-500 to-teal-500",
   },
   {
@@ -97,7 +96,7 @@ const stats = [
     change: 15.7,
     icon: DollarSign,
     color:
-      "text-amber-600 bg-amber-100 dark:text-amber-400 dark:bg-amber-950",
+      "text-amber-600 bg-amber-50 dark:text-amber-400 dark:bg-amber-950",
     gradient: "from-amber-500 to-orange-500",
   },
 ]
@@ -111,11 +110,11 @@ const funnelData = [
 ]
 
 const FUNNEL_COLORS = [
-  "#3b82f6",
-  "#6366f1",
-  "#8b5cf6",
-  "#a855f7",
-  "#22c55e",
+  "#c4553a",
+  "#d97a2e",
+  "#b8863e",
+  "#5a9a7a",
+  "#2d8a6e",
 ]
 
 const teamRanking = [
@@ -224,8 +223,8 @@ const recentActivity = [
   {
     id: 3,
     icon: MessageSquare,
-    iconClass: "text-violet-600 dark:text-violet-400",
-    bgClass: "bg-violet-100 dark:bg-violet-950",
+    iconClass: "text-primary dark:text-primary",
+    bgClass: "bg-primary/10 dark:bg-primary/15",
     description: "Camila Santos enviou proposta para Tech Solutions",
     time: "1h atras",
   },
@@ -248,8 +247,8 @@ const recentActivity = [
   {
     id: 6,
     icon: MessageSquare,
-    iconClass: "text-violet-600 dark:text-violet-400",
-    bgClass: "bg-violet-100 dark:bg-violet-950",
+    iconClass: "text-primary dark:text-primary",
+    bgClass: "bg-primary/10 dark:bg-primary/15",
     description:
       "Bruno Oliveira respondeu mensagem de Ana Paula via WhatsApp",
     time: "4h atras",
@@ -266,25 +265,23 @@ const closerStats = [
     value: "18",
     change: null,
     icon: Users,
-    color: "text-blue-600 bg-blue-100 dark:text-blue-400 dark:bg-blue-950",
-    gradient: "from-blue-500 to-indigo-500",
+    color: "text-sky-600 bg-sky-50 dark:text-sky-400 dark:bg-sky-950",
+    gradient: "from-sky-500 to-cyan-500",
   },
   {
     title: "Deals em Negociacao",
     value: "5",
     change: null,
     icon: Handshake,
-    color:
-      "text-violet-600 bg-violet-100 dark:text-violet-400 dark:bg-violet-950",
-    gradient: "from-violet-500 to-purple-500",
+    color: "text-primary bg-primary/10 dark:text-primary dark:bg-primary/15",
+    gradient: "from-primary to-orange-500",
   },
   {
     title: "Minha Conversao",
     value: "28,7%",
     change: 3.2,
     icon: TrendingUp,
-    color:
-      "text-emerald-600 bg-emerald-100 dark:text-emerald-400 dark:bg-emerald-950",
+    color: "text-emerald-600 bg-emerald-50 dark:text-emerald-400 dark:bg-emerald-950",
     gradient: "from-emerald-500 to-teal-500",
   },
   {
@@ -292,8 +289,7 @@ const closerStats = [
     value: "R$ 42.800",
     change: 12,
     icon: DollarSign,
-    color:
-      "text-amber-600 bg-amber-100 dark:text-amber-400 dark:bg-amber-950",
+    color: "text-amber-600 bg-amber-50 dark:text-amber-400 dark:bg-amber-950",
     gradient: "from-amber-500 to-orange-500",
   },
 ]
@@ -370,8 +366,8 @@ const closerRecentActivity = [
   {
     id: 3,
     icon: MessageCircle,
-    iconClass: "text-violet-600 dark:text-violet-400",
-    bgClass: "bg-violet-100 dark:bg-violet-950",
+    iconClass: "text-primary dark:text-primary",
+    bgClass: "bg-primary/10 dark:bg-primary/15",
     description: "Mensagem WhatsApp para Andre Moreira (NextGen)",
     time: "2h atras",
   },
@@ -395,16 +391,15 @@ const sdrStats = [
     value: "34",
     change: null,
     icon: Filter,
-    color: "text-blue-600 bg-blue-100 dark:text-blue-400 dark:bg-blue-950",
-    gradient: "from-blue-500 to-indigo-500",
+    color: "text-sky-600 bg-sky-50 dark:text-sky-400 dark:bg-sky-950",
+    gradient: "from-sky-500 to-cyan-500",
   },
   {
     title: "Qualificados Hoje",
     value: "8",
     change: null,
     icon: UserCheck,
-    color:
-      "text-emerald-600 bg-emerald-100 dark:text-emerald-400 dark:bg-emerald-950",
+    color: "text-emerald-600 bg-emerald-50 dark:text-emerald-400 dark:bg-emerald-950",
     gradient: "from-emerald-500 to-teal-500",
   },
   {
@@ -412,17 +407,15 @@ const sdrStats = [
     value: "45,2%",
     change: null,
     icon: TrendingUp,
-    color:
-      "text-violet-600 bg-violet-100 dark:text-violet-400 dark:bg-violet-950",
-    gradient: "from-violet-500 to-purple-500",
+    color: "text-primary bg-primary/10 dark:text-primary dark:bg-primary/15",
+    gradient: "from-primary to-orange-500",
   },
   {
     title: "MQLs Gerados",
     value: "12",
     change: null,
     icon: Target,
-    color:
-      "text-amber-600 bg-amber-100 dark:text-amber-400 dark:bg-amber-950",
+    color: "text-amber-600 bg-amber-50 dark:text-amber-400 dark:bg-amber-950",
     gradient: "from-amber-500 to-orange-500",
   },
 ]
@@ -514,7 +507,7 @@ const roleLabels: Record<string, string> = {
 const roleBadgeClass: Record<string, string> = {
   admin: "bg-red-100 text-red-700 dark:bg-red-950 dark:text-red-400",
   gestor: "bg-blue-100 text-blue-700 dark:bg-blue-950 dark:text-blue-400",
-  closer: "bg-violet-100 text-violet-700 dark:bg-violet-950 dark:text-violet-400",
+  closer: "bg-primary/10 text-primary dark:bg-primary/15 dark:text-primary",
   sdr: "bg-emerald-100 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-400",
 }
 
@@ -523,15 +516,12 @@ function Greeting({ user }: { user: AuthUser }) {
     <div className="flex items-center gap-3">
       <div>
         <div className="flex items-center gap-2">
-          <h2 className="text-2xl font-bold tracking-tight">
-            <span className="text-gradient">Bom dia</span>, {user.name}
+          <h2 className="text-2xl font-semibold tracking-tight">
+            <span className="font-display text-gradient">Bom dia</span>, {user.name}
           </h2>
-          <Badge
-            variant="secondary"
-            className={roleBadgeClass[user.role] ?? ""}
-          >
+          <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-semibold leading-none ${roleBadgeClass[user.role] ?? ""}`}>
             {roleLabels[user.role] ?? user.role}
-          </Badge>
+          </span>
         </div>
       </div>
     </div>
@@ -644,28 +634,28 @@ function AIBriefing({ role, userName }: { role: string; userName: string }) {
     warning: { bg: "bg-amber-500/10", border: "border-l-amber-500", icon: "text-amber-600 dark:text-amber-400" },
     success: { bg: "bg-emerald-500/10", border: "border-l-emerald-500", icon: "text-emerald-600 dark:text-emerald-400" },
     insight: { bg: "bg-blue-500/10", border: "border-l-blue-500", icon: "text-blue-600 dark:text-blue-400" },
-    action: { bg: "bg-violet-500/10", border: "border-l-violet-500", icon: "text-violet-600 dark:text-violet-400" },
+    action: { bg: "bg-primary/10", border: "border-l-primary", icon: "text-primary dark:text-primary" },
   }
 
   return (
-    <Card className="border-gradient glass shadow-xl shadow-primary/[0.06] animate-card-in stagger-1 overflow-hidden">
-      {/* Animated gradient stripe */}
-      <div className="h-0.5 bg-gradient-to-r from-violet-500 via-primary to-emerald-500" />
+    <Card className="animate-card-in stagger-1 overflow-hidden relative">
+      <div className="absolute left-0 top-0 bottom-0 w-[3px] rounded-l-xl bg-gradient-to-b from-primary to-orange-500" />
 
-      <CardHeader className="pb-3">
-        <div className="flex items-center gap-3">
-          {/* Sparkle icon in gradient circle */}
-          <div className="flex size-10 items-center justify-center rounded-xl bg-gradient-to-br from-violet-500 to-primary text-white shadow-lg shadow-violet-500/25 glow-primary">
-            <Sparkles className="size-5 animate-spin" style={{ animationDuration: "3s" }} />
+      <CardHeader className="pb-2">
+        <div className="flex items-center gap-2.5">
+          <div className="flex size-8 items-center justify-center rounded-lg bg-primary/10 text-primary">
+            <Sparkles className="size-4" />
           </div>
-          <div className="flex items-center gap-2">
-            <CardTitle className="text-lg font-semibold text-gradient">{data.title}</CardTitle>
-            <Badge className="bg-gradient-to-r from-violet-500/10 to-primary/10 text-violet-700 dark:text-violet-300 border-violet-200 dark:border-violet-800">
-              Powered by AI
-            </Badge>
+          <div>
+            <div className="flex items-center gap-2">
+              <CardTitle className="font-display text-[15px]">{data.title}</CardTitle>
+              <span className="inline-flex items-center rounded-md bg-primary/8 px-1.5 py-0.5 text-[9px] font-semibold text-primary">
+                AI
+              </span>
+            </div>
           </div>
         </div>
-        <p className="text-sm text-muted-foreground mt-1">{data.summary}</p>
+        <p className="text-[13px] text-muted-foreground mt-1">{data.summary}</p>
       </CardHeader>
 
       <CardContent className="space-y-2 pb-4">
@@ -719,20 +709,18 @@ function StatCard({
     <Card
       className={`card-hover animate-card-in stagger-${index + 1}`}
     >
-      <CardHeader className="flex flex-row items-center justify-between pb-2">
-        <CardTitle className="text-sm font-medium text-muted-foreground">
+      <CardHeader className="flex flex-row items-center justify-between pb-1">
+        <CardTitle className="text-[12px] font-medium text-muted-foreground tracking-normal">
           {stat.title}
         </CardTitle>
-        <div
-          className={`rounded-lg p-2 bg-gradient-to-br ${stat.gradient} text-white shadow-sm`}
-        >
-          <Icon className="size-4" />
+        <div className={`rounded-md p-1.5 ${stat.color}`}>
+          <Icon className="size-3.5" />
         </div>
       </CardHeader>
       <CardContent>
-        <div className="text-3xl font-bold tracking-tight">{stat.value}</div>
+        <div className="font-display text-[1.625rem] font-semibold tracking-tight leading-none">{stat.value}</div>
         {stat.change !== null && (
-          <div className="mt-1 flex items-center gap-1 text-xs">
+          <div className="mt-1.5 flex items-center gap-1 text-xs">
             {isPositive ? (
               <ArrowUpRight className="size-3 text-emerald-600" />
             ) : (
@@ -741,8 +729,8 @@ function StatCard({
             <span
               className={
                 isPositive
-                  ? "font-medium text-emerald-600"
-                  : "font-medium text-red-600"
+                  ? "font-semibold text-emerald-600"
+                  : "font-semibold text-red-600"
               }
             >
               {isPositive ? "+" : ""}
@@ -799,10 +787,9 @@ function GestorDashboard({ user }: { user: AuthUser }) {
       {/* Middle Row: Funnel + Team */}
       <div className="grid gap-6 lg:grid-cols-5">
         {/* Funnel Chart */}
-        <Card className="lg:col-span-3 animate-card-in stagger-5 overflow-hidden border-t-2 border-t-primary/20"
-              style={{ borderImage: "linear-gradient(to right, #3b82f6, #8b5cf6, #22c55e) 1 0 0 0" }}>
+        <Card className="lg:col-span-3 animate-card-in stagger-5 overflow-hidden">
           <CardHeader>
-            <CardTitle className="text-lg font-semibold">Funil de Vendas</CardTitle>
+            <CardTitle className="font-display text-base font-semibold">Funil de Vendas</CardTitle>
             <CardDescription>
               Conversao entre etapas do pipeline
             </CardDescription>
@@ -863,13 +850,11 @@ function GestorDashboard({ user }: { user: AuthUser }) {
         </Card>
 
         {/* Team Ranking */}
-        <Card className="lg:col-span-2 animate-card-in stagger-6">
+        <Card className="lg:col-span-2 animate-card-in stagger-6 overflow-hidden">
           <CardHeader>
             <div className="flex items-center gap-2">
-              <div className="glow-primary rounded-md p-1">
-                <Trophy className="size-5 text-amber-500 drop-shadow-sm" />
-              </div>
-              <CardTitle className="text-lg font-semibold">Ranking do Time</CardTitle>
+              <Trophy className="size-4 text-amber-500" />
+              <CardTitle className="font-display text-base font-semibold">Ranking do Time</CardTitle>
             </div>
             <CardDescription>Desempenho dos vendedores este mes</CardDescription>
           </CardHeader>
@@ -941,14 +926,14 @@ function GestorDashboard({ user }: { user: AuthUser }) {
       {/* Bottom Row: AI Insights + Activity */}
       <div className="grid gap-6 lg:grid-cols-5">
         {/* AI Insights */}
-        <Card className="border-gradient lg:col-span-3 animate-card-in stagger-5">
+        <Card className="lg:col-span-3 animate-card-in stagger-5 overflow-hidden">
           <CardHeader>
             <div className="flex items-center gap-2">
-              <Sparkles className="size-4 text-violet-500 animate-spin" style={{ animationDuration: "4s" }} />
-              <CardTitle className="text-lg font-semibold">IA Gestora — Analise em Tempo Real</CardTitle>
-              <span className="relative flex size-2">
-                <span className="absolute inline-flex size-full animate-ping rounded-full bg-emerald-400 opacity-75" />
-                <span className="relative inline-flex size-2 rounded-full bg-emerald-500" />
+              <Sparkles className="size-3.5 text-primary" />
+              <CardTitle className="font-display text-base font-semibold">IA Gestora — Analise em Tempo Real</CardTitle>
+              <span className="relative flex size-1.5">
+                <span className="absolute inline-flex size-full animate-ping rounded-full bg-emerald-400 opacity-60" />
+                <span className="relative inline-flex size-1.5 rounded-full bg-emerald-500" />
               </span>
             </div>
             <CardDescription>
@@ -996,9 +981,9 @@ function GestorDashboard({ user }: { user: AuthUser }) {
         </Card>
 
         {/* Recent Activity */}
-        <Card className="lg:col-span-2 animate-card-in stagger-6">
+        <Card className="lg:col-span-2 animate-card-in stagger-6 overflow-hidden">
           <CardHeader>
-            <CardTitle className="text-lg font-semibold">Atividade Recente</CardTitle>
+            <CardTitle className="font-display text-base font-semibold">Atividade Recente</CardTitle>
             <CardDescription>Ultimas interacoes do time</CardDescription>
           </CardHeader>
           <CardContent className="px-0">
@@ -1045,13 +1030,13 @@ function CloserDashboard({ user }: { user: AuthUser }) {
       {/* Middle Row: Lead Lock + Tasks */}
       <div className="grid gap-6 lg:grid-cols-5">
         {/* Proximo Lead (Lead Lock) -- HERO element */}
-        <Card className="border-gradient bg-gradient-to-br from-violet-50/50 to-background dark:from-violet-950/30 lg:col-span-2 animate-card-in stagger-5">
+        <Card className="bg-gradient-to-br from-primary/[0.03] to-background dark:from-primary/[0.06] lg:col-span-2 animate-card-in stagger-5 overflow-hidden">
           <CardHeader className="pb-3">
             <div className="flex items-center gap-2">
-              <div className="rounded-md bg-gradient-to-br from-violet-500 to-purple-500 p-1.5">
+              <div className="rounded-md bg-gradient-to-br from-primary to-orange-600 p-1.5">
                 <Target className="size-4 text-white" />
               </div>
-              <CardTitle className="text-lg font-semibold">Proximo Lead</CardTitle>
+              <CardTitle className="font-display text-base font-semibold">Proximo Lead</CardTitle>
             </div>
             <CardDescription>
               Foque neste lead antes de avancar
@@ -1072,9 +1057,9 @@ function CloserDashboard({ user }: { user: AuthUser }) {
                 </div>
                 <p className="text-sm text-muted-foreground">TechCorp</p>
               </div>
-              <div className="flex flex-col items-center rounded-xl bg-gradient-to-br from-violet-100 to-violet-50 px-4 py-2 dark:from-violet-950 dark:to-violet-900/50 shadow-sm">
-                <span className="text-xs text-muted-foreground">Score</span>
-                <span className="text-2xl font-bold text-violet-700 dark:text-violet-400">
+              <div className="flex flex-col items-center rounded-lg bg-primary/[0.06] px-4 py-2 dark:bg-primary/10">
+                <span className="text-[11px] text-muted-foreground">Score</span>
+                <span className="font-display text-2xl font-semibold text-primary">
                   92
                 </span>
               </div>
@@ -1086,7 +1071,7 @@ function CloserDashboard({ user }: { user: AuthUser }) {
             </div>
 
             <Button
-              className="w-full btn-lift bg-gradient-to-r from-violet-600 to-purple-600 hover:from-violet-700 hover:to-purple-700 text-white shadow-md"
+              className="w-full btn-lift bg-gradient-to-r from-primary to-orange-600 hover:from-primary/90 hover:to-orange-600/90 text-white shadow-sm"
               asChild
             >
               <Link to="/inbox">
@@ -1098,11 +1083,11 @@ function CloserDashboard({ user }: { user: AuthUser }) {
         </Card>
 
         {/* Minhas Tarefas Pendentes */}
-        <Card className="lg:col-span-3 animate-card-in stagger-6">
+        <Card className="lg:col-span-3 animate-card-in stagger-6 overflow-hidden">
           <CardHeader>
             <div className="flex items-center gap-2">
-              <ListChecks className="size-4 text-blue-500" />
-              <CardTitle className="text-lg font-semibold">Minhas Tarefas Pendentes</CardTitle>
+              <ListChecks className="size-4 text-sky-500" />
+              <CardTitle className="font-display text-base font-semibold">Minhas Tarefas Pendentes</CardTitle>
             </div>
             <CardDescription>
               {closerTasks.length} tarefas para hoje
@@ -1150,14 +1135,14 @@ function CloserDashboard({ user }: { user: AuthUser }) {
       {/* Bottom Row: IA Copilot + Activity */}
       <div className="grid gap-6 lg:grid-cols-5">
         {/* IA Copilot Proximos Passos */}
-        <Card className="border-gradient lg:col-span-3 animate-card-in stagger-5">
+        <Card className="lg:col-span-3 animate-card-in stagger-5 overflow-hidden">
           <CardHeader>
             <div className="flex items-center gap-2">
-              <Sparkles className="size-4 text-violet-500 animate-spin" style={{ animationDuration: "4s" }} />
-              <CardTitle className="text-lg font-semibold">IA Copilot — Proximos Passos</CardTitle>
-              <span className="relative flex size-2">
-                <span className="absolute inline-flex size-full animate-ping rounded-full bg-emerald-400 opacity-75" />
-                <span className="relative inline-flex size-2 rounded-full bg-emerald-500" />
+              <Sparkles className="size-3.5 text-primary" />
+              <CardTitle className="font-display text-base font-semibold">IA Copilot — Proximos Passos</CardTitle>
+              <span className="relative flex size-1.5">
+                <span className="absolute inline-flex size-full animate-ping rounded-full bg-emerald-400 opacity-60" />
+                <span className="relative inline-flex size-1.5 rounded-full bg-emerald-500" />
               </span>
             </div>
             <CardDescription>
@@ -1187,7 +1172,7 @@ function CloserDashboard({ user }: { user: AuthUser }) {
                 <div className="flex shrink-0 items-center gap-1.5 self-center">
                   <Button
                     size="sm"
-                    className="btn-lift bg-gradient-to-r from-violet-600 to-primary text-white text-xs h-7 px-3"
+                    className="btn-lift bg-gradient-to-r from-primary to-orange-600 text-white text-xs h-7 px-3"
                   >
                     Aceitar
                   </Button>
@@ -1205,9 +1190,9 @@ function CloserDashboard({ user }: { user: AuthUser }) {
         </Card>
 
         {/* Minha Atividade Recente */}
-        <Card className="lg:col-span-2 animate-card-in stagger-6">
+        <Card className="lg:col-span-2 animate-card-in stagger-6 overflow-hidden">
           <CardHeader>
-            <CardTitle className="text-lg font-semibold">Minha Atividade Recente</CardTitle>
+            <CardTitle className="font-display text-base font-semibold">Minha Atividade Recente</CardTitle>
             <CardDescription>Suas ultimas interacoes</CardDescription>
           </CardHeader>
           <CardContent className="px-0">
@@ -1254,11 +1239,11 @@ function SDRDashboard({ user }: { user: AuthUser }) {
       {/* Middle Row: Qualification Queue + Cadence */}
       <div className="grid gap-6 lg:grid-cols-5">
         {/* Fila de Qualificacao */}
-        <Card className="lg:col-span-3 animate-card-in stagger-5">
+        <Card className="lg:col-span-3 animate-card-in stagger-5 overflow-hidden">
           <CardHeader>
             <div className="flex items-center gap-2">
-              <Filter className="size-4 text-blue-500" />
-              <CardTitle className="text-lg font-semibold">Fila de Qualificacao</CardTitle>
+              <Filter className="size-4 text-sky-500" />
+              <CardTitle className="font-display text-base font-semibold">Fila de Qualificacao</CardTitle>
             </div>
             <CardDescription>
               {qualificationQueue.length} leads aguardando qualificacao
@@ -1300,14 +1285,14 @@ function SDRDashboard({ user }: { user: AuthUser }) {
                       </span>
                     </div>
                     <div className="flex items-center gap-1 pt-0.5">
-                      <Sparkles className="size-3 text-violet-500" />
-                      <span className="text-xs text-violet-600 dark:text-violet-400">{lead.aiSuggestion}</span>
+                      <Sparkles className="size-3 text-primary" />
+                      <span className="text-xs text-primary dark:text-primary">{lead.aiSuggestion}</span>
                     </div>
                   </div>
                 </div>
                 <Button
                   size="sm"
-                  className="btn-lift bg-gradient-to-r from-primary to-violet-600 text-primary-foreground hover:from-primary/90 hover:to-violet-600/90 shadow-sm"
+                  className="btn-lift bg-gradient-to-r from-primary to-orange-600 text-white hover:from-primary/90 hover:to-orange-600/90 shadow-sm"
                 >
                   Qualificar
                   <ChevronRight className="size-3" />
@@ -1320,18 +1305,18 @@ function SDRDashboard({ user }: { user: AuthUser }) {
         {/* Cadencia do Dia + Leads Recentes (stacked) */}
         <div className="space-y-6 lg:col-span-2">
           {/* Cadencia do Dia */}
-          <Card className="animate-card-in stagger-5">
+          <Card className="animate-card-in stagger-5 overflow-hidden">
             <CardHeader>
               <div className="flex items-center gap-2">
                 <Zap className="size-4 text-amber-500" />
-                <CardTitle className="text-lg font-semibold">Cadencia do Dia</CardTitle>
+                <CardTitle className="font-display text-base font-semibold">Cadencia do Dia</CardTitle>
               </div>
               <CardDescription>Progresso de contatos hoje</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="flex items-end justify-between">
                 <div>
-                  <span className="text-3xl font-bold">8</span>
+                  <span className="font-display text-3xl font-semibold">8</span>
                   <span className="text-lg text-muted-foreground">/15</span>
                 </div>
                 <span className="text-sm text-muted-foreground">
@@ -1352,9 +1337,9 @@ function SDRDashboard({ user }: { user: AuthUser }) {
           </Card>
 
           {/* Leads Recentes */}
-          <Card className="animate-card-in stagger-6">
+          <Card className="animate-card-in stagger-6 overflow-hidden">
             <CardHeader>
-              <CardTitle className="text-lg font-semibold">Leads Recentes</CardTitle>
+              <CardTitle className="font-display text-base font-semibold">Leads Recentes</CardTitle>
               <CardDescription>Ultimos leads que chegaram</CardDescription>
             </CardHeader>
             <CardContent className="px-0">

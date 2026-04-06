@@ -1,11 +1,4 @@
 import { SidebarTrigger } from "@/components/ui/sidebar"
-import { Separator } from "@/components/ui/separator"
-import {
-  Breadcrumb,
-  BreadcrumbItem,
-  BreadcrumbList,
-  BreadcrumbPage,
-} from "@/components/ui/breadcrumb"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -15,7 +8,6 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
-import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Bell, Settings, LogOut, User, Sparkles } from "lucide-react"
 import { useLocation, useNavigate } from "react-router-dom"
@@ -59,97 +51,78 @@ export function AppHeader() {
   }
 
   return (
-    <header className="glass sticky top-0 z-30 flex h-14 items-center gap-4 border-b border-border/50 px-6 shadow-sm shadow-primary/[0.02]">
-      <SidebarTrigger className="transition-all duration-200 hover:text-primary" />
-      <Separator orientation="vertical" className="h-6 bg-border/40" />
+    <header className="sticky top-0 z-30 flex h-[52px] items-center gap-3 border-b border-border bg-background px-5">
+      <SidebarTrigger className="text-muted-foreground/60 hover:text-foreground transition-colors" />
 
-      <Breadcrumb>
-        <BreadcrumbList>
-          <BreadcrumbItem>
-            <BreadcrumbPage className="text-base font-semibold tracking-tight">
-              {pageName}
-            </BreadcrumbPage>
-          </BreadcrumbItem>
-        </BreadcrumbList>
-      </Breadcrumb>
+      <div className="h-4 w-px bg-border" />
+
+      <h1 className="text-sm font-semibold tracking-tight text-foreground">
+        {pageName}
+      </h1>
 
       <div className="flex-1" />
 
-      {/* AI Status Indicator */}
-      <div className="hidden sm:flex items-center gap-2 rounded-full border border-violet-200 dark:border-violet-800 bg-gradient-to-r from-violet-500/5 to-primary/5 px-3 py-1.5 mr-2">
-        <div className="glow-primary flex size-5 items-center justify-center rounded-md bg-gradient-to-br from-violet-500 to-primary text-white">
-          <Sparkles className="size-3 animate-spin" style={{ animationDuration: "3s" }} />
-        </div>
-        <div className="flex flex-col">
-          <span className="text-[10px] font-semibold leading-tight">IA Ativa</span>
-          <div className="flex items-center gap-1">
-            <span className="relative flex size-1"><span className="absolute inline-flex size-full animate-ping rounded-full bg-emerald-400 opacity-75" /><span className="relative inline-flex size-1 rounded-full bg-emerald-500" /></span>
-            <span className="text-[9px] text-emerald-600 dark:text-emerald-400 leading-tight">Monitorando</span>
-          </div>
-        </div>
+      {/* AI Status */}
+      <div className="hidden sm:flex items-center gap-1.5 rounded-md bg-muted/60 px-2 py-1">
+        <Sparkles className="size-3 text-primary/70" />
+        <span className="text-[11px] font-medium text-muted-foreground">IA</span>
+        <span className="relative flex size-1.5">
+          <span className="absolute inline-flex size-full animate-ping rounded-full bg-emerald-400 opacity-50" />
+          <span className="relative inline-flex size-1.5 rounded-full bg-emerald-500" />
+        </span>
       </div>
 
-      <div className="flex items-center gap-2">
+      <div className="flex items-center gap-0.5">
         <Button
           variant="ghost"
-          size="icon"
-          className="relative transition-all duration-200 hover:bg-primary/5 hover:text-primary"
+          size="icon-sm"
+          className="relative text-muted-foreground/60 hover:text-foreground"
         >
           <Bell className="size-4" />
-          <Badge
-            variant="destructive"
-            className="absolute -top-1 -right-1 flex h-4 min-w-4 animate-pulse items-center justify-center rounded-full px-1 text-[10px] shadow-sm"
-          >
+          <span className="absolute -top-0.5 -right-0.5 flex size-[14px] items-center justify-center rounded-full bg-primary text-[8px] font-bold text-primary-foreground">
             3
-          </Badge>
-          <span className="sr-only">Notificacoes</span>
+          </span>
         </Button>
 
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button
               variant="ghost"
-              size="icon"
-              className="rounded-full transition-all duration-200 hover:ring-2 hover:ring-primary/20"
+              size="icon-sm"
+              className="rounded-full"
             >
-              <Avatar className="transition-all duration-200">
-                <AvatarFallback className="bg-gradient-to-br from-primary/10 to-violet-500/10 text-xs font-medium text-primary">
+              <Avatar className="size-6">
+                <AvatarFallback className="bg-muted text-[9px] font-semibold text-muted-foreground">
                   {user?.initials ?? "?"}
                 </AvatarFallback>
               </Avatar>
             </Button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="w-56 shadow-lg shadow-primary/[0.04]">
+          <DropdownMenuContent align="end" className="w-48">
             <DropdownMenuLabel className="font-normal">
-              <div className="flex flex-col gap-1">
-                <p className="text-sm font-medium">{user?.name}</p>
-                <p className="text-xs text-muted-foreground">{user?.email}</p>
+              <div className="flex flex-col gap-0.5">
+                <p className="text-[13px] font-medium">{user?.name}</p>
+                <p className="text-[11px] text-muted-foreground">{user?.email}</p>
                 {user && (
-                  <Badge variant="outline" className="w-fit text-[10px] mt-0.5 border-primary/20">
+                  <span className="mt-1 inline-flex w-fit rounded-md bg-primary/8 px-1.5 py-0.5 text-[10px] font-medium text-primary">
                     {roleLabels[user.role]}
-                  </Badge>
+                  </span>
                 )}
               </div>
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
-            <DropdownMenuItem
-              onClick={() => navigate("/settings")}
-              className="transition-colors duration-150 cursor-pointer"
-            >
+            <DropdownMenuItem onClick={() => navigate("/settings")} className="cursor-pointer">
               <User className="size-4" />
               Perfil
             </DropdownMenuItem>
-            <DropdownMenuItem
-              onClick={() => navigate("/settings")}
-              className="transition-colors duration-150 cursor-pointer"
-            >
+            <DropdownMenuItem onClick={() => navigate("/settings")} className="cursor-pointer">
               <Settings className="size-4" />
               Configuracoes
             </DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem
               onClick={handleLogout}
-              className="text-destructive transition-colors duration-150 cursor-pointer focus:text-destructive"
+              className="text-destructive cursor-pointer focus:text-destructive"
             >
               <LogOut className="size-4" />
               Sair

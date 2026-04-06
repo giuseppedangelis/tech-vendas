@@ -232,7 +232,7 @@ function SourcePieChart() {
 function FunnelTab() {
   return (
     <div className="space-y-6">
-      <Card className="animate-card-in border-t-2 border-t-primary/20 shadow-lg shadow-primary/[0.03]">
+      <Card className="animate-card-in border-t-2 border-t-primary/20">
         <CardHeader>
           <CardTitle>Funil de Vendas</CardTitle>
           <CardDescription>
@@ -245,7 +245,7 @@ function FunnelTab() {
       </Card>
 
       <div className="grid gap-4 md:grid-cols-2">
-        <Card className="animate-card-in shadow-lg shadow-primary/[0.03]">
+        <Card className="animate-card-in">
           <CardHeader>
             <CardTitle className="text-base">Taxas de Conversao</CardTitle>
             <CardDescription>
@@ -268,7 +268,7 @@ function FunnelTab() {
           </CardContent>
         </Card>
 
-        <Card className="animate-card-in shadow-lg shadow-primary/[0.03]">
+        <Card className="animate-card-in">
           <CardHeader>
             <CardTitle className="text-base">Motivos de Perda</CardTitle>
             <CardDescription>
@@ -287,7 +287,7 @@ function FunnelTab() {
 function TimeTab() {
   return (
     <div className="space-y-6">
-      <Card className="animate-card-in shadow-lg shadow-primary/[0.03]">
+      <Card className="animate-card-in">
         <CardHeader>
           <CardTitle>Ranking de Vendedores</CardTitle>
           <CardDescription>
@@ -335,7 +335,7 @@ function TimeTab() {
         </CardContent>
       </Card>
 
-      <Card className="animate-card-in shadow-lg shadow-primary/[0.03]">
+      <Card className="animate-card-in">
         <CardHeader>
           <CardTitle>Receita por Vendedor</CardTitle>
           <CardDescription>
@@ -381,7 +381,7 @@ function AtribuicaoTab() {
       </div>
 
       <div className="grid gap-4 md:grid-cols-2">
-        <Card className="animate-card-in shadow-lg shadow-primary/[0.03]">
+        <Card className="animate-card-in">
           <CardHeader>
             <CardTitle className="text-base">Distribuicao por Fonte</CardTitle>
             <CardDescription>
@@ -393,7 +393,7 @@ function AtribuicaoTab() {
           </CardContent>
         </Card>
 
-        <Card className="animate-card-in shadow-lg shadow-primary/[0.03]">
+        <Card className="animate-card-in">
           <CardHeader>
             <CardTitle className="text-base">Rastreamento UTM</CardTitle>
             <CardDescription>
@@ -403,7 +403,7 @@ function AtribuicaoTab() {
           <CardContent>
             <div className="flex h-[240px] items-center justify-center rounded-lg border border-dashed">
               <div className="text-center">
-                <div className="flex size-12 items-center justify-center rounded-full bg-gradient-to-br from-primary/10 to-violet-500/10 mx-auto mb-3">
+                <div className="flex size-12 items-center justify-center rounded-full bg-gradient-to-br from-primary/10 to-orange-500/10 mx-auto mb-3">
                   <Share2 className="size-6 text-primary" />
                 </div>
                 <p className="text-sm font-medium text-muted-foreground">
@@ -492,7 +492,7 @@ function RecorrenciaTab() {
         ))}
       </div>
 
-      <Card className="animate-card-in shadow-lg shadow-primary/[0.03]">
+      <Card className="animate-card-in">
         <CardHeader>
           <CardTitle>Evolucao do MRR</CardTitle>
           <CardDescription>
@@ -502,7 +502,7 @@ function RecorrenciaTab() {
         <CardContent>
           <div className="flex h-[240px] items-center justify-center rounded-lg border border-dashed">
             <div className="text-center">
-              <div className="flex size-12 items-center justify-center rounded-full bg-gradient-to-br from-primary/10 to-violet-500/10 mx-auto mb-3">
+              <div className="flex size-12 items-center justify-center rounded-full bg-gradient-to-br from-primary/10 to-orange-500/10 mx-auto mb-3">
                 <BarChart3 className="size-6 text-primary" />
               </div>
               <p className="text-sm text-muted-foreground">

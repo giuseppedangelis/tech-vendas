@@ -8,6 +8,7 @@ import {
   BarChart3,
   Settings,
   LogOut,
+  Flame,
 } from "lucide-react"
 import { useLocation, Link, useNavigate } from "react-router-dom"
 import {
@@ -24,7 +25,6 @@ import {
   SidebarMenuItem,
 } from "@/components/ui/sidebar"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
-import { Badge } from "@/components/ui/badge"
 import { useAuth, canAccess } from "@/hooks/use-auth"
 import type { LucideIcon } from "lucide-react"
 
@@ -71,11 +71,11 @@ const allMenuGroups: MenuGroup[] = [
   },
 ]
 
-const roleBadgeColors: Record<string, string> = {
-  admin: "bg-purple-100 text-purple-700 dark:bg-purple-900 dark:text-purple-300",
-  gestor: "bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300",
-  closer: "bg-emerald-100 text-emerald-700 dark:bg-emerald-900 dark:text-emerald-300",
-  sdr: "bg-amber-100 text-amber-700 dark:bg-amber-900 dark:text-amber-300",
+const roleColors: Record<string, string> = {
+  admin: "bg-rose-500/20 text-rose-300",
+  gestor: "bg-sky-500/20 text-sky-300",
+  closer: "bg-emerald-500/20 text-emerald-300",
+  sdr: "bg-amber-500/20 text-amber-300",
 }
 
 const roleLabels: Record<string, string> = {
@@ -94,7 +94,6 @@ export function AppSidebar() {
     return location.pathname === path || location.pathname.startsWith(path + "/")
   }
 
-  // Filter menu items by role
   const menuGroups = allMenuGroups
     .map((group) => ({
       ...group,
@@ -111,21 +110,26 @@ export function AppSidebar() {
 
   return (
     <Sidebar>
-      <SidebarHeader className="border-b border-sidebar-border/60 px-6 py-4">
-        <Link to="/dashboard" className="flex items-center gap-3 transition-opacity duration-200 hover:opacity-80">
-          <div className="flex size-9 items-center justify-center rounded-xl bg-gradient-to-br from-primary to-violet-600 text-primary-foreground shadow-md shadow-primary/20">
-            <Kanban className="size-4" />
+      <SidebarHeader className="border-b border-white/[0.06] px-5 py-5">
+        <Link to="/dashboard" className="flex items-center gap-3 group">
+          <div className="flex size-8 items-center justify-center rounded-lg bg-gradient-to-br from-primary to-orange-500 shadow-lg shadow-primary/10 transition-transform duration-200 group-hover:scale-[1.04]">
+            <Flame className="size-4 text-white" />
           </div>
-          <span className="text-gradient text-lg font-bold tracking-tight">
-            Tech Vendas Pro
-          </span>
+          <div className="flex flex-col gap-0">
+            <span className="font-display text-sm font-semibold tracking-tight text-white/95">
+              Tech Vendas
+            </span>
+            <span className="text-[9px] font-medium uppercase tracking-[0.18em] text-white/30">
+              Pro
+            </span>
+          </div>
         </Link>
       </SidebarHeader>
 
-      <SidebarContent className="px-2">
+      <SidebarContent className="px-3 py-3">
         {menuGroups.map((group, groupIndex) => (
-          <SidebarGroup key={group.label} className="animate-card-in" style={{ animationDelay: `${groupIndex * 0.05}s` }}>
-            <SidebarGroupLabel className="px-3 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground/70">
+          <SidebarGroup key={group.label}>
+            <SidebarGroupLabel className="px-3 mb-0.5 text-[10px] font-semibold uppercase tracking-[0.16em] text-white/25">
               {group.label}
             </SidebarGroupLabel>
             <SidebarGroupContent>
@@ -137,19 +141,19 @@ export function AppSidebar() {
                       <SidebarMenuButton
                         asChild
                         isActive={active}
-                        className={`transition-all duration-200 ${
+                        className={`rounded-lg px-3 py-[7px] transition-all duration-150 ${
                           active
-                            ? "border-l-[3px] border-l-primary bg-primary/[0.06] font-medium text-primary"
-                            : "border-l-[3px] border-l-transparent hover:bg-accent/50 hover:border-l-primary/30"
+                            ? "bg-white/[0.07] text-white font-medium"
+                            : "text-white/50 hover:bg-white/[0.04] hover:text-white/80"
                         }`}
                       >
                         <Link to={item.path}>
                           <item.icon className={`size-4 ${active ? "text-primary" : ""}`} />
-                          <span>{item.title}</span>
+                          <span className="text-[13px]">{item.title}</span>
                         </Link>
                       </SidebarMenuButton>
                       {item.badge != null && item.badge > 0 && (
-                        <SidebarMenuBadge className="bg-primary/10 text-primary font-semibold">
+                        <SidebarMenuBadge className="bg-primary text-white text-[10px] font-semibold min-w-5 h-5 rounded-md">
                           {item.badge}
                         </SidebarMenuBadge>
                       )}
@@ -158,41 +162,39 @@ export function AppSidebar() {
                 })}
               </SidebarMenu>
             </SidebarGroupContent>
-            {/* Gradient separator between groups */}
             {groupIndex < menuGroups.length - 1 && (
-              <div className="mx-3 mt-1 h-px bg-gradient-to-r from-transparent via-border/60 to-transparent" />
+              <div className="mx-3 mt-2 mb-1 h-px bg-white/[0.04]" />
             )}
           </SidebarGroup>
         ))}
       </SidebarContent>
 
-      <SidebarFooter className="border-t border-sidebar-border/60 p-4">
-        <div className="flex items-center gap-3">
-          <Avatar className="ring-2 ring-primary/20 transition-all duration-200 hover:ring-primary/40">
-            <AvatarFallback className="bg-gradient-to-br from-primary/10 to-violet-500/10 text-xs font-medium text-primary">
+      <SidebarFooter className="border-t border-white/[0.06] p-4">
+        <div className="flex items-center gap-2.5">
+          <Avatar className="size-7">
+            <AvatarFallback className="bg-white/[0.07] text-[10px] font-semibold text-white/70">
               {user?.initials ?? "?"}
             </AvatarFallback>
           </Avatar>
-          <div className="flex flex-1 flex-col text-sm leading-tight min-w-0">
+          <div className="flex flex-1 flex-col min-w-0">
             <div className="flex items-center gap-1.5">
-              <span className="font-medium truncate">{user?.name ?? "Usuario"}</span>
+              <span className="text-[12px] font-medium text-white/80 truncate">
+                {user?.name ?? "Usuario"}
+              </span>
               {user && (
-                <Badge
-                  variant="secondary"
-                  className={`text-[9px] px-1.5 py-0 leading-tight shrink-0 shadow-sm ${roleBadgeColors[user.role]}`}
-                >
+                <span className={`inline-flex items-center rounded-md px-1.5 py-[1px] text-[9px] font-semibold leading-none ${roleColors[user.role]}`}>
                   {roleLabels[user.role]}
-                </Badge>
+                </span>
               )}
             </div>
-            <span className="text-xs text-muted-foreground truncate">{user?.email}</span>
+            <span className="text-[10px] text-white/30 truncate">{user?.email}</span>
           </div>
           <button
             onClick={handleLogout}
-            className="rounded-md p-1.5 text-muted-foreground transition-all duration-200 hover:bg-destructive/10 hover:text-destructive shrink-0"
+            className="rounded-md p-1.5 text-white/25 transition-colors duration-150 hover:bg-white/[0.05] hover:text-red-400 shrink-0"
             aria-label="Sair"
           >
-            <LogOut className="size-4" />
+            <LogOut className="size-3.5" />
           </button>
         </div>
       </SidebarFooter>

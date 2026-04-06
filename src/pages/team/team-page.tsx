@@ -122,14 +122,14 @@ const roleBadgeVariant: Record<Role, "default" | "secondary" | "outline"> = {
 }
 
 const roleColors: Record<Role, string> = {
-  Admin: "bg-violet-500/10 text-violet-700 dark:text-violet-400",
+  Admin: "bg-primary/10 text-primary dark:text-primary",
   Gestor: "bg-blue-500/10 text-blue-700 dark:text-blue-400",
   Closer: "bg-emerald-500/10 text-emerald-700 dark:text-emerald-400",
   SDR: "bg-amber-500/10 text-amber-700 dark:text-amber-400",
 }
 
 const avatarColors: Record<Role, string> = {
-  Admin: "bg-violet-100 text-violet-700 dark:bg-violet-900/40 dark:text-violet-300",
+  Admin: "bg-primary/10 text-primary dark:bg-primary/20 dark:text-primary",
   Gestor: "bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-300",
   Closer: "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-300",
   SDR: "bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-300",
@@ -154,7 +154,7 @@ export function TeamPage() {
         </div>
         <Dialog open={inviteOpen} onOpenChange={setInviteOpen}>
           <DialogTrigger asChild>
-            <Button className="btn-lift bg-gradient-to-r from-primary to-violet-600 text-primary-foreground shadow-md shadow-primary/20">
+            <Button className="btn-lift bg-gradient-to-r from-primary to-orange-600 text-primary-foreground shadow-md shadow-primary/10">
               <UserPlus className="mr-1.5 size-4" />
               Convidar Membro
             </Button>
@@ -209,12 +209,12 @@ export function TeamPage() {
 
       {/* Summary Stats */}
       <div className="grid gap-4 sm:grid-cols-3">
-        <Card className="animate-card-in stagger-1 card-hover shadow-lg shadow-primary/[0.03]">
+        <Card className="animate-card-in stagger-1 card-hover">
           <CardHeader className="flex flex-row items-center justify-between pb-2">
             <CardTitle className="text-sm font-medium">
               Total Membros
             </CardTitle>
-            <div className="flex size-8 items-center justify-center rounded-lg bg-gradient-to-br from-primary/10 to-violet-500/10">
+            <div className="flex size-8 items-center justify-center rounded-lg bg-gradient-to-br from-primary/10 to-orange-500/10">
               <Users className="size-4 text-primary" />
             </div>
           </CardHeader>
@@ -225,10 +225,10 @@ export function TeamPage() {
             </p>
           </CardContent>
         </Card>
-        <Card className="animate-card-in stagger-2 card-hover shadow-lg shadow-primary/[0.03]">
+        <Card className="animate-card-in stagger-2 card-hover">
           <CardHeader className="flex flex-row items-center justify-between pb-2">
             <CardTitle className="text-sm font-medium">Online Agora</CardTitle>
-            <div className="flex size-8 items-center justify-center rounded-lg bg-gradient-to-br from-primary/10 to-violet-500/10">
+            <div className="flex size-8 items-center justify-center rounded-lg bg-gradient-to-br from-primary/10 to-orange-500/10">
               <Wifi className="size-4 text-primary" />
             </div>
           </CardHeader>
@@ -239,12 +239,12 @@ export function TeamPage() {
             </p>
           </CardContent>
         </Card>
-        <Card className="animate-card-in stagger-3 card-hover shadow-lg shadow-primary/[0.03]">
+        <Card className="animate-card-in stagger-3 card-hover">
           <CardHeader className="flex flex-row items-center justify-between pb-2">
             <CardTitle className="text-sm font-medium">
               Media de Conversao
             </CardTitle>
-            <div className="flex size-8 items-center justify-center rounded-lg bg-gradient-to-br from-primary/10 to-violet-500/10">
+            <div className="flex size-8 items-center justify-center rounded-lg bg-gradient-to-br from-primary/10 to-orange-500/10">
               <TrendingUp className="size-4 text-primary" />
             </div>
           </CardHeader>
@@ -260,12 +260,12 @@ export function TeamPage() {
       {/* Team Grid */}
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {teamMembers.map((member, index) => (
-          <Card key={member.id} className={`card-hover animate-card-in stagger-${(index % 5) + 1} shadow-lg shadow-primary/[0.03]`}>
+          <Card key={member.id} className={`card-hover animate-card-in stagger-${(index % 5) + 1}`}>
             <CardHeader>
               <div className="flex items-start justify-between">
                 <div className="flex items-center gap-3">
                   <div className="relative">
-                    <Avatar size="lg" className="ring-2 ring-primary/20">
+                    <Avatar size="lg">
                       <AvatarFallback className={avatarColors[member.role]}>
                         {member.initials}
                       </AvatarFallback>

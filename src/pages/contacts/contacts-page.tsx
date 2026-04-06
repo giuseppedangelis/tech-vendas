@@ -202,7 +202,7 @@ const contacts: Contact[] = [
 const stageColors: Record<LifecycleStage, string> = {
   Lead: "bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300",
   MQL: "bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300",
-  SQL: "bg-violet-100 text-violet-700 dark:bg-violet-900 dark:text-violet-300",
+  SQL: "bg-primary/10 text-primary dark:bg-primary/20 dark:text-primary",
   Oportunidade:
     "bg-amber-100 text-amber-700 dark:bg-amber-900 dark:text-amber-300",
   Cliente:
@@ -270,7 +270,7 @@ export function ContactsPage() {
             <Upload className="size-4" />
             Importar CSV
           </Button>
-          <Button className="btn-lift bg-gradient-to-r from-primary to-violet-600 text-primary-foreground shadow-md shadow-primary/20">
+          <Button className="btn-lift bg-gradient-to-r from-primary to-orange-600 text-primary-foreground shadow-md shadow-primary/10">
             <UserPlus className="size-4" />
             Novo Contato
           </Button>
@@ -316,7 +316,7 @@ export function ContactsPage() {
       </div>
 
       {/* Table */}
-      <div className="animate-card-in stagger-1 rounded-xl border bg-card shadow-lg shadow-primary/[0.03] ring-1 ring-foreground/10">
+      <div className="animate-card-in stagger-1 rounded-xl border bg-card">
         <Table>
           <TableHeader>
             <TableRow>
@@ -349,7 +349,7 @@ export function ContactsPage() {
                   <TableCell>
                     <div className="flex items-center gap-2.5">
                       <Avatar size="sm">
-                        <AvatarFallback className="bg-gradient-to-br from-primary/10 to-violet-500/10 text-primary text-[10px]">
+                        <AvatarFallback className="bg-gradient-to-br from-primary/10 to-orange-500/10 text-primary text-[10px]">
                           {getInitials(contact.name)}
                         </AvatarFallback>
                       </Avatar>

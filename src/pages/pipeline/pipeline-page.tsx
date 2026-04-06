@@ -309,15 +309,15 @@ function LeadCard({
 
           {/* AI Recommendation */}
           {lead.score > 80 && (
-            <div className="flex items-center gap-1.5 pt-1 border-t border-dashed border-violet-200 dark:border-violet-800">
-              <Sparkles className="size-3 text-violet-500 shrink-0" />
-              <span className="text-[10px] text-violet-600 dark:text-violet-400 truncate">
+            <div className="flex items-center gap-1.5 pt-1 border-t border-dashed border-primary/20 dark:border-primary/30">
+              <Sparkles className="size-3 text-primary shrink-0" />
+              <span className="text-[10px] text-primary dark:text-primary truncate">
                 {lead.score > 90 ? "IA: Prioridade maxima — alto potencial de fechamento" : "IA: Lead quente — recomendo contato imediato"}
               </span>
             </div>
           )}
           {lead.score <= 80 && lead.score > 50 && (
-            <div className="flex items-center gap-1.5 pt-1 border-t border-dashed border-border/50">
+            <div className="flex items-center gap-1.5 pt-1 border-t border-dashed">
               <Sparkles className="size-3 text-muted-foreground/60 shrink-0" />
               <span className="text-[10px] text-muted-foreground truncate">
                 IA: Nurturing recomendado — envie conteudo de valor
@@ -336,7 +336,7 @@ function LeadCard({
 
 function LeadCardOverlay({ lead }: { lead: PipelineLead }) {
   return (
-    <Card size="sm" className="w-[280px] shadow-lg ring-2 ring-primary/20">
+    <Card size="sm" className="w-[280px] shadow-lg">
       <CardContent className="space-y-2 p-3">
         <div className="flex items-start justify-between gap-2">
           <span className="truncate text-sm font-medium">{lead.name}</span>
@@ -627,7 +627,7 @@ export function PipelinePage() {
 
       {/* Role-based banner */}
       {userRole === "closer" && (
-        <div className="border-gradient flex items-center gap-2 rounded-lg bg-blue-50 px-4 py-2 dark:bg-blue-950/40">
+        <div className="flex items-center gap-2 rounded-lg bg-blue-50 px-4 py-2 dark:bg-blue-950/40">
           <User className="size-4 text-blue-600 dark:text-blue-400" />
           <span className="text-sm font-medium text-blue-700 dark:text-blue-300">
             Pipeline pessoal de {userFirstName} — {roleFilteredLeads.length} leads
@@ -652,8 +652,8 @@ export function PipelinePage() {
       )}
 
       {/* AI Pipeline Analysis */}
-      <div className="animate-card-in flex items-center gap-3 rounded-xl border-gradient glass px-4 py-3 shadow-lg shadow-primary/[0.04]">
-        <div className="flex size-8 items-center justify-center rounded-lg bg-gradient-to-br from-violet-500 to-primary text-white shadow-sm">
+      <div className="animate-card-in flex items-center gap-3 rounded-xl px-4 py-3">
+        <div className="flex size-8 items-center justify-center rounded-lg bg-gradient-to-br from-primary to-orange-500 text-white shadow-sm">
           <Sparkles className="size-4 animate-spin" style={{ animationDuration: "3s" }} />
         </div>
         <div className="flex-1 min-w-0">
@@ -665,7 +665,7 @@ export function PipelinePage() {
             3 leads em risco de esfriar · 2 prontos para avancar estagio · Score medio: 74 · Valor total no pipeline: R$ 612.000
           </p>
         </div>
-        <Badge variant="secondary" className="bg-violet-500/10 text-violet-700 dark:text-violet-300 shrink-0">
+        <Badge variant="secondary" className="bg-primary/10 text-primary dark:text-primary shrink-0">
           <Sparkles className="mr-1 size-3" />
           AI Insights
         </Badge>
@@ -673,7 +673,7 @@ export function PipelinePage() {
 
       {/* Proximo Lead card for closers */}
       {nextLeadForCloser && (
-        <Card className="border-gradient bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-950/30 dark:to-indigo-950/30">
+        <Card className="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-950/30 dark:to-indigo-950/30">
           <CardContent className="flex items-center gap-4 p-4">
             <div className="flex size-10 shrink-0 items-center justify-center rounded-full bg-blue-100 dark:bg-blue-900/50">
               <Zap className="size-5 text-blue-600 dark:text-blue-400" />
@@ -683,7 +683,7 @@ export function PipelinePage() {
                 <p className="text-xs font-semibold uppercase tracking-wider text-blue-600 dark:text-blue-400">
                   Proximo Lead
                 </p>
-                <Badge className="bg-gradient-to-r from-violet-500/10 to-primary/10 text-violet-700 dark:text-violet-300 border-violet-200 dark:border-violet-800 text-[10px]">
+                <Badge className="bg-gradient-to-r from-primary/10 to-orange-500/10 text-primary dark:text-primary border-primary/20 dark:border-primary/30 text-[10px]">
                   <Sparkles className="mr-1 size-2.5" />
                   Recomendado pela IA
                 </Badge>

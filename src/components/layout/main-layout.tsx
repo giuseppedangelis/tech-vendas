@@ -12,8 +12,7 @@ export function MainLayout() {
       <AppSidebar />
       <SidebarInset>
         <AppHeader />
-        {/* Subtle gradient top border on content area */}
-        <div className="h-px bg-gradient-to-r from-primary/20 via-primary/5 to-transparent" />
+        <div className="h-px bg-border/40" />
         <main
           key={location.pathname}
           className={`animate-page-in ${isFullHeight ? "flex-1 overflow-hidden" : "flex-1 p-6"}`}

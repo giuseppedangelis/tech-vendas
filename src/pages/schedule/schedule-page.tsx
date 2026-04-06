@@ -178,9 +178,9 @@ const typeConfig: Record<
   },
   Demo: {
     icon: Monitor,
-    color: "text-violet-700 dark:text-violet-300",
+    color: "text-primary dark:text-primary",
     bgColor:
-      "bg-violet-100 text-violet-700 dark:bg-violet-900 dark:text-violet-300",
+      "bg-primary/10 text-primary dark:bg-primary/20 dark:text-primary",
   },
   "Follow-up": {
     icon: RotateCcw,
@@ -221,12 +221,12 @@ function AppointmentCard({ appointment }: { appointment: Appointment }) {
   const TypeIcon = typeConf.icon
 
   return (
-    <Card className="card-hover animate-card-in shadow-lg shadow-primary/[0.03]">
+    <Card className="card-hover animate-card-in">
       <CardContent className="pt-4">
         <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
           <div className="flex gap-3">
             <div className="flex flex-col items-center gap-1">
-              <div className="flex size-10 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-primary/5 to-violet-500/5">
+              <div className="flex size-10 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-primary/5 to-orange-500/5">
                 <TypeIcon className={`size-5 ${typeConf.color}`} />
               </div>
             </div>
@@ -244,7 +244,7 @@ function AppointmentCard({ appointment }: { appointment: Appointment }) {
               </div>
               <div className="flex items-center gap-2">
                 <Avatar size="sm">
-                  <AvatarFallback className="bg-gradient-to-br from-primary/10 to-violet-500/10 text-primary text-[10px]">
+                  <AvatarFallback className="bg-gradient-to-br from-primary/10 to-orange-500/10 text-primary text-[10px]">
                     {getInitials(appointment.leadName)}
                   </AvatarFallback>
                 </Avatar>
@@ -271,9 +271,9 @@ function AppointmentCard({ appointment }: { appointment: Appointment }) {
               </div>
               {/* AI Prediction */}
               {appointment.status !== "Concluido" && appointment.status !== "No-show" && (
-                <div className="flex items-center gap-1.5 pt-2 mt-2 border-t border-dashed border-violet-200 dark:border-violet-800">
-                  <Sparkles className="size-3 text-violet-500 shrink-0" />
-                  <span className="text-[10px] text-violet-600 dark:text-violet-400">
+                <div className="flex items-center gap-1.5 pt-2 mt-2 border-t border-dashed border-primary/20 dark:border-primary/30">
+                  <Sparkles className="size-3 text-primary shrink-0" />
+                  <span className="text-[10px] text-primary dark:text-primary">
                     {appointment.status === "Confirmado"
                       ? "IA: 95% chance de comparecimento — lead engajado"
                       : appointment.type === "Demo"
@@ -356,7 +356,7 @@ export function SchedulePage() {
             Gerencie seus agendamentos
           </p>
         </div>
-        <Button className="btn-lift bg-gradient-to-r from-primary to-violet-600 text-primary-foreground shadow-md shadow-primary/20">
+        <Button className="btn-lift bg-gradient-to-r from-primary to-orange-600 text-primary-foreground shadow-md shadow-primary/10">
           <CalendarPlus className="size-4" />
           Novo Agendamento
         </Button>
@@ -384,8 +384,8 @@ export function SchedulePage() {
       )}
 
       {/* AI Summary Banner */}
-      <div className="flex items-center gap-3 rounded-xl border-gradient glass px-4 py-3 shadow-sm animate-card-in">
-        <div className="flex size-8 items-center justify-center rounded-lg bg-gradient-to-br from-violet-500 to-primary text-white shadow-sm">
+      <div className="flex items-center gap-3 rounded-xl px-4 py-3 shadow-sm animate-card-in">
+        <div className="flex size-8 items-center justify-center rounded-lg bg-gradient-to-br from-primary to-orange-500 text-white shadow-sm">
           <Sparkles className="size-4 animate-spin" style={{ animationDuration: "3s" }} />
         </div>
         <div className="flex-1">
@@ -472,7 +472,7 @@ export function SchedulePage() {
       </Tabs>
 
       {/* Summary Footer */}
-      <div className="flex flex-wrap gap-4 rounded-lg border glass px-4 py-3 shadow-sm shadow-primary/[0.02]">
+      <div className="flex flex-wrap gap-4 rounded-lg border px-4 py-3 shadow-sm">
         <div className="flex items-center gap-2">
           <div className="size-2 rounded-full bg-slate-500" />
           <span className="text-xs text-muted-foreground">
