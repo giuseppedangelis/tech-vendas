@@ -1,0 +1,1788 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TechVendasPro — Gap Analysis Dashboard</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <style>
+    :root {
+      --bg1: #0d0f12;
+      --bg2: #13161b;
+      --bg3: #1a1e26;
+      --bg4: #21263100;
+      --text: #e2e6ed;
+      --muted: #6b7280;
+      --accent: #378ADD;
+      --border: #252a35;
+      --coberto: #22c55e;
+      --parcial: #f59e0b;
+      --gap: #ef4444;
+      --p0: #ef4444;
+      --p1: #f97316;
+      --p2: #22c55e;
+      --f2: #378ADD;
+      --f3: #8b5cf6;
+      --f4: #6b7280;
+      --m01: #1D9E75;
+      --m02: #378ADD;
+      --m03: #D85A30;
+      --m04: #639922;
+      --m05: #534AB7;
+      --m06: #BA7517;
+      --m07: #993C1D;
+      --m08: #185FA5;
+      --m09: #E24B4A;
+      --m10: #3B6D11;
+      --m11: #72243E;
+      --m12: #0F6E56;
+      --m13: #888780;
+      --m14: #5F5E5A;
+      --m15: #7F77DD;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0
+    }
+
+    body {
+      background: var(--bg1);
+      color: var(--text);
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      font-size: 14px;
+      line-height: 1.5
+    }
+
+    a {
+      color: var(--accent);
+      text-decoration: none
+    }
+
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px
+    }
+
+    ::-webkit-scrollbar-track {
+      background: var(--bg2)
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: var(--border);
+      border-radius: 3px
+    }
+
+    /* layout */
+    .page {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 24px 20px
+    }
+
+    .section {
+      margin-bottom: 32px
+    }
+
+    .section-title {
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 14px;
+      display: flex;
+      align-items: center;
+      gap: 8px
+    }
+
+    .section-title::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--border)
+    }
+
+    /* header */
+    .header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      margin-bottom: 28px;
+      gap: 16px;
+      flex-wrap: wrap
+    }
+
+    .header-title {
+      font-size: 22px;
+      font-weight: 700;
+      letter-spacing: -.02em
+    }
+
+    .header-sub {
+      font-size: 12px;
+      color: var(--muted);
+      margin-top: 4px
+    }
+
+    .header-badge {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 3px 10px;
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: .03em
+    }
+
+    .badge-date {
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      color: var(--muted)
+    }
+
+    /* kpi grid */
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 12px
+    }
+
+    @media(max-width:900px) {
+      .kpi-grid {
+        grid-template-columns: repeat(3, 1fr)
+      }
+    }
+
+    @media(max-width:500px) {
+      .kpi-grid {
+        grid-template-columns: repeat(2, 1fr)
+      }
+    }
+
+    .kpi-card {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 16px;
+      cursor: pointer;
+      transition: border-color .15s, transform .1s;
+      position: relative;
+      overflow: hidden
+    }
+
+    .kpi-card:hover {
+      border-color: var(--accent);
+      transform: translateY(-1px)
+    }
+
+    .kpi-card.active {
+      border-color: var(--accent);
+      background: var(--bg3)
+    }
+
+    .kpi-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      border-radius: 10px 10px 0 0
+    }
+
+    .kpi-card.kc-total::before {
+      background: var(--accent)
+    }
+
+    .kpi-card.kc-coberto::before {
+      background: var(--coberto)
+    }
+
+    .kpi-card.kc-parcial::before {
+      background: var(--parcial)
+    }
+
+    .kpi-card.kc-gap::before {
+      background: var(--gap)
+    }
+
+    .kpi-card.kc-p0::before {
+      background: var(--p0)
+    }
+
+    .kpi-card.kc-timeline::before {
+      background: var(--f3)
+    }
+
+    .kpi-label {
+      font-size: 11px;
+      color: var(--muted);
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: .05em;
+      margin-bottom: 6px
+    }
+
+    .kpi-value {
+      font-size: 28px;
+      font-weight: 800;
+      letter-spacing: -.03em;
+      line-height: 1
+    }
+
+    .kpi-sub {
+      font-size: 11px;
+      color: var(--muted);
+      margin-top: 4px
+    }
+
+    .kpi-card.kc-coberto .kpi-value {
+      color: var(--coberto)
+    }
+
+    .kpi-card.kc-parcial .kpi-value {
+      color: var(--parcial)
+    }
+
+    .kpi-card.kc-gap .kpi-value {
+      color: var(--gap)
+    }
+
+    .kpi-card.kc-p0 .kpi-value {
+      color: var(--p0)
+    }
+
+    .kpi-card.kc-timeline .kpi-value {
+      color: var(--f3);
+      font-size: 20px;
+      margin-top: 4px
+    }
+
+    /* charts */
+    .charts-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px
+    }
+
+    @media(max-width:900px) {
+      .charts-grid {
+        grid-template-columns: 1fr
+      }
+    }
+
+    .chart-card {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 20px
+    }
+
+    .chart-title {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: .06em;
+      margin-bottom: 16px
+    }
+
+    .chart-wrap {
+      position: relative;
+      height: 220px
+    }
+
+    /* module cards */
+    .module-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px
+    }
+
+    @media(max-width:900px) {
+      .module-grid {
+        grid-template-columns: repeat(2, 1fr)
+      }
+    }
+
+    @media(max-width:500px) {
+      .module-grid {
+        grid-template-columns: 1fr
+      }
+    }
+
+    .mod-card {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      overflow: hidden;
+      cursor: pointer;
+      transition: border-color .15s
+    }
+
+    .mod-card:hover {
+      border-color: var(--accent)
+    }
+
+    .mod-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 14px 16px
+    }
+
+    .mod-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      flex-shrink: 0
+    }
+
+    .mod-name {
+      flex: 1;
+      font-size: 13px;
+      font-weight: 600
+    }
+
+    .mod-arrow {
+      color: var(--muted);
+      font-size: 11px;
+      transition: transform .2s
+    }
+
+    .mod-card.open .mod-arrow {
+      transform: rotate(180deg)
+    }
+
+    .mod-stats {
+      display: flex;
+      gap: 6px;
+      padding: 0 16px 12px
+    }
+
+    .mod-stat {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 11px;
+      font-weight: 600
+    }
+
+    .mod-stat .dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%
+    }
+
+    .mod-badges {
+      display: flex;
+      gap: 6px;
+      padding: 0 16px 12px;
+      flex-wrap: wrap
+    }
+
+    .mod-body {
+      display: none;
+      border-top: 1px solid var(--border);
+      padding: 12px 16px;
+      max-height: 300px;
+      overflow-y: auto
+    }
+
+    .mod-card.open .mod-body {
+      display: block
+    }
+
+    .mod-feat-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 5px
+    }
+
+    .mod-feat-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      font-size: 12px;
+      padding: 4px 0;
+      border-bottom: 1px solid var(--border);
+      cursor: pointer
+    }
+
+    .mod-feat-item:last-child {
+      border-bottom: none
+    }
+
+    .mod-feat-item:hover {
+      color: var(--accent)
+    }
+
+    .mod-feat-id {
+      font-size: 10px;
+      color: var(--muted);
+      font-family: monospace;
+      flex-shrink: 0;
+      padding-top: 1px
+    }
+
+    /* tags */
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: .04em;
+      text-transform: uppercase;
+      white-space: nowrap
+    }
+
+    .tag-coberto {
+      background: #14532d;
+      color: #4ade80
+    }
+
+    .tag-parcial {
+      background: #451a03;
+      color: #fbbf24
+    }
+
+    .tag-gap {
+      background: #450a0a;
+      color: #f87171
+    }
+
+    .tag-p0 {
+      background: #450a0a;
+      color: #fca5a5
+    }
+
+    .tag-p1 {
+      background: #431407;
+      color: #fdba74
+    }
+
+    .tag-p2 {
+      background: #14532d;
+      color: #86efac
+    }
+
+    .tag-f2 {
+      background: #1e3a5f;
+      color: #93c5fd
+    }
+
+    .tag-f3 {
+      background: #2e1065;
+      color: #c4b5fd
+    }
+
+    .tag-f4 {
+      background: #1f2937;
+      color: #9ca3af
+    }
+
+    .tag-coberto-sm {
+      background: #14532d;
+      color: #4ade80
+    }
+
+    .tag-parcial-sm {
+      background: #451a03;
+      color: #fbbf24
+    }
+
+    .tag-gap-sm {
+      background: #450a0a;
+      color: #f87171
+    }
+
+    /* filters */
+    .filter-bar {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 14px;
+      align-items: center
+    }
+
+    .filter-search {
+      flex: 1;
+      min-width: 200px;
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 7px;
+      padding: 8px 12px;
+      color: var(--text);
+      font-size: 13px;
+      outline: none;
+      transition: border-color .15s
+    }
+
+    .filter-search:focus {
+      border-color: var(--accent)
+    }
+
+    .filter-select {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 7px;
+      padding: 8px 12px;
+      color: var(--text);
+      font-size: 12px;
+      outline: none;
+      cursor: pointer;
+      min-width: 130px;
+      transition: border-color .15s
+    }
+
+    .filter-select:focus {
+      border-color: var(--accent)
+    }
+
+    .filter-clear {
+      background: transparent;
+      border: 1px solid var(--border);
+      border-radius: 7px;
+      padding: 7px 14px;
+      color: var(--muted);
+      font-size: 12px;
+      cursor: pointer;
+      transition: all .15s;
+      white-space: nowrap
+    }
+
+    .filter-clear:hover {
+      border-color: var(--gap);
+      color: var(--gap)
+    }
+
+    .filter-count {
+      font-size: 12px;
+      color: var(--muted);
+      white-space: nowrap;
+      padding: 0 4px
+    }
+
+    /* table */
+    .table-wrap {
+      overflow-x: auto;
+      border: 1px solid var(--border);
+      border-radius: 10px
+    }
+
+    .feat-tbl {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 700px
+    }
+
+    .feat-tbl thead th {
+      background: var(--bg3);
+      padding: 10px 14px;
+      text-align: left;
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: .06em;
+      color: var(--muted);
+      white-space: nowrap;
+      position: sticky;
+      top: 0;
+      z-index: 1
+    }
+
+    .feat-tbl tbody tr {
+      border-bottom: 1px solid var(--border);
+      cursor: pointer;
+      transition: background .1s
+    }
+
+    .feat-tbl tbody tr:hover {
+      background: var(--bg3)
+    }
+
+    .feat-tbl tbody tr.expanded {
+      background: var(--bg3)
+    }
+
+    .feat-tbl tbody tr:last-child {
+      border-bottom: none
+    }
+
+    .feat-tbl td {
+      padding: 9px 14px;
+      vertical-align: middle
+    }
+
+    .td-id {
+      font-family: monospace;
+      font-size: 11px;
+      color: var(--muted);
+      white-space: nowrap
+    }
+
+    .td-name {
+      font-size: 13px;
+      font-weight: 500;
+      max-width: 320px
+    }
+
+    .td-mod {
+      font-size: 11px;
+      color: var(--muted);
+      white-space: nowrap
+    }
+
+    .td-null {
+      color: var(--muted);
+      font-size: 11px
+    }
+
+    .expand-row td {
+      padding: 0 14px 12px;
+      background: var(--bg3)
+    }
+
+    .expand-inner {
+      padding: 12px;
+      background: var(--bg2);
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      font-size: 12px;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 10px
+    }
+
+    .expand-field label {
+      display: block;
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: .06em;
+      color: var(--muted);
+      font-weight: 600;
+      margin-bottom: 3px
+    }
+
+    .expand-field p {
+      color: var(--text)
+    }
+
+    .expand-field p.empty {
+      color: var(--muted);
+      font-style: italic
+    }
+
+    .no-results {
+      text-align: center;
+      padding: 40px;
+      color: var(--muted);
+      font-size: 13px
+    }
+
+    /* expand row buttons */
+    .expand-row button {
+      transition: all .15s
+    }
+
+    .expand-row button:hover {
+      border-color: var(--accent);
+      color: var(--accent)
+    }
+
+    /* progress bar */
+    .pbar-wrap {
+      display: flex;
+      gap: 4px;
+      height: 6px;
+      border-radius: 3px;
+      overflow: hidden;
+      margin-top: 8px
+    }
+
+    .pbar-seg {
+      height: 100%;
+      border-radius: 0;
+      transition: width .3s
+    }
+
+    /* module color accent on left border */
+    .mod-card[data-m="01"] {
+      border-left: 3px solid var(--m01)
+    }
+
+    .mod-card[data-m="02"] {
+      border-left: 3px solid var(--m02)
+    }
+
+    .mod-card[data-m="03"] {
+      border-left: 3px solid var(--m03)
+    }
+
+    .mod-card[data-m="04"] {
+      border-left: 3px solid var(--m04)
+    }
+
+    .mod-card[data-m="05"] {
+      border-left: 3px solid var(--m05)
+    }
+
+    .mod-card[data-m="06"] {
+      border-left: 3px solid var(--m06)
+    }
+
+    .mod-card[data-m="07"] {
+      border-left: 3px solid var(--m07)
+    }
+
+    .mod-card[data-m="08"] {
+      border-left: 3px solid var(--m08)
+    }
+
+    .mod-card[data-m="09"] {
+      border-left: 3px solid var(--m09)
+    }
+
+    .mod-card[data-m="10"] {
+      border-left: 3px solid var(--m10)
+    }
+
+    .mod-card[data-m="11"] {
+      border-left: 3px solid var(--m11)
+    }
+
+    .mod-card[data-m="12"] {
+      border-left: 3px solid var(--m12)
+    }
+
+    .mod-card[data-m="13"] {
+      border-left: 3px solid var(--m13)
+    }
+
+    .mod-card[data-m="14"] {
+      border-left: 3px solid var(--m14)
+    }
+
+    .mod-card[data-m="15"] {
+      border-left: 3px solid var(--m15)
+    }
+
+    /* Reverse analysis section */
+    .reverse-kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+
+    @media(max-width:900px) {
+      .reverse-kpi-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media(max-width:500px) {
+      .reverse-kpi-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .kpi-card.kc-solicitado::before {
+      background: var(--coberto)
+    }
+
+    .kpi-card.kc-implicito::before {
+      background: #3b82f6
+    }
+
+    .kpi-card.kc-nao-solicitado::before {
+      background: var(--gap)
+    }
+
+    .kpi-card.kc-horas::before {
+      background: #8b5cf6
+    }
+
+    .kpi-card.kc-solicitado .kpi-value {
+      color: var(--coberto)
+    }
+
+    .kpi-card.kc-implicito .kpi-value {
+      color: #3b82f6
+    }
+
+    .kpi-card.kc-nao-solicitado .kpi-value {
+      color: var(--gap)
+    }
+
+    .kpi-card.kc-horas .kpi-value {
+      color: #8b5cf6
+    }
+
+    .tag-solicitado {
+      background: #14532d;
+      color: #4ade80
+    }
+
+    .tag-implicito {
+      background: #1e3a5f;
+      color: #93c5fd
+    }
+
+    .tag-nao-solicitado {
+      background: #450a0a;
+      color: #f87171
+    }
+
+    .tag-risco-alto {
+      background: #450a0a;
+      color: #fca5a5
+    }
+
+    .tag-risco-medio {
+      background: #431407;
+      color: #fdba74
+    }
+
+    .tag-risco-baixo {
+      background: #14532d;
+      color: #86efac
+    }
+
+    .reverse-table-wrap {
+      overflow-x: auto;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+    }
+
+    .reverse-tbl {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 800px;
+    }
+
+    .reverse-tbl thead th {
+      background: var(--bg3);
+      padding: 10px 14px;
+      text-align: left;
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: .06em;
+      color: var(--muted);
+      white-space: nowrap;
+      position: sticky;
+      top: 0;
+      z-index: 1;
+    }
+
+    .reverse-tbl tbody tr {
+      border-bottom: 1px solid var(--border);
+      transition: background .1s;
+    }
+
+    .reverse-tbl tbody tr:hover {
+      background: var(--bg3)
+    }
+
+    .reverse-tbl td {
+      padding: 9px 14px;
+      vertical-align: middle;
+      font-size: 12px
+    }
+
+    .reverse-tbl .td-rf-id {
+      font-family: monospace;
+      font-size: 11px;
+      color: var(--muted);
+      white-space: nowrap;
+      width: 60px
+    }
+
+    .reverse-tbl .td-rf-mod {
+      font-size: 11px;
+      white-space: nowrap
+    }
+
+    .reverse-tbl .td-rf-rec {
+      font-size: 11px;
+      color: var(--muted);
+      max-width: 280px
+    }
+  </style>
+</head>
+
+<body>
+  <div class="page">
+
+    <!-- HEADER -->
+    <div class="header">
+      <div>
+        <div class="header-title">TechVendasPro — Gap Analysis Bidirecional</div>
+        <div class="header-sub">195 features do cliente × 43 RFs internos · Análise bidirecional · Gerado 2026-04-14
+        </div>
+      </div>
+      <div class="header-badge">
+        <span class="badge badge-date">📅 2026-04-14</span>
+        <span class="badge badge-date">195 features</span>
+        <span class="badge badge-date">43 RFs</span>
+        <span class="badge badge-date">15 módulos</span>
+        <span class="badge badge-date" style="border-color:rgba(239,68,68,0.3)">⚠️ 12 RFs não solicitados</span>
+        <a href="roadmap.html" class="badge" style="background:var(--bg3);border:1px solid var(--accent);color:var(--accent);cursor:pointer">🗺 Roadmap por Fase</a>
+      </div>
+    </div>
+
+    <!-- KPI CARDS -->
+    <div class="section">
+      <div class="kpi-grid">
+        <div class="kpi-card kc-total" onclick="setFilter('status','')">
+          <div class="kpi-label">Total Features</div>
+          <div class="kpi-value">195</div>
+          <div class="kpi-sub">15 módulos do cliente</div>
+        </div>
+        <div class="kpi-card kc-coberto" onclick="setFilter('status','COBERTO')">
+          <div class="kpi-label">✅ Coberto</div>
+          <div class="kpi-value">36</div>
+          <div class="kpi-sub">18% do total</div>
+        </div>
+        <div class="kpi-card kc-parcial" onclick="setFilter('status','PARCIAL')">
+          <div class="kpi-label">⚠️ Parcial</div>
+          <div class="kpi-value">39</div>
+          <div class="kpi-sub">20% — refinamento necessário</div>
+        </div>
+        <div class="kpi-card kc-gap" onclick="setFilter('status','GAP')">
+          <div class="kpi-label">❌ Gap</div>
+          <div class="kpi-value">120</div>
+          <div class="kpi-sub">62% — ausente no time</div>
+        </div>
+        <div class="kpi-card kc-p0" onclick="setFilter('prioridade','P0')">
+          <div class="kpi-label">🔴 P0 Crítico</div>
+          <div class="kpi-value" id="kpi-p0">—</div>
+          <div class="kpi-sub">bloqueiam fluxo principal</div>
+        </div>
+        <div class="kpi-card kc-timeline" onclick="setFilter('fase','Fase 2')">
+          <div class="kpi-label">⏱ Timeline P0+P1</div>
+          <div class="kpi-value">6,5 meses</div>
+          <div class="kpi-sub">3 devs · P0 only = 4,5m</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CHARTS -->
+    <div class="section">
+      <div class="section-title">Visão Geral</div>
+      <div class="charts-grid">
+        <div class="chart-card">
+          <div class="chart-title">Cobertura Geral</div>
+          <div class="chart-wrap"><canvas id="c1"></canvas></div>
+        </div>
+        <div class="chart-card">
+          <div class="chart-title">Gaps por Módulo</div>
+          <div class="chart-wrap"><canvas id="c2"></canvas></div>
+        </div>
+        <div class="chart-card">
+          <div class="chart-title">Distribuição por Prioridade (Gaps)</div>
+          <div class="chart-wrap"><canvas id="c3"></canvas></div>
+        </div>
+        <div class="chart-card">
+          <div class="chart-title">Cobertura por Módulo</div>
+          <div class="chart-wrap"><canvas id="c4"></canvas></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- REVERSE ANALYSIS SECTION -->
+    <div class="section">
+      <div class="section-title">Análise Reversa — RFs Internos vs Features do Cliente</div>
+      <p style="font-size:12px;color:var(--muted);margin-bottom:16px">RFs planejados pela equipe que não foram
+        solicitados explicitamente pelo cliente (over-engineering)</p>
+
+      <!-- Reverse KPI Cards -->
+      <div class="reverse-kpi-grid">
+        <div class="kpi-card kc-solicitado">
+          <div class="kpi-label">✅ Solicitados</div>
+          <div class="kpi-value">21</div>
+          <div class="kpi-sub">48,8% — pedidos pelo cliente</div>
+        </div>
+        <div class="kpi-card kc-implicito">
+          <div class="kpi-label">🔵 Implícitos</div>
+          <div class="kpi-value">9</div>
+          <div class="kpi-sub">20,9% — deriváveis do pedido</div>
+        </div>
+        <div class="kpi-card kc-nao-solicitado">
+          <div class="kpi-label">❌ Não Solicitados</div>
+          <div class="kpi-value">12</div>
+          <div class="kpi-sub">27,9% — over-engineering</div>
+        </div>
+        <div class="kpi-card kc-horas">
+          <div class="kpi-label">⏱ Horas Economizáveis</div>
+          <div class="kpi-value">~300h</div>
+          <div class="kpi-sub">se remover 6 RFs de alto risco</div>
+        </div>
+      </div>
+
+      <!-- Reverse Charts -->
+      <div class="charts-grid">
+        <div class="chart-card">
+          <div class="chart-title">Cobertura Reversa (43 RFs)</div>
+          <div class="chart-wrap"><canvas id="c5"></canvas></div>
+        </div>
+        <div class="chart-card">
+          <div class="chart-title">RFs Não Solicitados por Módulo</div>
+          <div class="chart-wrap"><canvas id="c6"></canvas></div>
+        </div>
+      </div>
+
+      <!-- Reverse Table: 12 RFs não solicitados -->
+      <div style="margin-top:24px">
+        <div class="section-title">12 RFs Não Solicitados pelo Cliente</div>
+        <div class="reverse-table-wrap">
+          <table class="reverse-tbl">
+            <thead>
+              <tr>
+                <th>ID RF</th>
+                <th>Módulo</th>
+                <th>Requisito</th>
+                <th>Risco</th>
+                <th>Recomendação</th>
+              </tr>
+            </thead>
+            <tbody id="reverse-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- MODULE CARDS -->
+    <div class="section">
+      <div class="section-title">Módulos do Cliente</div>
+      <div class="module-grid" id="module-grid"></div>
+    </div>
+
+    <!-- ACTIVE FILTERS BREADCRUMB -->
+    <div id="active-filters-bar"
+      style="margin-bottom:16px;padding:10px 14px;background:var(--bg2);border:1px solid var(--accent);border-radius:8px;font-size:12px;align-items:center;gap:8px;flex-wrap:wrap;display:none">
+      <span style="color:var(--muted);font-weight:600">Filtros ativos:</span>
+      <div id="active-filter-tags" style="display:flex;gap:6px;flex-wrap:wrap"></div>
+      <button class="filter-clear" onclick="clearFilters()" style="margin-left:auto">✕ Limpar tudo</button>
+    </div>
+
+    <!-- FEATURE TABLE -->
+    <div class="section" id="feat-section">
+      <div class="section-title">Features — Tabela Completa</div>
+      <div class="filter-bar">
+        <input class="filter-search" type="text" placeholder="🔍 Buscar feature…" id="f-search"
+          oninput="applyFilters()">
+        <select class="filter-select" id="f-modulo" onchange="applyFilters()">
+          <option value="">Todos os módulos</option>
+        </select>
+        <select class="filter-select" id="f-status" onchange="applyFilters()">
+          <option value="">Todos os status</option>
+          <option value="COBERTO">✅ Coberto</option>
+          <option value="PARCIAL">⚠️ Parcial</option>
+          <option value="GAP">❌ Gap</option>
+        </select>
+        <select class="filter-select" id="f-prio" onchange="applyFilters()">
+          <option value="">Todas as prioridades</option>
+          <option value="P0">P0 Crítico</option>
+          <option value="P1">P1 Alto</option>
+          <option value="P2">P2 Desejável</option>
+          <option value="null">Sem prioridade</option>
+        </select>
+        <select class="filter-select" id="f-fase" onchange="applyFilters()">
+          <option value="">Todas as fases</option>
+          <option value="Fase 2">Fase 2</option>
+          <option value="Fase 3">Fase 3</option>
+          <option value="Fase 4">Fase 4</option>
+          <option value="null">Sem fase</option>
+        </select>
+        <button class="filter-clear" onclick="clearFilters()">Limpar filtros</button>
+        <span class="filter-count" id="filter-count"></span>
+      </div>
+      <div class="table-wrap">
+        <table class="feat-tbl">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Feature</th>
+              <th>Módulo</th>
+              <th>Status</th>
+              <th>Prioridade</th>
+              <th>Fase</th>
+              <th>RF Equipe</th>
+            </tr>
+          </thead>
+          <tbody id="feat-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+
+  </div><!-- /page -->
+
+  <script>
+    // ─── DATA ───────────────────────────────────────────────────────────────────
+    // Fields: id, nome, modulo, rf, status, prioridade, fase, deps, obs
+    const F = [
+      // M01 · Forms
+      ["001", "Editor drag-and-drop de campos", "01", "", "GAP", "P0", "Fase 3", "—", "Form builder não existe no escopo"],
+      ["002", "Lógica condicional entre campos", "01", "", "GAP", "P1", "Fase 3", "001", ""],
+      ["003", "Steps e páginas múltiplas no form", "01", "", "GAP", "P1", "Fase 3", "001", ""],
+      ["004", "Preview em tempo real do form", "01", "", "GAP", "P1", "Fase 3", "001", ""],
+      ["005", "Validações customizadas por campo", "01", "", "GAP", "P1", "Fase 3", "001", ""],
+      ["006", "Criação automática de contato ao submeter form", "01", "", "GAP", "P0", "Fase 3", "001, M2 CRM", ""],
+      ["007", "Criação automática de oportunidade com pipeline configurável", "01", "", "GAP", "P0", "Fase 3", "001, M2 Pipeline", ""],
+      ["008", "Mapeamento de campos form → campos CRM", "01", "", "GAP", "P0", "Fase 3", "001, 006", ""],
+      ["009", "Deduplicação de contato por email e telefone", "01", "", "GAP", "P1", "Fase 3", "006", ""],
+      ["010", "Script de pixel para embed em sites externos", "01", "", "GAP", "P1", "Fase 3", "001", ""],
+      ["011", "Captura de UTMs no carregamento do form", "01", "", "GAP", "P1", "Fase 3", "001, M4 UTM", "Captura de UTM existe em M4 mas não via form"],
+      ["012", "Eventos de tracking: pageview, start, submit, abandon", "01", "", "GAP", "P1", "Fase 3", "001", ""],
+      ["013", "Integração com Meta CAPI (Conversions API)", "01", "", "GAP", "P2", "Fase 4", "012", ""],
+      ["014", "Link público compartilhável com domínio customizado", "01", "", "GAP", "P1", "Fase 3", "001", ""],
+      ["015", "Embed via iframe e script JS", "01", "", "GAP", "P1", "Fase 3", "010", ""],
+      ["016", "Biblioteca de templates de formulário", "01", "", "GAP", "P2", "Fase 4", "001", ""],
+      ["017", "Customização de tema, cores e logo do form", "01", "", "GAP", "P2", "Fase 4", "001", ""],
+      // M02 · CRM
+      ["018", "Cadastro de contato com campos padrão e customizados", "02", "RF-019", "PARCIAL", null, null, "", "RF-019 cobre campos custom; cadastro base não explicitado"],
+      ["019", "Vinculação contato → empresa", "02", "", "GAP", "P0", "Fase 2", "—", "Entidade 'Empresa' não mapeada"],
+      ["020", "Timeline de atividades 360° por contato", "02", "RF-004", "PARCIAL", null, null, "", "RF-004 cobre histórico de diálogo; timeline 360° é mais ampla"],
+      ["021", "LTV calculado automaticamente por contato", "02", "", "GAP", "P1", "Fase 2", "Histórico de transações", "LTV não existe em nenhum RF"],
+      ["022", "Importação de contatos via CSV", "02", "", "GAP", "P0", "Fase 2", "—", ""],
+      ["023", "Busca e filtros avançados de contatos", "02", "RF-008", "PARCIAL", null, null, "", "RF-008 é filtro na caixa de mensagens, não de contatos"],
+      ["024", "Criação de múltiplos pipelines com estágios customizáveis", "02", "RF-011", "COBERTO", null, null, "", "RF-011 MH"],
+      ["025", "Card de oportunidade com campos custom por pipeline", "02", "RF-019", "COBERTO", null, null, "", "RF-019 MH"],
+      ["026", "Kanban view de oportunidades por estágio", "02", "RF-015", "COBERTO", null, null, "", "RF-015 MH"],
+      ["027", "Lista view de oportunidades com filtros e ordenação", "02", "", "GAP", "P1", "Fase 2", "M2 Pipeline", "Não explicitado nos RFs"],
+      ["028", "Mover oportunidade entre estágios (drag-and-drop)", "02", "RF-012", "PARCIAL", null, null, "", "RF-012 cobre movimentação via trigger, não drag-and-drop manual"],
+      ["029", "Roteamento de oportunidade para vendedor do squad", "02", "RF-003", "COBERTO", null, null, "", "RF-003 MH"],
+      ["030", "Criar card em pipeline CS/Onboard ao ganhar venda", "02", "RF-012", "PARCIAL", null, null, "", "RF-012 cobre triggers; criação de card em outro pipeline não explicitada"],
+      ["031", "Configurar ação ao ganhar ou perder oportunidade", "02", "RF-012", "COBERTO", null, null, "", "RF-012 MH"],
+      ["032", "Regras de transição automática entre estágios", "02", "RF-012", "COBERTO", null, null, "", "RF-012 MH"],
+      ["033", "Campos custom por tipo: texto, select, data, moeda, número", "02", "RF-019", "COBERTO", null, null, "", "RF-019 MH"],
+      ["034", "Sistema de tags em contatos, oportunidades e conversas", "02", "RF-020", "COBERTO", null, null, "", "RF-020 MH"],
+      ["035", "Score de lead calculado por regras configuráveis", "02", "RF-016", "COBERTO", null, null, "", "RF-016 MH"],
+      ["036", "Configurar framework de vendas por pipeline (SPIN, BANT, GPCT)", "02", "RF-039", "PARCIAL", null, null, "", "RF-039 CH — prioridade baixa; cliente pede P1 Alto"],
+      ["037", "Perguntas do framework exibidas no card da oportunidade", "02", "", "GAP", "P1", "Fase 2", "RF-039 (framework)", "Não mapeado explicitamente"],
+      ["038", "Framework usado para calibrar RAG dos agentes de IA", "02", "RF-039", "PARCIAL", null, null, "", "RF-039 prevê seleção de framework; RAG não explicitado"],
+      ["039", "Biblioteca de templates de pipeline prontos (B2B, B2C, CS, SDR)", "02", "", "GAP", "P2", "Fase 3", "M2 Pipeline", ""],
+      ["040", "Instalar template de pipeline em 1 clique", "02", "", "GAP", "P2", "Fase 3", "039", ""],
+      ["041", "Salvar pipeline atual como template reutilizável", "02", "", "GAP", "P2", "Fase 3", "M2 Pipeline", ""],
+      // M03 · Inbox
+      ["042", "Conectar número via WABA (Business API oficial Meta)", "03", "RF-001", "COBERTO", null, null, "", "RF-001 MH"],
+      ["043", "Gerenciar múltiplos números WABA no mesmo workspace", "03", "RF-010", "COBERTO", null, null, "", "RF-010 MH"],
+      ["044", "Enviar e receber mensagens de texto, mídia e documentos", "03", "RF-001", "COBERTO", null, null, "", "Implícito no RF-001"],
+      ["045", "Status de entrega e leitura das mensagens WhatsApp", "03", "", "GAP", "P1", "Fase 2", "M1 WABA", "Não mapeado"],
+      ["046", "Conectar conta Instagram Business para DMs", "03", "RF-007", "PARCIAL", null, null, "", "RF-007 CH (baixa prioridade) — via ManyChat, não direto"],
+      ["047", "Conectar Gmail para email bidirecional no inbox", "03", "", "GAP", "P1", "Fase 2", "—", "Não mapeado"],
+      ["048", "Unificar conversas de todos os canais no mesmo inbox", "03", "", "GAP", "P0", "Fase 2", "M1 WhatsApp + 046 Instagram", "Equipe mapeou WhatsApp + Instagram, sem unified inbox"],
+      ["049", "Exibir dados do contato no sidepanel da conversa", "03", "", "GAP", "P0", "Fase 2", "M2 CRM", "Sidepanel não mapeado"],
+      ["050", "Mostrar oportunidades vinculadas ao contato no sidepanel", "03", "", "GAP", "P0", "Fase 2", "049, M2 Pipeline", ""],
+      ["051", "Mostrar LTV e histórico de transações no sidepanel", "03", "", "GAP", "P1", "Fase 2", "049, 021 LTV", ""],
+      ["052", "Ações rápidas da conversa: criar tarefa, oportunidade ou reunião", "03", "RF-005", "PARCIAL", null, null, "", "RF-005 cobre tarefas; criar oportunidade/reunião não mapeado"],
+      ["053", "Atribuir conversa a agente ou squad", "03", "RF-003", "COBERTO", null, null, "", "RF-003 MH"],
+      ["054", "Status de conversa: aberta, aguardando, resolvida", "03", "", "GAP", "P0", "Fase 2", "M1", "Não mapeado"],
+      ["055", "Filtros de inbox por canal, agente, status e tag", "03", "RF-008", "COBERTO", null, null, "", "RF-008 MH"],
+      ["056", "Respostas rápidas (canned responses) por canal", "03", "", "GAP", "P1", "Fase 2", "M1", "Não mapeado"],
+      ["057", "SLA e alertas de tempo sem resposta", "03", "RF-030", "PARCIAL", null, null, "", "RF-030 MH está em M4/Dashboard, não no inbox diretamente"],
+      ["058", "Cadastro e envio de templates WABA aprovados", "03", "RF-001", "PARCIAL", null, null, "", "RF-001 menciona HSM; cadastro e envio não detalhados"],
+      ["059", "Aprovação de templates via Meta Business API na plataforma", "03", "", "GAP", "P1", "Fase 2", "M1 HSM", "Não mapeado"],
+      ["060", "Variáveis dinâmicas nos templates (nome, produto, link)", "03", "", "GAP", "P1", "Fase 2", "059", ""],
+      ["061", "Disparo em massa de template para lista segmentada", "03", "M7 Fase 2", "PARCIAL", null, null, "", "Previsto na Fase 2, não na Fase 1"],
+      ["062", "Histórico de disparos com taxa de entrega e leitura", "03", "", "GAP", "P2", "Fase 3", "M7 Campanhas", ""],
+      // M04 · Chatbot
+      ["063", "Canvas drag-and-drop para montar flows de chatbot", "04", "", "GAP", "P0", "Fase 3", "—", ""],
+      ["064", "Nó de mensagem de texto com variáveis do contato", "04", "", "GAP", "P0", "Fase 3", "063, M2 CRM", ""],
+      ["065", "Nó de menu e botões (quick replies) no WhatsApp", "04", "", "GAP", "P0", "Fase 3", "063, M1 WABA", ""],
+      ["066", "Nó de condição (if/else por campo do CRM)", "04", "", "GAP", "P0", "Fase 3", "063, M2 CRM", ""],
+      ["067", "Nó de coleta de dado: salva resposta no CRM", "04", "", "GAP", "P0", "Fase 3", "063, M2 CRM", ""],
+      ["068", "Nó de delay e espera configurável", "04", "", "GAP", "P1", "Fase 3", "063", ""],
+      ["069", "Nó de IA com LLM configurável (OpenAI, Anthropic)", "04", "", "GAP", "P1", "Fase 3", "063, 116 API Keys", ""],
+      ["070", "Contexto do CRM injetado no nó de IA", "04", "", "GAP", "P1", "Fase 3", "069, M2 CRM", ""],
+      ["071", "Handoff bot → agente humano com contexto da conversa", "04", "", "GAP", "P0", "Fase 3", "063, M1 Inbox", ""],
+      ["072", "Horário de atendimento para handoff automático", "04", "", "GAP", "P1", "Fase 3", "071", ""],
+      ["073", "Trigger de flow por palavra-chave recebida", "04", "", "GAP", "P1", "Fase 3", "063, M1", ""],
+      ["074", "Associar flow a múltiplos números WABA", "04", "", "GAP", "P1", "Fase 3", "063, M1 multi-número", ""],
+      ["075", "Dashboard de analytics do chatbot (sessões, conclusão, handoffs)", "04", "", "GAP", "P2", "Fase 4", "063", ""],
+      ["076", "Biblioteca de templates de flow (SDR, suporte, agendamento)", "04", "", "GAP", "P2", "Fase 4", "063", ""],
+      ["077", "Instalar e customizar template de flow em 1 clique", "04", "", "GAP", "P2", "Fase 4", "076", ""],
+      // M05 · Calendário
+      ["078", "OAuth com Google Calendar", "05", "RF-021", "COBERTO", null, null, "", "RF-021 MH"],
+      ["079", "Sincronização bidirecional de eventos com Google Calendar", "05", "RF-021", "COBERTO", null, null, "", "Critério de aceite: evento criado no CRM aparece no GCal em <30s"],
+      ["080", "Link de agendamento público (tipo Calendly) por usuário", "05", "RF-026", "COBERTO", null, null, "", "RF-026 SH"],
+      ["081", "Configurar disponibilidade e horários por usuário", "05", "RF-026", "PARCIAL", null, null, "", "RF-026 menciona link mas não detalha configuração de disponibilidade"],
+      ["082", "Confirmação e lembrete automático de reunião por WhatsApp", "05", "RF-024", "COBERTO", null, null, "", "RF-024 SH"],
+      ["083", "Integração com Granola via webhook para receber transcrições", "05", "", "GAP", "P1", "Fase 2", "M3 VOIP/webhook", "Equipe prevê VOIP (RF-006) mas não Granola/webhook externo"],
+      ["084", "Extrair tarefas da transcrição e criar no CRM automaticamente", "05", "RF-038", "PARCIAL", null, null, "", "RF-038 SH — síntese de ligações via VOIP; extração de tarefas não explicitada"],
+      ["085", "Associar transcrição ao contato e oportunidade automaticamente", "05", "RF-038", "PARCIAL", null, null, "", "RF-038 cobre síntese; associação automática não detalhada"],
+      ["086", "Criar reunião a partir do card de oportunidade", "05", "", "GAP", "P0", "Fase 2", "M3 Agenda, M2 Pipeline", "Não mapeado"],
+      ["087", "Histórico de reuniões na timeline do contato", "05", "RF-004", "PARCIAL", null, null, "", "RF-004 cobre histórico de diálogo; reuniões na timeline não mapeadas"],
+      // M06 · IA e Copiloto
+      ["088", "Configurar regras de score (perfil, comportamento, engajamento)", "06", "RF-005", "PARCIAL", null, null, "", "RN-005 é HIPÓTESE; regras configuráveis não detalhadas"],
+      ["089", "Score calculado automaticamente em tempo real", "06", "RF-040", "COBERTO", null, null, "", "RF-040 MH"],
+      ["090", "Exibir score no card de oportunidade, lista e inbox", "06", "RF-016", "COBERTO", null, null, "", "RF-016 MH"],
+      ["091", "Alerta quando lead atinge threshold de score configurado", "06", "", "GAP", "P1", "Fase 2", "RF-040 Score IA", "Não mapeado"],
+      ["092", "Decay automático de score por inatividade do lead", "06", "", "GAP", "P1", "Fase 2", "RF-040 Score IA", "Não mapeado"],
+      ["093", "Sugestão de próxima ação por oportunidade (copiloto)", "06", "RF-035", "COBERTO", null, null, "", "RF-035 MH + RF-036 MH"],
+      ["094", "Lista de leads quentes priorizados para contato hoje", "06", "RF-017", "PARCIAL", null, null, "", "RF-017 MH — Lead Lock prioriza leads; lista diária não explicitada"],
+      ["095", "Alerta de oportunidades paradas (sem atividade em X dias)", "06", "", "GAP", "P0", "Fase 2", "M2 Pipeline, M5", ""],
+      ["096", "Sugestão de mensagem de follow-up baseada no histórico", "06", "RF-036", "COBERTO", null, null, "", "RF-036 MH"],
+      ["097", "Resumo do pipeline vs meta do mês em linguagem natural", "06", "RF-043", "PARCIAL", null, null, "", "RF-043 SH — sugestão proativa; meta vs realizado não explicitado"],
+      ["098", "Projeção de fechamento do mês com base no pipeline atual", "06", "", "GAP", "P1", "Fase 2", "M4 Dashboard, M5", ""],
+      ["099", "Ranking de performance do time em tempo real", "06", "RF-029", "COBERTO", null, null, "", "RF-029 MH"],
+      ["100", "Sugestão de ações para recuperar meta pelo copiloto", "06", "RF-043", "PARCIAL", null, null, "", "RF-043 SH — sugestão proativa; recuperação de meta não específica"],
+      ["101", "Dashboard executivo simplificado (receita, conversão, MRR)", "06", "RF-027", "PARCIAL", null, null, "", "RF-027 cobre funil; MRR/ARR em RF-033 SH"],
+      ["102", "Resumo semanal em linguagem natural por WhatsApp ou email", "06", "", "GAP", "P2", "Fase 3", "M5, M1 WABA", ""],
+      ["103", "Carregar playbook de vendas como base de conhecimento do RAG", "06", "", "GAP", "P1", "Fase 2", "M5 RAG", ""],
+      ["104", "Indexar framework de vendas escolhido no agente (SPIN, BANT)", "06", "", "GAP", "P1", "Fase 2", "RF-039, M5", ""],
+      ["105", "Atualizar base RAG sem reimplantar o agente", "06", "", "GAP", "P1", "Fase 2", "103", ""],
+      // M07 · AI Agent Builder
+      ["106", "Configurar persona, objetivo e instruções do agente de IA", "07", "", "GAP", "P0", "Fase 3", "—", ""],
+      ["107", "Selecionar model provider e modelo (GPT-4o, Claude Sonnet)", "07", "", "GAP", "P0", "Fase 3", "116 API Keys", ""],
+      ["108", "Adicionar ferramentas ao agente (consulta CRM, calendário, API)", "07", "", "GAP", "P0", "Fase 3", "106, M2 CRM", ""],
+      ["109", "Testar agente em sandbox antes de publicar", "07", "", "GAP", "P1", "Fase 3", "106", ""],
+      ["110", "Agente SDR pré-configurado para prospecção ativa via WhatsApp", "07", "", "GAP", "P0", "Fase 3", "106, M1 WABA", ""],
+      ["111", "Qualificação via perguntas do framework de vendas configurado", "07", "", "GAP", "P0", "Fase 3", "110, RF-039", ""],
+      ["112", "Criar contato e oportunidade ao qualificar lead", "07", "", "GAP", "P0", "Fase 3", "111, M2 CRM", ""],
+      ["113", "Agendar reunião automaticamente ao qualificar lead", "07", "", "GAP", "P0", "Fase 3", "112, M3 Agenda", ""],
+      ["114", "Agente de reativação para leads perdidos e inativos", "07", "", "GAP", "P1", "Fase 3", "106, M2 Pipeline", ""],
+      ["115", "Sequência de mensagens configurável para recuperação", "07", "", "GAP", "P1", "Fase 3", "114, M1 WABA", ""],
+      ["116", "CRUD de API Keys por provider (OpenAI, Anthropic, Meta, Google)", "07", "", "GAP", "P1", "Fase 3", "—", ""],
+      ["117", "Criptografia de API Keys em repouso (AES-256)", "07", "", "GAP", "P1", "Fase 3", "116", ""],
+      // M08 · Automações
+      ["118", "Criar automação com trigger + condições + ações encadeadas", "08", "RF-012", "PARCIAL", null, null, "", "RF-012 cobre triggers/movimentação; motor genérico não explicitado"],
+      ["119", "Ativar e desativar automação sem excluir", "08", "", "GAP", "P1", "Fase 2", "Motor de automação", ""],
+      ["120", "Trigger: formulário submetido", "08", "", "GAP", "P1", "Fase 3", "Módulo 01 Forms", "Form builder não existe no escopo"],
+      ["121", "Trigger: oportunidade mudou de estágio", "08", "RF-012", "COBERTO", null, null, "", "RF-012 MH"],
+      ["122", "Trigger: oportunidade ganha ou perdida", "08", "RF-012", "COBERTO", null, null, "", "RF-012 MH"],
+      ["123", "Trigger: webhook externo recebido", "08", "RF-018", "PARCIAL", null, null, "", "RF-018 SH — webhook por etapa; webhook genérico não detalhado"],
+      ["124", "Trigger: X dias sem atividade na oportunidade", "08", "RF-023", "PARCIAL", null, null, "", "RF-023 cobre no-show; inatividade geral em oportunidade não mapeada"],
+      ["125", "Ação: mover oportunidade de estágio", "08", "RF-012", "COBERTO", null, null, "", "RF-012 MH"],
+      ["126", "Ação: criar tarefa vinculada à oportunidade", "08", "RF-005", "PARCIAL", null, null, "", "RF-005 MH — tarefas nativas; criação via automação não explicitada"],
+      ["127", "Ação: enviar mensagem WhatsApp ou email ao contato", "08", "", "GAP", "P0", "Fase 2", "M1 WABA, motor de automação", "Não mapeado como ação de automação"],
+      ["128", "Ação: criar oportunidade em outro pipeline", "08", "", "GAP", "P0", "Fase 2", "M2 Pipeline", ""],
+      ["129", "Ação: HTTP request (POST/GET para sistema externo)", "08", "", "GAP", "P0", "Fase 2", "—", ""],
+      ["130", "Log de execução por automação com payload e status", "08", "", "GAP", "P1", "Fase 2", "Motor de automação", ""],
+      ["131", "Biblioteca de templates de automação prontos", "08", "", "GAP", "P2", "Fase 4", "Motor de automação", ""],
+      // M09 · Tracking
+      ["132", "Script JS de pixel para instalar em qualquer site", "09", "", "GAP", "P1", "Fase 3", "—", ""],
+      ["133", "Capturar eventos: pageview, lead, purchase, custom", "09", "", "GAP", "P1", "Fase 3", "132", ""],
+      ["134", "Identificar visitante por cookie e cruzar com CRM", "09", "", "GAP", "P1", "Fase 3", "132, M2 CRM", ""],
+      ["135", "Capturar UTMs ao submeter formulário", "09", "RF-031", "COBERTO", null, null, "", "RF-031 MH"],
+      ["136", "Armazenar UTMs no contato: first-touch e last-touch", "09", "RF-031", "COBERTO", null, null, "", "RF-031 MH"],
+      ["137", "Atribuição de deal à campanha e canal de origem", "09", "RF-031", "COBERTO", null, null, "", "RF-031 MH"],
+      ["138", "Relatório de vendas por origem UTM e canal", "09", "RF-031", "COBERTO", null, null, "", "RF-031 MH"],
+      ["139", "KPIs do empresário: receita, vendas, ticket médio, conversão", "09", "RF-027", "PARCIAL", null, null, "", "RF-027 cobre funil; KPIs financeiros como ticket médio não explicitados"],
+      ["140", "Gráfico de receita no tempo com comparativo mensal", "09", "RF-027", "PARCIAL", null, null, "", "RF-027 cobre volumetria; comparativo mensal não detalhado"],
+      ["141", "Performance individual de cada vendedor para o líder", "09", "RF-029", "COBERTO", null, null, "", "RF-029 MH"],
+      ["142", "Meta vs realizado por vendedor e squad para o líder", "09", "", "GAP", "P0", "Fase 2", "M4 Dashboard, 10 Planejamento", "Não mapeado"],
+      ["143", "Relatório de funil de conversão por estágio do pipeline", "09", "RF-027", "PARCIAL", null, null, "", "RF-027 MH — funil presente; relatório detalhado por estágio parcial"],
+      ["144", "Minha meta do mês e progresso em tempo real (closer)", "09", "", "GAP", "P0", "Fase 2", "M4, 10 Planejamento", ""],
+      ["145", "Lista de tarefas do dia e leads prioritários (closer)", "09", "", "GAP", "P0", "Fase 2", "M4, M5 IA, RF-017 Lead Lock", ""],
+      ["146", "Enviar eventos de conversão para Meta CAPI", "09", "", "GAP", "P2", "Fase 4", "133, M1 Meta", ""],
+      // M10 · Planejamento
+      ["147", "Definir meta anual global por produto e serviço", "10", "", "GAP", "P1", "Fase 3", "—", ""],
+      ["148", "Dividir meta por produto com sazonalidade mensal configurável", "10", "", "GAP", "P1", "Fase 3", "147", ""],
+      ["149", "Distribuir meta por squad e vendedor (cascata)", "10", "", "GAP", "P1", "Fase 3", "147, entidade Squad", ""],
+      ["150", "Visualização em árvore da cascata de metas", "10", "", "GAP", "P2", "Fase 4", "149", ""],
+      ["151", "Painel meta vs realizado em tempo real por período", "10", "", "GAP", "P0", "Fase 3", "147, 149, M4", ""],
+      ["152", "Alerta automático quando abaixo de X% da meta", "10", "", "GAP", "P0", "Fase 3", "151", ""],
+      // M11 · OTES
+      ["153", "Apuração de vendas do mês por vendedor com validação", "11", "", "GAP", "P0", "Fase 4", "M4 Dashboard, M2 Pipeline", ""],
+      ["154", "Configurar regras OTES: metas, aceleradores, deceleradores", "11", "", "GAP", "P0", "Fase 4", "10 Planejamento", ""],
+      ["155", "Cálculo automático de remuneração variável pela metodologia OTES", "11", "", "GAP", "P0", "Fase 4", "153, 154", ""],
+      ["156", "Gerar holerite detalhado por vendedor (fixo + variável + acelerador)", "11", "", "GAP", "P0", "Fase 4", "155", ""],
+      ["157", "Aprovação do líder antes de publicar folha ao vendedor", "11", "", "GAP", "P1", "Fase 4", "156", ""],
+      ["158", "Exportar folha de pagamento em PDF", "11", "", "GAP", "P1", "Fase 4", "156", ""],
+      // M12 · Integrações
+      ["159", "Webhook de compra aprovada do Hotmart", "12", "RF-018", "PARCIAL", null, null, "", "RF-018 SH — webhooks por etapa; Hotmart especificamente não mapeado"],
+      ["160", "Criar deal e vincular ao contato ao receber compra Hotmart", "12", "RF-012", "PARCIAL", null, null, "", "RF-012 cobre triggers de pagamento; Hotmart não nomeado"],
+      ["161", "Webhook de reembolso e cancelamento Hotmart", "12", "", "GAP", "P1", "Fase 2", "RF-018, M2 Pipeline", ""],
+      ["162", "Endpoints REST para contatos, oportunidades e deals", "12", "", "GAP", "P0", "Fase 2", "—", "API pública não mapeada"],
+      ["163", "Autenticação via API Key com escopos de permissão", "12", "", "GAP", "P0", "Fase 2", "162", ""],
+      ["164", "Documentação Swagger / OpenAPI interativa", "12", "", "GAP", "P2", "Fase 3", "162, 163", ""],
+      ["165", "MCP Server para integração com Claude e agentes de IA", "12", "", "GAP", "P0", "Fase 3", "162", ""],
+      ["166", "Webhooks de saída configuráveis por evento do CRM", "12", "RF-018", "COBERTO", null, null, "", "RF-018 SH"],
+      ["167", "Webhooks de entrada com validação de assinatura HMAC", "12", "", "GAP", "P1", "Fase 2", "RF-018", ""],
+      ["168", "Log de envio e recebimento de webhooks com retry automático", "12", "", "GAP", "P1", "Fase 2", "RF-018", ""],
+      // M13 · Jobs Pro
+      ["169", "Publicar vaga e gerenciar candidatos (Jobs Pro)", "13", "M8 Fase 3", "COBERTO", null, null, "", "M8 previsto na Fase 3"],
+      ["170", "Perfil profissional com histórico de performance portável", "13", "M8 Fase 3", "GAP", "P1", "Fase 4", "M8 Jobs Pro", "M8 genérico; perfil portável não detalhado"],
+      ["171", "Vendedor migra de empresa mantendo histórico no Jobs Pro", "13", "", "GAP", "P2", "Fase 4", "170, M8", "Não mapeado em nenhuma fase"],
+      // M14 · Academy
+      ["172", "Cadastro de cursos, módulos e aulas com player de vídeo", "14", "", "GAP", "P1", "Fase 4", "—", ""],
+      ["173", "Trilhas de formação: Closer, SDR e Líder Comercial", "14", "", "GAP", "P1", "Fase 4", "172", ""],
+      ["174", "Emitir certificado ao concluir trilha de formação", "14", "", "GAP", "P2", "Fase 4", "173", ""],
+      ["175", "Certificado vinculado ao perfil do Jobs Pro automaticamente", "14", "", "GAP", "P2", "Fase 4", "174, 13 Jobs Pro", ""],
+      // M15 · Admin
+      ["176", "Criação de workspace isolado por empresa (multi-tenant)", "15", "RNF-005", "COBERTO", null, null, "", "RNF-005 MH — RLS para isolamento total"],
+      ["177", "Perfis de acesso: Empresário, Líder, Closer, SDR, Admin", "15", "RN-009", "COBERTO", null, null, "", "RN-009 — permissões por perfil"],
+      ["178", "Permissões granulares por perfil e módulo", "15", "RN-009", "COBERTO", null, null, "", "RN-009"],
+      ["179", "Criar squads e atribuir líderes e pipelines", "15", "", "GAP", "P0", "Fase 2", "M2 Pipeline, RN-009", "Squads não mapeados como entidade"],
+      ["180", "Tela central de configuração de todas as integrações", "15", "", "GAP", "P1", "Fase 3", "12 Integrações", ""],
+      ["181", "Status de cada integração: ativo, erro, desconectado", "15", "", "GAP", "P1", "Fase 3", "180", ""],
+      ["182", "Conectar números WABA via Meta Business Manager", "15", "RF-001", "COBERTO", null, null, "", "RF-001 + RF-010 MH"],
+      ["183", "Configurar número padrão por squad e pipeline", "15", "", "GAP", "P1", "Fase 2", "179, M1 multi-número", "Squads não mapeados"],
+      ["184", "F01 · Domínio, DNS e SSL", "15", "Sprint 0", "COBERTO", null, null, "", "Sprint 0 previsto"],
+      ["185", "F02 · Repositório GitHub e Organização", "15", "Sprint 0", "COBERTO", null, null, "", "Sprint 0 previsto"],
+      ["186", "F03 · Vercel — Projeto, Deploy e Domínios", "15", "Sprint 0", "COBERTO", null, null, "", "Sprint 0 previsto"],
+      ["187", "F04 · Neon — Banco de Dados e Branches", "15", "Sprint 0", "COBERTO", null, null, "", "Sprint 0 previsto"],
+      ["188", "F05 · Upstash — Redis (BullMQ + Rate Limiting)", "15", "Sprint 0", "COBERTO", null, null, "", "Sprint 0 previsto"],
+      ["189", "F06 · Pusher — Real-time Channels", "15", "Sprint 0", "PARCIAL", null, null, "", "Sprint 0 previsto; Pusher não nomeado, Redis sim"],
+      ["190", "F07 · APIs de IA — Anthropic e OpenAI", "15", "REST-008", "PARCIAL", null, null, "", "REST-008 — decisão de modelo após benchmark"],
+      ["191", "F08 · Meta Business — App e WABA", "15", "RF-001", "COBERTO", null, null, "", "RF-001 MH — ver também Módulo 12"],
+      ["192", "F09 · Autenticação — Auth.js Setup", "15", "Sprint 0", "COBERTO", null, null, "", "Sprint 0 previsto"],
+      ["193", "F10 · Email Transacional — Resend", "15", "Sprint 0", "PARCIAL", null, null, "", "Sprint 0 previsto; Resend não nomeado"],
+      ["194", "F11 · Monitoramento — Sentry e PostHog", "15", "Sprint 0", "PARCIAL", null, null, "", "Sprint 0 previsto; ferramentas específicas não nomeadas"],
+      ["195", "F12 · Boilerplate Next.js e Variáveis de Ambiente", "15", "REST-005", "COBERTO", null, null, "", "REST-005 — Stack React + PWA"],
+    ];
+
+    // Module metadata
+    const MODULES = {
+      "01": { name: "Forms", full: "01 · Forms — Form Builder Visual", cor: "#1D9E75", fase: "Fase 3", comercial: "Ausente" },
+      "02": { name: "CRM", full: "02 · CRM — Contatos, Pipelines e Oportunidades", cor: "#378ADD", fase: "Fase 2", comercial: "Parcial" },
+      "03": { name: "Inbox", full: "03 · Inbox — Mensageria Omnichannel", cor: "#D85A30", fase: "Fase 2", comercial: "Parcial" },
+      "04": { name: "Chatbot", full: "04 · Chatbot Builder — Flow Builder Visual", cor: "#639922", fase: "Fase 3", comercial: "Ausente" },
+      "05": { name: "Calendário", full: "05 · Calendário e Reuniões", cor: "#534AB7", fase: "Fase 2", comercial: "Parcial" },
+      "06": { name: "IA/Copiloto", full: "06 · IA e Copiloto", cor: "#BA7517", fase: "Fase 2", comercial: "Parcial" },
+      "07": { name: "AI Agent", full: "07 · AI Agent Builder", cor: "#993C1D", fase: "Fase 3", comercial: "Ausente" },
+      "08": { name: "Automações", full: "08 · Automações — Motor de Regras", cor: "#185FA5", fase: "Fase 2", comercial: "Parcial" },
+      "09": { name: "Tracking", full: "09 · Tracking e Analytics", cor: "#E24B4A", fase: "Fase 2", comercial: "Parcial" },
+      "10": { name: "Planejamento", full: "10 · Planejamento Comercial", cor: "#3B6D11", fase: "Fase 3", comercial: "Ausente" },
+      "11": { name: "OTES", full: "11 · Folha Comercial — OTES", cor: "#72243E", fase: "Fase 4", comercial: "Ausente" },
+      "12": { name: "Integrações", full: "12 · Integrações", cor: "#0F6E56", fase: "Fase 2–3", comercial: "Parcial" },
+      "13": { name: "Jobs Pro", full: "13 · Jobs Pro", cor: "#888780", fase: "Fase 4", comercial: "Parcial" },
+      "14": { name: "Academy", full: "14 · Academy", cor: "#5F5E5A", fase: "Fase 4", comercial: "Ausente" },
+      "15": { name: "Admin", full: "15 · Admin e Workspace", cor: "#7F77DD", fase: "Fase 2–3", comercial: "Parcial" },
+    };
+
+    // ─── COMPUTED STATS ──────────────────────────────────────────────────────────
+    const modStats = {};
+    for (const k in MODULES) modStats[k] = { coberto: 0, parcial: 0, gap: 0, total: 0 };
+    F.forEach(r => {
+      const m = r[2], st = r[4];
+      if (!modStats[m]) modStats[m] = { coberto: 0, parcial: 0, gap: 0, total: 0 };
+      modStats[m].total++;
+      if (st === "COBERTO") modStats[m].coberto++;
+      else if (st === "PARCIAL") modStats[m].parcial++;
+      else modStats[m].gap++;
+    });
+
+    const p0count = F.filter(r => r[5] === "P0").length;
+    document.getElementById("kpi-p0").textContent = p0count;
+
+    // ─── FILTER FUNCTIONS (defined before charts use them) ───────────────────────
+    // Populate module select
+    const modSel = document.getElementById("f-modulo");
+    Object.keys(MODULES).forEach(k => {
+      const opt = document.createElement("option");
+      opt.value = k;
+      opt.textContent = MODULES[k].full;
+      modSel.appendChild(opt);
+    });
+
+    function getFiltered() {
+      const q = document.getElementById("f-search").value.toLowerCase().trim();
+      const mod = document.getElementById("f-modulo").value;
+      const st = document.getElementById("f-status").value;
+      const pr = document.getElementById("f-prio").value;
+      const fa = document.getElementById("f-fase").value;
+      return F.filter(r => {
+        if (q) {
+          const modInfo = MODULES[r[2]];
+          const modName = modInfo ? modInfo.full.toLowerCase() : "";
+          const searchIn = `${r[0]} ${r[1]} ${r[3] || ""} ${modName}`.toLowerCase();
+          if (!searchIn.includes(q)) return false;
+        }
+        if (mod && r[2] !== mod) return false;
+        if (st && r[4] !== st) return false;
+        if (pr) {
+          if (pr === "null" && r[5] !== null) return false;
+          if (pr !== "null" && r[5] !== pr) return false;
+        }
+        if (fa) {
+          if (fa === "null" && r[6] !== null) return false;
+          if (fa !== "null" && r[6] !== fa) return false;
+        }
+        return true;
+      });
+    }
+
+    function updateActiveFilterBar() {
+      const bar = document.getElementById("active-filters-bar");
+      const tags = document.getElementById("active-filter-tags");
+      const q = document.getElementById("f-search").value.trim();
+      const mod = document.getElementById("f-modulo").value;
+      const st = document.getElementById("f-status").value;
+      const pr = document.getElementById("f-prio").value;
+      const fa = document.getElementById("f-fase").value;
+      const parts = [];
+      if (q) parts.push(`<span class="tag" style="background:#1e3a5f;color:#93c5fd;cursor:pointer" onclick="document.getElementById('f-search').value='';applyFilters()">${q}</span>`);
+      if (mod) { const m = MODULES[mod]; parts.push(`<span class="tag" style="background:${m.cor};color:#fff;cursor:pointer" onclick="setFilter('modulo','${mod}')">${m.name}</span>`); }
+      if (st) { const icons = { COBERTO: "✅", PARCIAL: "⚠️", GAP: "❌" }; parts.push(`<span class="tag tag-${st.toLowerCase()}" style="cursor:pointer" onclick="setFilter('status','${st}')">${icons[st]} ${st}</span>`); }
+      if (pr) { parts.push(`<span class="tag tag-${pr.toLowerCase()}" style="cursor:pointer" onclick="setFilter('prioridade','${pr}')">${pr}</span>`); }
+      if (fa) { parts.push(`<span class="tag tag-${fa === "Fase 2" ? "f2" : fa === "Fase 3" ? "f3" : "f4"}" style="cursor:pointer" onclick="setFilter('fase','${fa}')">${fa}</span>`); }
+      if (parts.length === 0) { bar.style.display = "none"; return; }
+      bar.style.display = "flex";
+      tags.innerHTML = parts.join("");
+    }
+
+    function applyFilters() { renderTable(getFiltered()); updateActiveFilterBar(); }
+
+    function setFilter(type, val) {
+      if (type === "status") {
+        const current = document.getElementById("f-status").value;
+        document.getElementById("f-prio").value = "";
+        document.getElementById("f-fase").value = "";
+        document.getElementById("f-status").value = current === val ? "" : val;
+      }
+      if (type === "prioridade") {
+        const current = document.getElementById("f-prio").value;
+        document.getElementById("f-status").value = "";
+        document.getElementById("f-fase").value = "";
+        document.getElementById("f-prio").value = current === val ? "" : val;
+      }
+      if (type === "modulo") {
+        const current = document.getElementById("f-modulo").value;
+        document.getElementById("f-modulo").value = current === val ? "" : val;
+      }
+      if (type === "fase") {
+        const current = document.getElementById("f-fase").value;
+        document.getElementById("f-status").value = "";
+        document.getElementById("f-prio").value = "";
+        document.getElementById("f-fase").value = current === val ? "" : val;
+      }
+      applyFilters();
+      document.getElementById("feat-section")?.scrollIntoView({ behavior: "smooth", block: "start" });
+      // Update active KPI card
+      document.querySelectorAll(".kpi-card").forEach(c => c.classList.remove("active"));
+      const stVal = document.getElementById("f-status").value;
+      if (stVal) {
+        const idx = { COBERTO: 1, PARCIAL: 2, GAP: 3 };
+        document.querySelectorAll(".kpi-card")[idx[stVal]]?.classList.add("active");
+      }
+      if (document.getElementById("f-prio").value === "P0") {
+        document.querySelectorAll(".kpi-card")[4]?.classList.add("active");
+      }
+    }
+
+    function clearFilters() {
+      document.getElementById("f-search").value = "";
+      document.getElementById("f-modulo").value = "";
+      document.getElementById("f-status").value = "";
+      document.getElementById("f-prio").value = "";
+      document.getElementById("f-fase").value = "";
+      document.querySelectorAll(".kpi-card").forEach(c => c.classList.remove("active"));
+      applyFilters();
+    }
+
+    // ─── CHARTS ─────────────────────────────────────────────────────────────────
+    const chartDefaults = {
+      plugins: { legend: { labels: { color: "#e2e6ed", font: { size: 11 } } }, tooltip: { backgroundColor: "#1a1e26", titleColor: "#e2e6ed", bodyColor: "#9ca3af", borderColor: "#252a35", borderWidth: 1 } },
+      scales: { x: { ticks: { color: "#6b7280", font: { size: 10 } }, grid: { color: "#252a35" } }, y: { ticks: { color: "#6b7280", font: { size: 10 } }, grid: { color: "#252a35" } } }
+    };
+
+    // C1 Doughnut cobertura geral
+    new Chart(document.getElementById("c1"), {
+      type: "doughnut", data: {
+        labels: ["✅ Coberto (36)", "⚠️ Parcial (39)", "❌ Gap (120)"],
+        datasets: [{ data: [36, 39, 120], backgroundColor: ["#22c55e", "#f59e0b", "#ef4444"], borderColor: "#0d0f12", borderWidth: 3, hoverOffset: 8 }]
+      }
+    }, { options: { plugins: { legend: { position: "bottom", labels: { color: "#e2e6ed", font: { size: 11 }, padding: 12 } }, tooltip: { callbacks: { label: ctx => `${ctx.label}: ${ctx.raw} (${Math.round(ctx.raw / 195 * 100)}%)` } } }, onClick: (e, els) => { if (els.length) { const l = ["COBERTO", "PARCIAL", "GAP"][els[0].index]; setFilter("status", l); } }, onHover: (e, el) => { e.native && (e.native.target.style.cursor = el.length ? "pointer" : "default"); } } });
+
+    // C2 Gaps por módulo
+    const modNames = Object.keys(MODULES).map(k => MODULES[k].name);
+    const modGaps = Object.keys(MODULES).map(k => modStats[k]?.gap || 0);
+    const modColors = Object.keys(MODULES).map(k => MODULES[k].cor);
+    new Chart(document.getElementById("c2"), {
+      type: "bar", data: {
+        labels: modNames,
+        datasets: [{ label: "Gaps", data: modGaps, backgroundColor: modColors, borderRadius: 4, borderSkipped: false }]
+      }
+    }, { options: { ...chartDefaults, indexAxis: "y", plugins: { legend: { display: false }, ...chartDefaults.plugins }, scales: { x: { ...chartDefaults.scales.x, ticks: { ...chartDefaults.scales.x.ticks, stepSize: 2 } }, y: { ...chartDefaults.scales.y, ticks: { ...chartDefaults.scales.y.ticks, font: { size: 10 } } } }, onClick: (e, els) => { if (els.length) { const k = Object.keys(MODULES)[els[0].index]; setFilter("modulo", k); } }, onHover: (e, el) => { e.native && (e.native.target.style.cursor = el.length ? "pointer" : "default"); } } });
+
+    // C3 Prioridade
+    const p0 = F.filter(r => r[5] === "P0").length;
+    const p1 = F.filter(r => r[5] === "P1").length;
+    const p2 = F.filter(r => r[5] === "P2").length;
+    new Chart(document.getElementById("c3"), {
+      type: "bar", data: {
+        labels: ["P0 Crítico", "P1 Alto", "P2 Desejável"],
+        datasets: [{ label: "Features", data: [p0, p1, p2], backgroundColor: ["#ef4444", "#f97316", "#22c55e"], borderRadius: 6, borderSkipped: false }]
+      }
+    }, { options: { ...chartDefaults, plugins: { legend: { display: false }, ...chartDefaults.plugins }, onClick: (e, els) => { if (els.length) { const p = ["P0", "P1", "P2"][els[0].index]; setFilter("prioridade", p); } }, onHover: (e, el) => { e.native && (e.native.target.style.cursor = el.length ? "pointer" : "default"); } } });
+
+    // C4 Cobertura stacked por módulo
+    const c4Chart = new Chart(document.getElementById("c4"), {
+      type: "bar", data: {
+        labels: modNames,
+        datasets: [
+          { label: "Coberto", data: Object.keys(MODULES).map(k => modStats[k]?.coberto || 0), backgroundColor: "#22c55e", borderRadius: 0, borderSkipped: false },
+          { label: "Parcial", data: Object.keys(MODULES).map(k => modStats[k]?.parcial || 0), backgroundColor: "#f59e0b" },
+          { label: "Gap", data: Object.keys(MODULES).map(k => modStats[k]?.gap || 0), backgroundColor: "#ef4444" },
+        ]
+      }
+    }, {
+      options: {
+        ...chartDefaults, indexAxis: "y", plugins: { legend: { position: "bottom", labels: { color: "#e2e6ed", font: { size: 10 }, padding: 8, boxWidth: 10 } }, ...chartDefaults.plugins }, scales: { x: { ...chartDefaults.scales.x, stacked: true }, y: { ...chartDefaults.scales.y, stacked: true } }, onClick: (e, els) => {
+          if (els.length) {
+            const datasetIdx = els[0].datasetIndex;
+            const modIdx = els[0].index;
+            const k = Object.keys(MODULES)[modIdx];
+            if (datasetIdx === 0) setFilter("status", "COBERTO");
+            else if (datasetIdx === 1) setFilter("status", "PARCIAL");
+            else if (datasetIdx === 2) setFilter("status", "GAP");
+            // Set module too
+            document.getElementById("f-modulo").value = k;
+            applyFilters();
+          }
+        }, onHover: (e, el) => { e.native && (e.native.target.style.cursor = el.length ? "pointer" : "default"); }
+      }
+    });
+
+    // ─── REVERSE ANALYSIS CHARTS ─────────────────────────────────────────────────
+    // C5 Doughnut cobertura reversa
+    new Chart(document.getElementById("c5"), {
+      type: "doughnut",
+      data: {
+        labels: ["✅ Solicitado (21)", "🔵 Implícito (9)", "🔶 Parcial (1)", "❌ Não Solicitado (12)"],
+        datasets: [{
+          data: [21, 9, 1, 12],
+          backgroundColor: ["#22c55e", "#3b82f6", "#f59e0b", "#ef4444"],
+          borderColor: "#0d0f12", borderWidth: 3, hoverOffset: 8
+        }]
+      },
+      options: {
+        plugins: {
+          legend: { position: "bottom", labels: { color: "#e2e6ed", font: { size: 11 }, padding: 12 } },
+          tooltip: {
+            callbacks: { label: ctx => `${ctx.label}: ${ctx.raw} (${Math.round(ctx.raw / 43 * 100)}%)` }
+          }
+        }
+      }
+    });
+
+    // C6 Barras horizontal — RFs não solicitados por módulo
+    const revModLabels = ["M1 Mensageria", "M2 Pipeline", "M3 Agenda", "M4 Dashboard", "M5 IA"];
+    const revModValues = [2, 3, 2, 2, 3];
+    const revModColors = ["#D85A30", "#378ADD", "#534AB7", "#BA7517", "#993C1D"];
+    new Chart(document.getElementById("c6"), {
+      type: "bar",
+      data: {
+        labels: revModLabels,
+        datasets: [{
+          label: "RFs não solicitados",
+          data: revModValues,
+          backgroundColor: revModColors,
+          borderRadius: 4,
+          borderSkipped: false
+        }]
+      },
+      options: {
+        ...chartDefaults,
+        indexAxis: "y",
+        plugins: { legend: { display: false }, ...chartDefaults.plugins },
+        scales: {
+          x: { ...chartDefaults.scales.x, ticks: { ...chartDefaults.scales.x.ticks, stepSize: 1 }, max: 4 },
+          y: { ...chartDefaults.scales.y }
+        }
+      }
+    });
+
+    // ─── REVERSE TABLE: 12 RFs não solicitados ─────────────────────────────────
+    const REVERSE_DATA = [
+      ["RF-006", "M1", "VOIP embarcado com transcrição automática", "alto", "🔴", "Mover para Fase 2 ou validar com cliente"],
+      ["RF-007", "M1", "Integração Instagram Direct via ManyChat", "medio", "🟡", "Validar se cliente usa Instagram como canal"],
+      ["RF-014", "M2", "Personalização de campos visíveis no card", "baixo", "🟢", "Manter se custo de implementação for baixo"],
+      ["RF-017", "M2", "Lead Lock — priorização de leads", "medio", "🟡", "Validar se deseja fluxo estilo Close CRM"],
+      ["RF-018", "M2", "Webhook de entrada e saída por etapa", "medio", "🟡", "Validar integrações por etapa com cliente"],
+      ["RF-025", "M3", "Agendamento nativo sem Google Calendar", "baixo", "🟢", "Manter como plano B se closers não tiverem Google"],
+      ["RF-026", "M3", "Link de agendamento público por closer", "medio", "🟡", "Validar se cliente quer auto-agendamento público"],
+      ["RF-028", "M4", "Motivos de perda categorizados por IA", "alto", "🔴", "Simplificar para campo livre no MVP"],
+      ["RF-032", "M5", "Análise RFM (Recência, Frequência, Monetário)", "alto", "🔴", "Mover para Fase 2; não é crítico"],
+      ["RF-033", "M5", "Métricas de recorrência (MRR, ARR, Churn)", "alto", "🔴", "Validar se cliente tem produtos de assinatura"],
+      ["RF-039", "M5", "Seleção de framework de vendas", "baixo", "🟢", "Manter se custo for baixo; pode ser diferencial"],
+      ["RF-041", "M5", "IA Gestora — detecção de padrões de perda", "alto", "🔴", "Mover para Fase 2 ou 3"],
+    ];
+
+    function renderReverseTable() {
+      const tbody = document.getElementById("reverse-tbody");
+      tbody.innerHTML = REVERSE_DATA.map(r => {
+        const modInfo = MODULES[r[1].replace("M", "").padStart(2, "0")];
+        const modName = modInfo ? modInfo.name : r[1];
+        const modColor = modInfo ? modInfo.cor : "#6b7280";
+        return `<tr>
+          <td class="td-rf-id">${r[0]}</td>
+          <td class="td-rf-mod"><span style="color:${modColor};font-weight:600">${modName}</span></td>
+          <td style="font-weight:500">${r[2]}</td>
+          <td><span class="tag tag-risco-${r[3]}">${r[4]} ${r[3] === "alto" ? "Alto" : r[3] === "medio" ? "Médio" : "Baixo"}</span></td>
+          <td class="td-rf-rec">${r[5]}</td>
+        </tr>`;
+      }).join("");
+    }
+    renderReverseTable();
+
+    // ─── MODULE CARDS ────────────────────────────────────────────────────────────
+    function renderModuleCards() {
+      const grid = document.getElementById("module-grid");
+      grid.innerHTML = "";
+      Object.keys(MODULES).forEach(k => {
+        const m = MODULES[k], st = modStats[k] || { coberto: 0, parcial: 0, gap: 0, total: 0 };
+        const pct = st.total > 0 ? Math.round(st.coberto / st.total * 100) : 0;
+        const feats = F.filter(r => r[2] === k);
+        const comercialIcon = m.comercial === "Ausente" ? "❌" : "⚠️";
+        const div = document.createElement("div");
+        div.className = "mod-card";
+        div.setAttribute("data-m", k);
+        div.innerHTML = `
+      <div class="mod-header" onclick="toggleMod(this.parentElement)">
+        <div class="mod-dot" style="background:${m.cor}"></div>
+        <div class="mod-name">${m.full.replace("·", "·")}</div>
+        <span class="mod-arrow">▼</span>
+      </div>
+      <div class="mod-stats">
+        <span class="mod-stat"><span class="dot" style="background:#22c55e"></span>${st.coberto}</span>
+        <span class="mod-stat"><span class="dot" style="background:#f59e0b"></span>${st.parcial}</span>
+        <span class="mod-stat"><span class="dot" style="background:#ef4444"></span>${st.gap}</span>
+        <span style="margin-left:auto;font-size:11px;color:var(--muted)">${pct}% coberto</span>
+      </div>
+      <div class="mod-badges">
+        <span class="tag tag-${m.fase === "Fase 2" ? "f2" : m.fase === "Fase 3" ? "f3" : m.fase === "Fase 4" ? "f4" : "f2"}">${m.fase}</span>
+        <span class="tag" style="background:#1f2937;color:#9ca3af">${comercialIcon} ${m.comercial}</span>
+      </div>
+      <div class="pbar-wrap">
+        <div class="pbar-seg" style="width:${st.total > 0 ? st.coberto / st.total * 100 : 0}%;background:#22c55e"></div>
+        <div class="pbar-seg" style="width:${st.total > 0 ? st.parcial / st.total * 100 : 0}%;background:#f59e0b"></div>
+        <div class="pbar-seg" style="width:${st.total > 0 ? st.gap / st.total * 100 : 0}%;background:#ef4444"></div>
+      </div>
+      <div class="mod-body">
+        <ul class="mod-feat-list">
+          ${feats.map(f => `<li class="mod-feat-item" onclick="scrollToFeature('${f[0]}')">
+            <span class="mod-feat-id">${f[0]}</span>
+            <span class="tag tag-${f[4] === "COBERTO" ? "coberto" : f[4] === "PARCIAL" ? "parcial" : "gap"}" style="font-size:9px;padding:1px 5px">${f[4][0]}</span>
+            <span style="flex:1">${f[1]}</span>
+          </li>`).join("")}
+        </ul>
+      </div>`;
+        grid.appendChild(div);
+      });
+    }
+    function toggleMod(card) {
+      card.classList.toggle("open");
+    }
+    renderModuleCards();
+
+    // ─── TABLE ───────────────────────────────────────────────────────────────────
+    let expandedRow = null;
+
+    function statusTag(s) {
+      const m = { COBERTO: "coberto", PARCIAL: "parcial", GAP: "gap" };
+      const e = { COBERTO: "✅ Coberto", PARCIAL: "⚠️ Parcial", GAP: "❌ Gap" };
+      return `<span class="tag tag-${m[s]}">${e[s]}</span>`;
+    }
+    function prioTag(p) {
+      if (!p) return '<span class="td-null">—</span>';
+      return `<span class="tag tag-${p.toLowerCase()}">${p}</span>`;
+    }
+    function faseTag(f) {
+      if (!f) return '<span class="td-null">—</span>';
+      const m = { "Fase 2": "f2", "Fase 3": "f3", "Fase 4": "f4" };
+      return `<span class="tag tag-${m[f] || "f2"}">${f}</span>`;
+    }
+
+    function renderTable(data) {
+      const tbody = document.getElementById("feat-tbody");
+      document.getElementById("filter-count").textContent = `${data.length} de 195`;
+      if (data.length === 0) { tbody.innerHTML = `<tr><td colspan="7" class="no-results">Nenhuma feature encontrada com os filtros atuais.</td></tr>`; return; }
+      tbody.innerHTML = data.map(r => {
+        const modInfo = MODULES[r[2]];
+        const modStr = modInfo ? `<span style="color:${modInfo.cor};font-weight:600">${modInfo.name}</span>` : "—";
+        return `<tr data-id="${r[0]}" onclick="toggleExpand('${r[0]}',this)">
+      <td class="td-id">${r[0]}</td>
+      <td class="td-name">${r[1]}</td>
+      <td class="td-mod">${modStr}</td>
+      <td>${statusTag(r[4])}</td>
+      <td>${prioTag(r[5])}</td>
+      <td>${faseTag(r[6])}</td>
+      <td class="td-null" style="font-family:monospace;font-size:11px">${r[3] || "—"}</td>
+    </tr>`;
+      }).join("");
+    }
+
+    function toggleExpand(id, tr) {
+      // Remove existing expand row
+      const prev = document.getElementById("expand-" + id);
+      if (prev) { prev.remove(); tr.classList.remove("expanded"); expandedRow = null; return; }
+      if (expandedRow) {
+        const old = document.getElementById("expand-" + expandedRow);
+        if (old) old.remove();
+        document.querySelector(`tr[data-id="${expandedRow}"]`)?.classList.remove("expanded");
+      }
+      expandedRow = id;
+      tr.classList.add("expanded");
+      const feat = F.find(r => r[0] === id);
+      if (!feat) return;
+      const modInfo = MODULES[feat[2]];
+      const expTr = document.createElement("tr");
+      expTr.id = "expand-" + id;
+      expTr.className = "expand-row";
+      expTr.innerHTML = `<td colspan="7" style="padding:0 14px 16px;background:var(--bg3)">
+    <div style="padding:14px;background:var(--bg2);border-radius:8px;border:1px solid var(--border);font-size:12px;display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px">
+      <div><label style="display:block;font-size:10px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);font-weight:600;margin-bottom:3px"># Feature</label><p style="color:var(--text);font-family:monospace;font-size:14px">${feat[0]}</p></div>
+      <div><label style="display:block;font-size:10px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);font-weight:600;margin-bottom:3px">Nome</label><p style="color:var(--text)">${feat[1]}</p></div>
+      <div><label style="display:block;font-size:10px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);font-weight:600;margin-bottom:3px">Módulo</label><p style="color:${modInfo.cor};font-weight:600">${modInfo.full}</p></div>
+      <div><label style="display:block;font-size:10px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);font-weight:600;margin-bottom:3px">Status</label>${statusTag(feat[4])}</div>
+      <div><label style="display:block;font-size:10px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);font-weight:600;margin-bottom:3px">RF Equipe</label><p style="color:var(--text);font-family:monospace">${feat[3] || "Não mapeado"}</p></div>
+      ${feat[5] ? `<div><label style="display:block;font-size:10px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);font-weight:600;margin-bottom:3px">Prioridade</label>${prioTag(feat[5])}</div>` : ""}
+      ${feat[6] ? `<div><label style="display:block;font-size:10px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);font-weight:600;margin-bottom:3px">Fase</label>${faseTag(feat[6])}</div>` : ""}
+      ${feat[7] && feat[7] !== "—" ? `<div><label style="display:block;font-size:10px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);font-weight:600;margin-bottom:3px">Dependências</label><p style="color:var(--text)">${feat[7]}</p></div>` : ""}
+      <div style="grid-column:1/-1"><label style="display:block;font-size:10px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);font-weight:600;margin-bottom:3px">Observação</label><p style="color:${feat[8] ? "var(--text)" : "var(--muted)"};font-style:${feat[8] ? "normal" : "italic"}">${feat[8] || "Sem observação"}</p></div>
+      ${feat[5] || feat[6] ? `<div style="grid-column:1/-1;display:flex;gap:8px;flex-wrap:wrap">
+        ${feat[5] ? `<button onclick="setFilter('prioridade','${feat[5]}')" style="padding:4px 10px;border:1px solid var(--border);border-radius:4px;background:var(--bg3);color:var(--text);font-size:11px;cursor:pointer">Filtrar por ${feat[5]}</button>` : ""}
+        ${feat[6] ? `<button onclick="setFilter('fase','${feat[6]}')" style="padding:4px 10px;border:1px solid var(--border);border-radius:4px;background:var(--bg3);color:var(--text);font-size:11px;cursor:pointer">Filtrar por ${feat[6]}</button>` : ""}
+        <button onclick="setFilter('modulo','${feat[2]}')" style="padding:4px 10px;border:1px solid var(--border);border-radius:4px;background:var(--bg3);color:var(--text);font-size:11px;cursor:pointer">Filtrar por módulo</button>
+      </div>`: ""}
+    </div>
+  </td>`;
+      tr.insertAdjacentElement("afterend", expTr);
+    }
+
+    function scrollToFeature(id) {
+      clearFilters();
+      document.getElementById("f-search").value = id;
+      applyFilters();
+      setTimeout(() => {
+        const row = document.querySelector(`tr[data-id="${id}"]`);
+        if (row) { row.scrollIntoView({ behavior: "smooth", block: "center" }); row.click(); }
+      }, 100);
+    }
+
+    // Initial render
+    applyFilters();
+
+    // Keyboard shortcuts
+    document.addEventListener("keydown", e => {
+      if (e.key === "Escape" && (document.activeElement.tagName !== "INPUT" && document.activeElement.tagName !== "SELECT")) {
+        clearFilters();
+      }
+      if (e.key === "/" && document.activeElement.tagName !== "INPUT") {
+        e.preventDefault();
+        document.getElementById("f-search").focus();
+      }
+    });
+  </script>
+</body>
+
+</html>

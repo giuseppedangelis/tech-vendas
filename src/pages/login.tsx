@@ -1,11 +1,11 @@
 import { useState } from "react"
 import { useNavigate } from "react-router-dom"
-import { useAuth } from "@/hooks/use-auth"
+import { useAuth, isUserEnabled } from "@/hooks/use-auth"
 import { Card, CardContent } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Button } from "@/components/ui/button"
-import { Flame, LogIn, Eye, EyeOff, ArrowRight, Sparkles } from "lucide-react"
+import { Flame, LogIn, Eye, EyeOff, ArrowRight, Sparkles, Lock } from "lucide-react"
 
 const roleColors: Record<string, string> = {
   admin: "bg-rose-500/10 text-rose-600 dark:text-rose-400",
@@ -216,32 +216,52 @@ export function LoginPage() {
             </div>
 
             <div className="space-y-2">
-              {allUsers.map((u, index) => (
-                <button
-                  key={u.id}
-                  onClick={() => handleQuickLogin(u.email)}
-                  disabled={loading}
-                  className={`animate-card-in stagger-${Math.min(index + 2, 6)} group flex w-full items-center gap-3 rounded-xl border border-border/60 bg-card/50 px-3.5 py-3 text-left transition-all duration-200 hover:border-primary/20 hover:bg-card hover:shadow-sm hover:shadow-primary/5 disabled:opacity-50 backdrop-blur-sm`}
-                >
-                  <div className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-gradient-to-br from-muted to-muted/60 text-[10px] font-bold text-muted-foreground">
-                    {u.initials}
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2">
-                      <span className="text-[13px] font-medium truncate">{u.name}</span>
-                      <span className={`inline-flex items-center rounded-md px-1.5 py-[2px] text-[9px] font-bold leading-none ${roleColors[u.role]}`}>
-                        {roleLabels[u.role]}
-                      </span>
+              {allUsers.map((u, index) => {
+                const enabled = isUserEnabled(u)
+                return (
+                  <button
+                    key={u.id}
+                    onClick={() => enabled && handleQuickLogin(u.email)}
+                    disabled={loading || !enabled}
+                    aria-disabled={!enabled}
+                    title={enabled ? undefined : "Perfil indisponível no protótipo"}
+                    className={`animate-card-in stagger-${Math.min(index + 2, 6)} group flex w-full items-center gap-3 rounded-xl border px-3.5 py-3 text-left transition-all duration-200 backdrop-blur-sm ${
+                      enabled
+                        ? "border-border/60 bg-card/50 hover:border-primary/20 hover:bg-card hover:shadow-sm hover:shadow-primary/5 cursor-pointer"
+                        : "border-border/30 bg-muted/20 opacity-50 cursor-not-allowed"
+                    } disabled:pointer-events-none`}
+                  >
+                    <div className={`flex size-8 shrink-0 items-center justify-center rounded-lg text-[10px] font-bold ${
+                      enabled
+                        ? "bg-gradient-to-br from-muted to-muted/60 text-muted-foreground"
+                        : "bg-muted/40 text-muted-foreground/50"
+                    }`}>
+                      {u.initials}
                     </div>
-                    <span className="text-[11px] text-muted-foreground/50">{u.email}</span>
-                  </div>
-                  <ArrowRight className="size-3.5 shrink-0 text-muted-foreground/15 transition-all duration-200 group-hover:translate-x-0.5 group-hover:text-primary/50" />
-                </button>
-              ))}
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2">
+                        <span className={`text-[13px] font-medium truncate ${enabled ? "" : "text-muted-foreground/60"}`}>{u.name}</span>
+                        <span className={`inline-flex items-center rounded-md px-1.5 py-[2px] text-[9px] font-bold leading-none ${roleColors[u.role]} ${enabled ? "" : "opacity-60"}`}>
+                          {roleLabels[u.role]}
+                        </span>
+                      </div>
+                      <span className="text-[11px] text-muted-foreground/50 truncate block">{u.email}</span>
+                    </div>
+                    {enabled ? (
+                      <ArrowRight className="size-3.5 shrink-0 text-muted-foreground/15 transition-all duration-200 group-hover:translate-x-0.5 group-hover:text-primary/50" />
+                    ) : (
+                      <span className="flex items-center gap-1 shrink-0 rounded-md bg-muted/40 px-1.5 py-0.5 text-[9px] font-semibold uppercase tracking-wide text-muted-foreground/60">
+                        <Lock className="size-2.5" />
+                        Em breve
+                      </span>
+                    )}
+                  </button>
+                )
+              })}
             </div>
 
             <p className="text-center text-[10px] text-muted-foreground/40">
-              Senha: <code className="rounded-md bg-muted/60 px-1.5 py-0.5 font-mono text-[10px] text-muted-foreground/60">123456</code>
+              Apenas o perfil Gestor está liberado nesta fase do protótipo · Senha: <code className="rounded-md bg-muted/60 px-1.5 py-0.5 font-mono text-[10px] text-muted-foreground/60">123456</code>
             </p>
           </div>
         </div>

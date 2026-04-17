@@ -57,6 +57,21 @@ const SetupPage = lazy(() =>
     default: m.SetupPage,
   }))
 )
+const SdrOverviewPage = lazy(() =>
+  import("@/pages/sdr/sdr-overview-page").then((m) => ({
+    default: m.SdrOverviewPage,
+  }))
+)
+const SdrOperationsPage = lazy(() =>
+  import("@/pages/sdr/sdr-operations-page").then((m) => ({
+    default: m.SdrOperationsPage,
+  }))
+)
+const SdrConfigurationPage = lazy(() =>
+  import("@/pages/sdr/sdr-configuration-page").then((m) => ({
+    default: m.SdrConfigurationPage,
+  }))
+)
 
 function PageLoader() {
   return (
@@ -109,6 +124,11 @@ export function AppRoutes() {
           <Route path="/team/:memberId" element={<RoleRoute allow={["admin","gestor"]}><TeamPage /></RoleRoute>} />
           <Route path="/reports" element={<RoleRoute allow={["admin","gestor"]}><ReportsPage /></RoleRoute>} />
           <Route path="/reports/:section" element={<RoleRoute allow={["admin","gestor"]}><ReportsPage /></RoleRoute>} />
+          <Route path="/sdr" element={<RoleRoute allow={["admin","gestor"]}><SdrOverviewPage /></RoleRoute>} />
+          <Route path="/sdr/operacao" element={<RoleRoute allow={["admin","gestor"]}><SdrOperationsPage /></RoleRoute>} />
+          <Route path="/sdr/operacao/:tab" element={<RoleRoute allow={["admin","gestor"]}><SdrOperationsPage /></RoleRoute>} />
+          <Route path="/sdr/configuracao" element={<RoleRoute allow={["admin","gestor"]}><SdrConfigurationPage /></RoleRoute>} />
+          <Route path="/sdr/configuracao/:tab" element={<RoleRoute allow={["admin","gestor"]}><SdrConfigurationPage /></RoleRoute>} />
           <Route path="/settings" element={<RoleRoute allow={["admin","gestor"]}><SettingsPage /></RoleRoute>} />
           <Route path="/settings/:section" element={<RoleRoute allow={["admin","gestor"]}><SettingsPage /></RoleRoute>} />
           <Route path="/settings/:section/:subsection" element={<RoleRoute allow={["admin","gestor"]}><SettingsPage /></RoleRoute>} />

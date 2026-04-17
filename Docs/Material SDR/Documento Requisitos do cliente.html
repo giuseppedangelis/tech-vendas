@@ -1,0 +1,649 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SaaS HQ — Dashboard de Backlog</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<style>
+  :root {
+    --bg: #0b0c0e;
+    --bg2: #111316;
+    --bg3: #17191d;
+    --border: rgba(255,255,255,0.07);
+    --border2: rgba(255,255,255,0.13);
+    --text: #e8e9eb;
+    --text2: #8a8d94;
+    --text3: #52555c;
+    --accent: #6c63ff;
+    --accent2: #a78bfa;
+    --red: #e24b4a;
+    --amber: #ef9f27;
+    --green: #1d9e75;
+    --blue: #378add;
+    --purple: #7f77dd;
+    --radius: 10px;
+    --radius-lg: 16px;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    line-height: 1.6;
+    min-height: 100vh;
+  }
+
+  /* HEADER */
+  .header {
+    border-bottom: 1px solid var(--border);
+    padding: 28px 40px 24px;
+    display: flex;
+    align-items: flex-end;
+    gap: 32px;
+    position: sticky;
+    top: 0;
+    background: rgba(11,12,14,0.92);
+    backdrop-filter: blur(12px);
+    z-index: 100;
+  }
+  .header-logo {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 20px;
+    letter-spacing: -0.5px;
+    color: var(--text);
+  }
+  .header-logo span { color: var(--accent2); }
+  .header-sub {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--text3);
+    letter-spacing: 0.08em;
+    padding-bottom: 2px;
+  }
+  .header-pills { display: flex; gap: 8px; margin-left: auto; }
+  .hpill {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    padding: 4px 10px;
+    border-radius: 20px;
+    border: 1px solid var(--border2);
+    color: var(--text2);
+    letter-spacing: 0.05em;
+  }
+
+  /* LAYOUT */
+  .main { max-width: 1400px; margin: 0 auto; padding: 40px; }
+  .section { margin-bottom: 48px; }
+  .section-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    color: var(--text3);
+    text-transform: uppercase;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .section-label::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  /* CARDS */
+  .card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 20px 24px;
+  }
+  .card-title {
+    font-family: 'Syne', sans-serif;
+    font-weight: 600;
+    font-size: 13px;
+    color: var(--text2);
+    margin-bottom: 16px;
+    letter-spacing: 0.02em;
+  }
+
+  /* KPI GRID */
+  .kpi-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+  .kpi-card {
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 20px;
+    position: relative;
+    overflow: hidden;
+  }
+  .kpi-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--accent), transparent);
+    opacity: 0.5;
+  }
+  .kpi-lbl { font-family: 'DM Mono', monospace; font-size: 10px; color: var(--text3); letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 8px; }
+  .kpi-val { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 28px; color: var(--text); line-height: 1; margin-bottom: 6px; }
+  .kpi-sub { font-size: 11px; color: var(--text3); }
+
+  /* PREMISSAS */
+  .premissas-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; margin-bottom: 16px; }
+  .p-item {
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 12px;
+    text-align: center;
+  }
+  .p-cx { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 16px; color: var(--accent2); margin-bottom: 4px; }
+  .p-h { font-family: 'DM Mono', monospace; font-size: 12px; color: var(--text); }
+  .p-d { font-size: 10px; color: var(--text3); margin-top: 2px; }
+  .team-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+  .t-item {
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 12px 16px;
+  }
+  .t-lbl { font-size: 10px; color: var(--text3); margin-bottom: 4px; font-family: 'DM Mono', monospace; letter-spacing: 0.06em; }
+  .t-val { font-size: 13px; font-weight: 500; color: var(--text); }
+
+  /* TWO-COL */
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .col-stack { display: flex; flex-direction: column; gap: 16px; }
+
+  /* PRIO CARDS */
+  .prio-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+  .prio-card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 20px 24px;
+    position: relative;
+    overflow: hidden;
+  }
+  .prio-lbl { font-family: 'DM Mono', monospace; font-size: 10px; color: var(--text3); letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 8px; }
+  .prio-val { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 26px; line-height: 1; margin-bottom: 6px; }
+  .prio-sub { font-size: 11px; color: var(--text3); }
+
+  /* LEGEND */
+  .legend { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 10px; }
+  .legend span { display: flex; align-items: center; gap: 5px; font-size: 11px; color: var(--text2); font-family: 'DM Mono', monospace; }
+  .ld { width: 10px; height: 10px; border-radius: 2px; flex-shrink: 0; }
+
+  /* READY LIST */
+  .ready-list { list-style: none; }
+  .ready-list li { display: flex; align-items: center; gap: 8px; padding: 7px 0; border-bottom: 1px solid var(--border); font-size: 12px; }
+  .ready-list li:last-child { border-bottom: none; }
+  .ready-list li .name { flex: 1; color: var(--text); }
+
+  /* GANTT */
+  .gantt-wrap { overflow-x: auto; }
+  .gantt-tbl { border-collapse: collapse; min-width: 100%; font-size: 11px; }
+  .gantt-tbl th { font-family: 'DM Mono', monospace; font-size: 9px; font-weight: 500; color: var(--text3); padding: 5px 4px; text-align: center; border-bottom: 1px solid var(--border); white-space: nowrap; min-width: 22px; letter-spacing: 0.04em; }
+  .gantt-tbl th.col-name { text-align: left; min-width: 170px; padding-left: 4px; }
+  .gantt-tbl th.col-dias { text-align: right; min-width: 36px; }
+  .gantt-tbl td.g-name { font-size: 11px; color: var(--text); padding: 5px 8px 5px 4px; white-space: nowrap; }
+  .gantt-tbl td.g-dias { font-family: 'DM Mono', monospace; font-size: 10px; color: var(--text3); padding: 5px 6px; text-align: right; white-space: nowrap; }
+  .gantt-tbl tr { border-bottom: 1px solid var(--border); }
+  .gantt-tbl tr:last-child { border-bottom: none; }
+  .g-cell { padding: 3px 2px; width: 22px; min-width: 22px; }
+  .g-bar { height: 14px; border-radius: 3px; opacity: 0.85; }
+  .month-th { background: var(--bg3); font-size: 9px; font-weight: 600; color: var(--text2); border-left: 1px solid var(--border2); text-align: center; }
+
+  /* TAGS */
+  .tag {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    padding: 2px 7px;
+    border-radius: 20px;
+    font-weight: 500;
+    white-space: nowrap;
+    letter-spacing: 0.04em;
+  }
+  .tag-p0  { background: rgba(226,75,74,0.15); color: #f08080; border: 1px solid rgba(226,75,74,0.25); }
+  .tag-p1  { background: rgba(239,159,39,0.12); color: #f5b53d; border: 1px solid rgba(239,159,39,0.22); }
+  .tag-p2  { background: rgba(29,158,117,0.12); color: #3ec99b; border: 1px solid rgba(29,158,117,0.22); }
+  .tag-xs  { background: rgba(29,158,117,0.1); color: #3ec99b; border: 1px solid rgba(29,158,117,0.2); }
+  .tag-s   { background: rgba(55,138,221,0.1); color: #6eb3f5; border: 1px solid rgba(55,138,221,0.2); }
+  .tag-m   { background: rgba(127,119,221,0.1); color: #a99ef7; border: 1px solid rgba(127,119,221,0.2); }
+  .tag-l   { background: rgba(239,159,39,0.1); color: #f5b53d; border: 1px solid rgba(239,159,39,0.2); }
+  .tag-xl  { background: rgba(226,75,74,0.1); color: #f08080; border: 1px solid rgba(226,75,74,0.2); }
+  .tag-dev { background: rgba(29,158,117,0.12); color: #3ec99b; border: 1px solid rgba(29,158,117,0.22); }
+  .tag-ideia { background: rgba(255,255,255,0.04); color: var(--text3); border: 1px solid var(--border); }
+  .tag-alto  { background: rgba(226,75,74,0.1); color: #f08080; border: 1px solid rgba(226,75,74,0.2); }
+  .tag-medio { background: rgba(239,159,39,0.1); color: #f5b53d; border: 1px solid rgba(239,159,39,0.2); }
+  .tag-baixo { background: rgba(29,158,117,0.1); color: #3ec99b; border: 1px solid rgba(29,158,117,0.2); }
+  .tag-admin { background: rgba(127,119,221,0.1); color: #a99ef7; border: 1px solid rgba(127,119,221,0.2); }
+  .tag-int   { background: rgba(29,158,117,0.1); color: #3ec99b; border: 1px solid rgba(29,158,117,0.2); }
+
+  /* FEATURES TABLE */
+  .feat-filters { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; align-items: center; }
+  .feat-filters input, .feat-filters select {
+    background: var(--bg3);
+    border: 1px solid var(--border2);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 12px;
+    padding: 7px 12px;
+    border-radius: var(--radius);
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .feat-filters input:focus, .feat-filters select:focus { border-color: var(--accent); }
+  .feat-filters input { flex: 1; min-width: 200px; }
+  .feat-filters select option { background: var(--bg2); }
+  .feat-count { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--text3); margin-left: auto; white-space: nowrap; }
+  .feat-table-wrap {
+    overflow-x: auto;
+    max-height: 480px;
+    overflow-y: auto;
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+  }
+  .feat-table-wrap::-webkit-scrollbar { width: 6px; height: 6px; }
+  .feat-table-wrap::-webkit-scrollbar-track { background: var(--bg3); }
+  .feat-table-wrap::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 3px; }
+  .feat-tbl { border-collapse: collapse; width: 100%; }
+  .feat-tbl thead th {
+    position: sticky;
+    top: 0;
+    background: var(--bg3);
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    font-weight: 500;
+    color: var(--text3);
+    padding: 9px 12px;
+    text-align: left;
+    border-bottom: 1px solid var(--border2);
+    white-space: nowrap;
+    cursor: pointer;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    user-select: none;
+    transition: color 0.15s;
+  }
+  .feat-tbl thead th:hover, .feat-tbl thead th.sorted { color: var(--text); }
+  .feat-tbl thead th.sorted::after { content: ' ↕'; opacity: 0.5; }
+  .feat-tbl tbody tr { border-bottom: 1px solid var(--border); transition: background 0.1s; }
+  .feat-tbl tbody tr:last-child { border-bottom: none; }
+  .feat-tbl tbody tr:hover { background: var(--bg3); }
+  .feat-tbl td { padding: 8px 12px; color: var(--text); vertical-align: middle; }
+  .feat-tbl td.td-id { font-family: 'DM Mono', monospace; color: var(--text3); font-size: 10px; width: 36px; }
+  .feat-tbl td.td-nome { max-width: 280px; font-size: 12px; }
+  .feat-tbl td.td-modulo { white-space: nowrap; color: var(--text2); font-size: 11px; }
+  .feat-tbl td.td-hrs { font-family: 'DM Mono', monospace; text-align: right; white-space: nowrap; color: var(--text3); font-size: 11px; }
+
+  /* DIVIDER */
+  .divider { border: none; border-top: 1px solid var(--border); margin: 40px 0; }
+
+  /* FOOTER */
+  .footer {
+    border-top: 1px solid var(--border);
+    padding: 20px 40px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .footer-txt { font-family: 'DM Mono', monospace; font-size: 10px; color: var(--text3); letter-spacing: 0.06em; }
+
+  @media (max-width: 900px) {
+    .main { padding: 20px; }
+    .header { padding: 16px 20px; }
+    .kpi-grid, .prio-row, .premissas-grid, .team-row { grid-template-columns: repeat(2, 1fr); }
+    .two-col { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<header class="header">
+  <div style="display:flex;align-items:center;gap:16px;">
+    <img src="data:image/png;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/4gHYSUNDX1BST0ZJTEUAAQEAAAHIAAAAAAQwAABtbnRyUkdCIFhZWiAH4AABAAEAAAAAAABhY3NwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAA9tYAAQAAAADTLQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAlkZXNjAAAA8AAAACRyWFlaAAABFAAAABRnWFlaAAABKAAAABRiWFlaAAABPAAAABR3dHB0AAABUAAAABRyVFJDAAABZAAAAChnVFJDAAABZAAAAChiVFJDAAABZAAAAChjcHJ0AAABjAAAADxtbHVjAAAAAAAAAAEAAAAMZW5VUwAAAAgAAAAcAHMAUgBHAEJYWVogAAAAAAAAb6IAADj1AAADkFhZWiAAAAAAAABimQAAt4UAABjaWFlaIAAAAAAAACSgAAAPhAAAts9YWVogAAAAAAAA9tYAAQAAAADTLXBhcmEAAAAAAAQAAAACZmYAAPKnAAANWQAAE9AAAApbAAAAAAAAAABtbHVjAAAAAAAAAAEAAAAMZW5VUwAAACAAAAAcAEcAbwBvAGcAbABlACAASQBuAGMALgAgADIAMAAxADb/2wBDAAUDBAQEAwUEBAQFBQUGBwwIBwcHBw8LCwkMEQ8SEhEPERETFhwXExQaFRERGCEYGh0dHx8fExciJCIeJBweHx7/2wBDAQUFBQcGBw4ICA4eFBEUHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh7/wAARCAJYAlgDASIAAhEBAxEB/8QAHQABAAEEAwEAAAAAAAAAAAAAAAECBQYHAwQJCP/EAFoQAQABAwIBBgcKCQgFCQkAAAABAgMEBREGBxIhMUFRCBNhcYGx0RQVIiM2cnSRk6EWMkJSVFVzssE0NWKClbPS4TM3U1aSFxgkQ2SDoqPCREVGV2NllNPw/8QAGwEBAAIDAQEAAAAAAAAAAAAAAAEDAgQFBgf/xABBEQEAAQMCAwQHBAkCBQUAAAAAAQIDEQQFEiExBlFhkRMUIkFxgdEyM7HBFRc1U3KhsuHwI0IHQ2Ki8VKCktLi/9oADAMBAAIRAxEAPwD48AGQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACNwSI3NzAkUicCoUhgVCkMCoUhgVCkMCoUhgVCkMCoUhgVCkMCoRubmBIjcQJAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAARMkyhOAASAJ2BAnY2MGECrY2TgUirY2MCkVbGxgUirYMCkVbeQ28hgUirbyBgUioMCkTsbIwYQJ2NjAgABO6BAqERKUAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAiSUJgAEgnYiE7JiANkxCdmUQI2TskZcJhGxsq2Nk8KcKdjZVsbHCYU7GyrY2OEwp2NlWxscJhTsbKtjY4TCnY2VbGyOEwp2NlWyNjhMI2RsqDhMKdkbK0bIwhSjZXMI2YzAoFSJY4EAAqEQliAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEgiUAyBMEJhMQJiEiYhnECOlMQqpp3ctNtfTbmWWHDFMp5rsRbT4tfGnlOHX5qdnY5nkR4vyMvQSnDg2NnNzCLaPQyjDh2Oa7EW0+LllGnlPC63NOa7XivIibc9x6vJwutzTbyOebfkUzR5GE2ZhGHDtBtDkmkilj6OTDj2RzXPFCqLbKLMyYdbmSc2Xa8WjxafV5MOrMI6XZqtuOqhVVZmDDiRsrqpUdSiqnDHCJhCrrRKuYQplCpSwkEwgQKgEAAAAAAADKuAKsS9cyMLJx7NyqY8ZbmuiJnumOn0fe6G1aCNw1VOm4+Hi6TPf/AHZ26OOrhYqNs+92n/oOL9lT7GF8fadbxc2zk2LVNu1ep5sxTTtEVR/lt9T0G8dj7+26WdT6SKojGcRjryz5rbmmminiyxoB49rgrx7Vd+/bsW43ruVRTTHlmdm0sXStPsY1uz7jx6+ZTFPOqtRMztHXL0Ww9nbu8cc0VcMU45zGecrrVmbmWqhtunAwafxcPHjzWqfYj3vwP0HG+yp9j0f6vb37+PKfqu9TnvalG2fe7T/0HF+yp9h73af+g4v2VPsR+r2/+/jyn6nqc97Uw2z73af+g4v2VPscdWn4Huq3HuLG25lXR4qnvp8iKv8Ah9eiM+mjyn6nqc97VQ2z73af+g4v2VPsYdxvokYlz3wxLcU2K52uU0xtFFXf5p9fnc7duxup2/TTqIriuI6xEdI7/qwuaaqinOcsXAeNawMn5PrFi/l5UX7Nu7EW4mIrpirbp8rMve7T/wBBxfsqfY9jtHY+7uelp1NN2KYnPLHdOGzb00108WWphsPFw8OeKcy1OJYm3Tj0TFPi42id+5dve7T/ANBxfsqfY29N2FvX6api9EYmY6T7px3sqdJM+9qYbZ97tP8A0HF+yp9hOnafPXg4v2NPsbH6vb/7+PKfqn1Oe9qYbRyNC0i/ExXp9iN/zKeZP3bLFqvBlExNem35pn/Z3Z3ifNPtc7W9h9x09M1W5iuPDr5T9WFWlrjpzYWOXMxr+JkVWMm1VbuU9dMuJ46uiqiqaaoxMe5rTGAGR8B6dRmajcyL9umuzYp6qo3iap6vu3+5t7bobmv1VGmt9ap8u+flDKiia6ophjiJba97tP8A0HF+yp9iyca6Rj16NVfxca1buWJ588yiI3p6p6vr9D1ut7C6jS6eu9F2KuGM4xPPDYr0s00zOWvwTHW8O1UqojshlHDPC3uq1RmajNVFqrpotR0TVHfM9kMwxMHDw6Ipxsa1a27aaen6+t7Pauxmr1tuLt2qLdM9MxmfLl/OWzb01VcZnk1Z4i/MbxZubd/NlTFMxO0xMT5W3ZcN/Gx8inm37Fu7HV8OmJdyrsBiPYv8/Gn+671Pulq+3Q7VqxVV1QyfVeGrMRN7A3pmOmbUzvE+aX2t4IvCfDGo8hWj5ep8N6PmZVV7Jiu9kYNu5cna9XERNVVMz0R0PP6/a7m0RxamnMZxGOkqK6JtfafBNONX+arjFq7nqb+A3BP+5/D39m2f8J+A3BP+5/D39m2f8LQjddLH/Lnzhh6WnueWU41X5rjqsTHY9S8rk84ByqebkcEcNXY/paXZnb/wsC428Gzkv4ix7s4WlXNBzKumm/gXJimJ8tuqZo28kRE+VZTueirnFUTT5SmLlMvO6bXkItdPU23y28ivEvJlmxczIpz9HvV8zH1KzTtRVPXFNdPTNFW0dUzMT2TO07a1t2fhxvDqWtFTdxVROYn3wsimJ6OnTj1T2K4xqu56dcKcE8GXOFtJuXOEdArrqwrNVVVWnWZmZmiN5meb1rn+A3BX+5/D39m2f8Lk/pXS0Tibc+cKvSU9zyz9zVdyKsar816m/gNwV/ufw9/Ztn/C4snk+4CyaOZkcE8NXae6vS7M/wDpT+l9JP8Ay584T6WnueWVdiY7HFXaei3G3g38l3EePd9y6PVoWZV005Gn3JpiJ/ZzvRt5oifLD5C5ceRjiPkw1CmrN5udpGRXNOLqNmnaiuevm109PMr26dumJ6dpnadtizc0usnhtTirunr8u/8AFMTTV0aim3PcRbl3ZtJos7z0QyjRTM4wnhdWi1v2OejHmeqG/uQfwcdc46x7Wua/du6JoNe1VuqaP+kZVPfbpnopp/pz6Il9acEcjnJxwhZtxpXC+FdyKI6crMojIvTPfzq9+b/ViIV39RpdJPDVPFV3R+c/+UVVU0vNzB0DVc6nnYWnZeTHVvasVVx90Kc/Q9TwYic3Aysbfo+Ns1UeuHrFTTTTTFNNMU0xG0REbRCLlFF23VbuUU10VRtVTVG8THlhqfpmz+5/7v7MPSx3PI65j1R10uvXa8j01465EeTTjCzcjP4axcPKrjoy9PpjHuxPf8GObVPzol8h8vXg9cQ8nlFzV9Orr1rh7f4WTRb2uY3dF2mOqP6cdHfzd4hfau6XV+zROKu6fyllE01Pn+uhw107LjetTEz0OpcoaWo080TiWMxh1eqSVdcbKI7nOqpwwlEqZVypVTCFIDETAQMRIAAAAADt6NmTgapj5cb7UV/C27aZ6J+51BbZvV2blNyicTTMTHxgicTmG4qaoqpiqmYmJjeJjtWri7C93aHfopje5ajxtHnjr+7dxcFZ3uzQ7dFU73LE+Kq80dX3epe336iq1u235/23KfLMfjEuvyuUfFpwd/iDC979XyMaI2oirej5s9MOg+BaixXp7tVqvrTMxPycmYmJxLIuAcL3Rq85NUb0Y1O/9aeiP4z6GwVj4Jwvceh266o2uZE+Nq809X3etfJmIjeZ2iH27srt/qO2URMe1V7U/Pp/LDqaejgohRTcpm9VaifhU0xVPmnfb1SrY/wpmzqGfquVvvTVdpij5sRMR9zIHV2/WU62xF+npMzj4RMxHnhZRVxRlj+qcVYuBn3cS5jXq6rcxEzTMbT0b/xdX8NcL9DyPrhjnF/ykzPnR+7C0vl24dr90sau7aorjFNVURyjpEzDQr1NyKpiGc/hrhfoeR9cO7oev4+r6l4qzYu25t2aqpmrbp6aWuWS8nX893vo1X71K/Zu1W5azX2rF2qJpqnnyhNrUV1VxEs+UZFq3fs12b1EV264mmqme2FY+rVUxVExMcpdBq3iHS7mlahVYq3qtVfCtV/nU+2FubS4g0u3qun1WKtqblPwrVf5tXsawyLNzHv12L1E0XKKppqpnsl8R7UbFO16nitx/p1dPDw+Xu8Pm5d+16Orl0ZTyb/y3L/Z0+tm7COTf+W5f7On1s3fRexf7It/Gr8Zbmm+7hZsT5XZ30a3615WbE+V2d9Gt+teXY2v7u5/HX/VK2jpPxlbNS13TdPyfc+Vdqpuc2KtoomeifM60cVaJM7Tk1x5ZtVexjHH/wAoJ/ZU/wAWPvA7r2z1+k1t2xRTTimZiMxP1adzU101TENr4GqafnTti5dq5Vtvzd9qvqnpdxp2iqqiqKqappqid4mJ2mGecGa7cz4nBzKudkUU70Vz+XT5fLDs7B2xo3C7Gn1FPDXPSY6T4c+k93XK2zqeOcVdV01/SbGrYc2q4im9TG9u5t00z7Gs8uxdxcm5j3qebct1TTVDbzCuUXCii9Yz6I25/wAXc88dMfdv9SjtvstF3T+vW4xXTjPjHTzj8Eaq1ExxwxFszhLB9w6JZpqja5d+Nr889UfVswThzB98NYsY8xvb53OufNjpn6+r0tpNDsBt2Zua2qOnsx+M/l/NhpKOtQpu0U3LdVuumKqKommqJ7YlbtU1a3hapg4VW3/SKpiqfzY6o+ufUub6Na1Fq/XXbpnM0ziY+MRP4S3ImJmYak1XEqwdRv4le+9uuYie+Oyfq2djhrDpztaxse5G9uaudXE9sRG8x6dtl+5RsHm3bGo0R0VR4q55+uJ9f1LZwNcpt8RWIqmI59NVMefb/J8YubXRpN9p0lyPY44x40zMY+jmzbim9wz3tjxG0bQtnEGs2NIs0VXKJuXa9+Zbidt9u2Z7IXRivHel5WV4rMxqKrvi6Zprop6ZiN994jtfWN81Gp02hruaWM1x4Zxz5zj34h0Ls1U0TNPV0KuMs6a/g4uNFPdPOmfWvmgcQWdSuRj3Lfib+28RvvFXma+iJiraY2mHd069OPl2b9Mbzbrirbfbfaep8423tTuFvUUzeucVOecTEdPJpUaiuJ5y2dV1PtfwTYiORDSdo2+PyZ/86t8DWuJvGbR7i2/73/J96eCHe90chGjXebzedeyejff/AK6t2+2e5aXWbZTFmrOK490x7qu+Fuqrpqt8u9txojK8Kjk4xsm7j3NO4kmu3XNFW2La23idv9q3u8ste/nrN+kXP3peN2HbtPrIuTeiZ4cYxOOufo1bNFNWcvuLRfCe5LdRyqLF/I1bTIqnbxmXh/AjzzbqqmPqbi0vUMHVdPsajpuXYzMPIoiuzfs1xXRXT3xMdEvK6JfVXgG8T51edrvCN69Xcw6ceM/HoqneLVUVRRXt3c7nUT/V8st3dNhsW9PVfsTMTT1iefLwZXLMRTmH09xRoWl8S6BmaFrWLRlYGZbm3dt1R2dkxPZMTtMT2TES82+UXhTK4L451XhnMq59zAvzRTc228ZRMRVRX5N6Zpn0vTZ8V+HHp9vG5WcDMtURTOZpNqq5MflV03LlO8/1Yoj0MeyN+fWZsT0mM/OP7fkaafaw+wOEfkppH0Gx/d0uHjniPE4R4T1HiTPs37+NgWvG3LdmImuqN4jo3mI7e9zcI/JTSPoNn+7pYj4SP+o7iv6F/wCul5+xbpu6ym3V0mqIn5yoiM1Ya7nwtOBI/wDh/iP7Oz/+xctB8KXk01HLox8y1relRVO3jsnFpqtx5/F11Vfc+HK+uUQ9vX2e2+ZmnhmPm2/QUPVDTM7C1PT7GoadlWcvEyKIuWb1muKqK6Z6piY6JW/jXhvS+LuFs/h3WLFN3DzbM26t4iZon8munuqpnaYnvhoLwDNbzczhfiLQr9yuvG07Is3seKp35njouc6mO6N7e+3fVPe+lXitfpqtv1dVqmrnTMYnymGrXTwVYeWnGHD+Vw5xRqeg5u05On5VzGuTEdFU0VTHOjyTtvHnbt8EXkds8YatPF3EOPFehabeimzYrp6Mu/G07T30U7xM987R1brN4Wem7eEFrNrFtxVXlxi1U0Ux0zXVZt0/XMxv6X2vyb8M43B3A2kcNYtNMU4ONTRcqp/LuT03K/61U1T6XrN313oNFbuUcqrsR8uUTP44bNyvFETHWWQUxFMRERERHRER2OlreraXoem3dS1jUMXT8O1G9d/IuxRRHpnt8idc1PC0XRszV9SvRZw8KxXfv3J/JopiZn1POrlt5Udc5SOJrufnXrlnTbVcxgYEVfAx6O/y1z21dvmiIjzW17XVrapqqnFEdZ/KP85Ne3b4/g+ste8KLkt03Iqs417V9Win/rMPDiKZn/vaqJ+5ycPeE7yWark02MjL1TSJq6q87E+Dv3b25r2889D4EquTv1opuT3u9O0bfjhxPxzz/DH8l/oqOj1e0vUMDVcC1qGmZuPm4l6nnWr9i5FdFcd8VR0S57tu3etV2rtFNy3XTNNdFUbxVE9cTHbDzt5AOVvV+Tbia1V469kaDk3IjUMHnb0zTPR4yiOyuOvy7bT5PQ7CysfNwrGbiXqL2PkW6btq5RO9NdFUbxVHkmJiXn9y22rRVxMTmmek/lPiouW+CXwZ4W3I7RwBxBRruh2pjh3VLtXi6Ij+SXuubXzZjeafJEx2bz8/XqNnqTy1cJWuN+THXOHq7UV372NVcxJ26ab9Hwrcx/WiInyTLy+zLfNrmNtnTsXp1mm4qvtU8p8e6f8AO5ZTPFStl2HDPW7N2HXqci9TiWEqZUyrnqUy1ZYKZ60JlCuRMBHWIkSAgAAAAAAZDwFne5tYnGqq2t5NPN/rR0x/GPS2E0/ZuV2b1F63PNroqiqme6YbZ0/JozMGzlW/xbtEVbd3fD6t2B3D0mnr0lU86JzHwnr5T+Lf0leaZpYvyi4W9vH1CiOmmfFXPN1x/H62K6RiVZ+p4+JG/wAZXEVbdlPXM/Vu2drGHTn6ZkYk7b3KJinfsq64n69mLcnmBVGRk5t2iYm38VTv2T+V/D62rvvZ/wBY321MR7N3nP8A7ftecY+csbtnN2PFmdFNNFMU0xEUxG0RHZC0cY53uLQ73Nna5e+Ko9PX9268MA5QM7x+q0YlE70Y9PT86emfu2+96ntRuHqG211U8qqvZj4z9IzLYv18FErjybf6DN+dR6pZcxHk2/0Gb86j1Sy5HZL9j2fn/VJp/u4dDJ0bS8m/Vfv4du5cr/GqnfeXF+D+jfq+19/tcWfxLpuFmXMW/wCO8Zbnarm0bx1b97r/AIX6R/2j7P8AzL2r2Gm5VFybfFmc5inOffnxRNVrPPDu/g/o36vtff7Vr0fGsYnHGZYxrcW7dOLG1MdUbzQ5/wAL9I/7R9n/AJupoGbZ1DjPLysfneLqxdo50bT0TRDn6jUbVc1GmjRzRxekj7MRnGKu73dGFU25mnhx1ZYsWo6zGn8TWsTIq2xr1inpn8irnVRv5uyV9YDyi/z3Z+jU/vVOh2n193QaKNRannTVT8++J+Ky/XNFOYZ8xbjnRfdNidSxqPjrcfGxH5VPf549XmV8Eaz7rx40/Ir+PtU/AmZ/Hp9sMmWzGk7Rbb/01R86Z+sT5x4SezeoYRyb/wAty/2dPrZus2k6PGm61lX7ERGNfoiaY/Nq36Y83cvKOzWhu6HQRp7se1TNX4zifmWKZooxKzYnyuzvo1v1rys2J8rs76Nb9a8tza/u7n8df9Us6Ok/GWvOP/lBP7Kn+LH2Qcf/ACgn9lT/ABY++Kdof2pf/ily733kju6Bfqx9aw7tM7bXqYnzTO0/dMuk73D9irJ1vDtUxvvdpmfNE7z90NHQcfrVr0f2uKMfHLGjPFGG1Vh47txXw7cqn8i5RVH17fxX5ZONIquaJ7ntxvcv3qLdEd8zO/8AB9232mKttvx30z545fzdW79iVv5O8HxeJez64+FdnmUfNjr+/wBTK3BgY1GHhWcW3+Laoinz+V0+KM73Bot+9TO1yqPF2/nT7OmfQq0Fi3s22RTX0opzPx6z/PoiiItW+fuYFxLnzna5fyKKp5lFXMtzE9lPbHp6fS2HoebGoaVj5e8c6uj4fkqjon72qWYcnOdtORp1c9fxtv1T/D73z/shvNf6Vri7P32f/l1j84+bT012fSc/eyXXsKNQ0q/i7fCqp3o8lUdMfe1dj3buNkUXrczRdt1RVHkmJbelrfjPB9xa3cqpja3f+Np889cfXv8AW7HbvQTw29db608p/GJ+U581uro6VwzjQdXxtVxYuW6opuxHxlrfppn2eVcWoce9dx7tN2xcrt3Keqqmdphkmn8YZlmIozLNGRH50TzavZ9yzaO29iuiKNbHDVH+6IzE/KOcfh8E2tVExiplubpmBmTvk4lq5VP5W21X1x0rRlcJ4dW9WLeuWZ7Iq+FT7XLicVaVfmIuVXcer+nTvH1xuvVi9ZyLcXLF2i5RPVVTO8PRxZ2jdszTFNc+HX+XNdi3c8WGX9JzMCre7RFVv8+jpj/J6BeBv/qA0T9tlf39b4xriJp2mN4nrh9r+CTbotchukUURtT4/J2ju+OreO7XbPb0Ghiq1PszVHKfdylram3FFHJth5Z67TPv1m/SLn70vUxgd3kc5L7tyq5c4K0mquuZqqmbc9Mz19ryeybpZ0EXIuxM8WOmPdnv+LWtXIozl5xRTPc+w/Ai4A1TRcDUuMtXxbmJ75WacfBt3KZpqrtb86q5tP5MzFO3ftM9UxvufRuTDk80fKpytO4M0Szfonei5OJTXVTPfE1RMxPlhl7a3LtBRqLE2LFMxFXWZ7u5lcvcUYgfEHhravZ1HlkpwrNfO97NNs412OyK6pru/u3KX1nyrce6Lyd8JZGvavdiaoiaMXGifh5N3boop9cz2RvLzn4i1vP4h4hztb1O9N7Mzr9V+9V2TVVO+0R2RHVEdkRDZ7I6WqL86mrpHKPGZ6+Ufiy01PPiemHCPyU0j6DZ/u6WKeEVauXuRPim1at13K6sLammmN5n4dPYyvhH5KaR9Bsf3dK6PMUXvQ6mLuM8NWfKcteJxVl5cVaLq2/82Zv2FXsXHQeB+L9dy6MXSeGtWzLtU7fF4tfNjyzVttTHlmYh6bD1FXa3POLPP+L+0Nj1nwar8GjkzyOTbgm7Y1Sq3VrGpXYv5kW53ptREbUW4nt23mZnvqnbeOltQaR8Jflo0/gnQ8rh7Qsyi/xPlW5t/FVb+4aZjprr7q9p+DT19Uz0bb+epp1G66uZ61VTz7o/tCj2rlTRvEGo43GPhjY963VF3FjiDGsUzHTFVNiaKJ88TNuZ9L7gebXIrqFGByvcKZl6rainV8eK6pnqiq5FMz9+70ldvtTRFubFun7NNOI+XL6LtRGMRDSnhp6te0zkQyMezXzffLPsYlc9vN+FdmP/ACvq3fAt+r4Uvvzw0NIvapyIZWRZp506bm2MuuNunm/CtzPo8bv5ol8B36emW1s2P0d7P/qnPx5fkytfYdWurpKKp3K6ekop6UTxcQ7NmraqHoh4JmrXtW5CNBqyK+fcxPG4kz/RouVRRHop5seh532afhQ9EvBP0i9o/ITw/RkU827l03MuY2/JuXKpon00c2fSr3rHqEcXXijHlKLv2G1HllysYNGm8o3Eun26ebRi6tlWaY7opu1Ux6nqa8seVXPt6nyh8R6laqiqjL1XKv0zE77xVdqqj1uXs2fR3e7l+au10lht51a+t2rzq19bW1HVEo7FM9SrsUz1NGWEqZQmUK5JICBEioBAAAAAAAM45O83xmHewK5+Faq59HzZ6/v9bB1y4ZzvcGtWL1U7W6p5lz5s9H3dE+h3eze4eobjbuzPszyn4T9OvyW2K+CuJbRcdixasU1U2qIpiqua6tu2qZ3mXIPvE0xMxMxzh1nDm5FGLiXcm5+JaomqfQ1Nk3q8jIuX7k713KpqqnyzLN+ULO8Tp1vCon4V+rer5sf57fUwR8m7ebh6bV06WmeVEc/jP0jHnLnauvNXD3M15Nv9Bm/Oo9UsuYjybf6DN+dR6pZc9x2S/Y9n5/1S29P93DWXF/ykzPnR+7C0tjalwtp+fm3cu9eyqa7kxMxRVTEdW3bDr/gXpf6Rmf8AHT/heF3Dsdud/V3btERiqqZjn7pmZalemrmqZhgLJeTr+e730ar96lefwL0v9IzP+On/AAu9ovD+FpOVVkY93IrrqomiYuVRMbTMT2RHc2dl7Jbjo9fav3YjhpnM82VrT101xMruwHlF/nuz9Gp/eqZ8wHlF/nuz9Gp/eqel7b/sqf4oXar7tj2Lfu42RbyLFc0XLdXOpmG0NC1K1qmn0ZNvaK+q5R+bU1WufDeq16TqEXembFfwbtMdsd/nh4Dstv07XqeC5P8Ap19fCe/6+HwhqWLvo6sT0bQFNq5RdtU3bdUV0VxFVNUdUxKp9tiYmMw6izYnyuzvo1v1rys2J8rs76Nb9a8ubtf3dz+Ov+qWFHSfjLXnH/ygn9lT/Fj7aWoaJpmfke6MvG8Zc2iN/GVR0R5pcEcMaHE7+4fru1+14PdOxWu1mtu36K6IiqZmMzOf6Wpc0tdVUzEta26K7lcUW6aq6qp2immN5ln3BuhV6fTOZl07ZNdO1NH5lPtlesLT8HC/kuLatT1c6mnpn09btOxsHY6jbrsai/VxVx0x0jx8Z7uiyzpoonM9Rbb22Xrtq110YVPja/n1dFMeiOdPphHEOsWNJxJrqmmq/VHxVvfpme+fIjhmxdtaXTfyJmrIyapvXZnvq6o+rZ6G/qbeo1UaOnnNOKqvCI+zHxmcTjuie9dNUTVwro4crFxsqiKMmxbvUxO8RXTExE+ly1TFNM1VTEREbzM9jEq+NrMV1RTgV1UxPRPjdt4+plue6aHQ0xTrKoiKukTEznHwiSu5RR9pkHvPpX6txPsqXJj6bp+Pdi7Ywse1cjqqotxEwxr8N7f6ur+1/wAj8OLX6ur+1j2ONR2h7PUzFVNVMTH/AET/APVX6ayy9bNd0fG1e3apyKrlE25maaqNt+nrjp9Dl0TUbeq6fTl26Jo3qmmqiZ35sx2eqfS7r0NVOm3HTc4iq3XET8Y6wu9muPCWMxwXp/6VlfXT7GO8U6TRpOZbtWarldq5b50VV7b77zvHR6PrbJh09X03F1PG8Rk0z0TvTVT0VUz3w87uvZPSXtLVTpLcU1+6efl81FzT0zT7Mc2rI6110HNv4Wfars1TtVVEV09lUbrtd4LvRcnxWdRNH9KiYlctG4Ys4V+jIyL8366J3ppinamJ7/K8jtvZndrWppq4ODE9cxy8p5qKLFyKo5L/AD1PtjwTv9SGk/t8n++rfE9XU+2PBO/1IaT+3yf76t6jt9+y6f44/CpdrPu/m2s1BmeEjyVYmVdxr2rZ0XLVc0VxGDcnaYnaext95W8WXduI9Sjf/wBru/vy+cbNoNPqqbk38+zjGJx1z4T3NK1RTVnL7myvCg5KLNO9GdqmRPdbwaon/wAUwwDjbwvsOnHu2eDuGL1d6eijJ1OuKaafL4uiZ3/44fH1y75XFN1040OgtTmKZn4z9MLOCiGXcd8b8R8b65XrHEmp3c3Jnoo53RRap/NopjopjyR553lZLNe9ULbTddrHr+HHS7Ok1UTXTTHKIW01PVLhH5J6P9Bsf3dLp8o/EF3hTgXWeI7ONRk3NPxar9NquqaYrmOyZjqdzhD5J6P9Asf3dLGPCEnbkT4un/7ZceDsUU16ummqMxNUZ82lEZqaA/53es77fgbp3/5lf+F9PcBcT6dxlwhp3Eml1b42bZivm77zbq6qqJ8tNUTE+Z5f1XdpfR3gT8pMaPxLd4F1PI2wNWr5+FNU9FvKiPxfNXEbfOppjter3jaNLNiatLRw1U8/fzj39e7q2btqnhzTD7C1zAjVdGzdNnKycT3VYrs+Px7k0XbXOiY51NUdMVRvvDzS5ReHtV4S4y1PQNa51WZiX5pruTv8bE9NNyJnriqJir0vTl87+GlybfhBwrTxvpWPztS0e3tmU0R03sXfeZ89EzM/Nmruhy+zu4+r3ZsVfZr/AB93n08ldivhnHe+L8e/XYyLd61XNFy3VFVFUdcTE7xL005MeKcbjTgHR+JcaqmfduNTVdpp/Iux8G5T6K4qh5gVV7VbN+eCVyx2+CNZq4Y4gv8AN4f1K9FVN6qejDvztHPn+hVtEVd20T2Tv2d5006yxin7VHOPGPfC27TxRyfbusadh6vpOXpWoWKb+HmWa7F+3V1V0VRMTH1S87+XTko1vk24juY+RZu5Gj37k+4M+Kfg3aeuKapj8WuI648m8dD0Zt10XKKbluqmuiqImmqmd4mJ7YdfVNPwNVwLuBqeFj5uJep5t2xftxXRXHdNM9EvMbZudWhqmJjNM9Y/OPH8WvbucDyiqtzv1FNud+p6B694NPJTqmRVftaVm6ZVV104eXVFO/fEV86I80dDk4e8G7kp0jIpyK9FydTrp6aYzsqqumJ8tNPNpn0xMO9O87fji9r4Yj6rvS0PlLweuR7VuUfiKzev2L2Pw5jXInOzJjaKojp8Vbntrnq6PxYneeyJ9CMXHsYmLaxca1RZsWaIt27dEbU0UxG0REd0QpwcTFwMS1h4ONZxcazTzbdmzRFFFEd0Ux0RCrJv2cbHuZOTet2bNqma7ly5VFNNFMRvMzM9EREdrz+5blVrq4iIxTHSP896m5cmuWHcuPF9rgfku1vX6rsW8mjHqs4cb9NV+uObb279pnnT5KZeYWZXzq5lvLwr+WKOUTiOjSdGuVRw5pdyqMeemPdV3qm9Md23RTHXETM/lTEaEvV7upZs+p6bgq+1Vznw7o/zvWUxw0uC7Lr1OS5Linrci9VmWEk9SmUyplqywRKEz1oVyJjrCBEiQEAAAAAAAADZHD+t4V7SMerKzce1fpp5ldNy7FM7x0b9M9vW7/vtpf6yw/t6fa1QPeaft7qrVqm3NuJmIiM5nnj3tuNXVEYwuvFWfGoa1eu0VRVao+LtzE9ExHb6Z3n0rUDxer1Neqv137nWqZnzatVU1TmWXcn+ZiYtjLjJyrFmaqqeb4y5FO/RPeyn320v9ZYf29PtaoHq9r7ZX9v0tGmptRMU555n3zM/m2LepmimKcNr++2l/rLD+3p9p77aX+ssP7en2tUDf/WFqf3NPnLP1yrubX99tL/WWH9vT7T320v9ZYf29PtaoD9YWp/c0+cnrlXc2v77aX+ssP7en2sI48yMfJ1i1cx79q9RGPTE1W64qjfnVdHQx8creO1t7dNNOnrtxTGYnMTPuV3NRNynEwAPJNdlfBGuUY2+n5t2mizO82q652ime2Jnu/8A7tZZ77aX+ssP7en2tUD2O19s9VoNNTp5oiuKekznOO75Nm3qaqKcNg4uoYEcUZl6c7Gi3Vj0RTXN2nmzO/VE7rt77aX+ssP7en2tUDZ03brUWKaoi1E5mZ6z75ymnVTHubX99tL/AFlh/b0+1E6tpcf+8sP7en2tUjY/WFqf3NPnKfXKu5s7I4h0azEzVn26vJRvV6lj1TjOJpmjTseYn/aXezzRDDRztZ233LUUzTbxRHhHPznP8sMKtVXPTkuGnz75a1aq1DJp5tdfOu3LtcRG0dMxvP1NjRqulRG0alhfb0+1qkauy9pru1U1xTbiqquczMzOf86+aLV+beeTYPFmtYlGi3beJmWL1298XEW7kVTET1z0eTePS18DR3veru734u3IxiMREMLt2bk5kRKUS4ytk/AOp2sTIv4uTeotWblPPpqrqiIiqPLPfHqZhGraX+ssL7en2tTj2O09sNRt2lp00URVEZxmZ9/PDYt6mqinhw2Lq3EONgZVm5av2MvHub03KbV2mquieyY6er2Lhg61peZTE2cy1FU/kVzzavqlquFUNu1261lF6qqaImmfd3fCfrll63VE5w3Bvv0xO6i9es2aedeu27cd9dUR62pIqqp/FqmPNKaaund1P1gZjlY5/wAX/wCVnrng2FqXEeFZpmjGq90XOro/Fj09vofY3gocfcG6byJaTia5xjw/p+fTeyarmPl6lZs3KYm9XMb01VRMRMbTHkeftFezsW79UR0VOFuW9Xd4p4NROKc5iI/uquXJu8peqH/Kbybf/MLhL+2cf/G8yuKsm3d4h1G5auU10V5V2qmqmd4qiap2mJ7lnnIrmPxnFVc3nr3c+x6LS01RbmZ4sdfD/wAsKcU9HLXc3nrcfP6etxVVKecpqvzMoy7NNbtY1zauOlbqanLRcmO1sabVcFUSypqw9P8AhTlJ5O7XC+lWrvH3Ctu5RhWaa6KtXx4qpmKIiYmOf0Sxvl35QeA9Q5HeKcLT+NuGszLvadcos2LGq2Lly5VPVFNMVbzPkh51U5FUR1pnIqmOuVdGk01FyLsVTmJz7mMUUxOXbru/Cnpc2BnXsPLtZWNertXrNcXLdyidqqKoneJieyYmFrm4RddONfMV8SzjekHJBy3cHcT8Aadqev8AFGhaRq8UeKzcbMzrVirxtPRNdNNVUTzauiqNujp264lld7lI5M71quze494RuW66Zproq1fHmKonomJjn9MPLim/MflJnIq/OcyvQaSqqaoqmM+7lyVzbpbC5d+H9B4Z5Q87F4X1vTNX0S/PujCu4OZRkU26Kpn4qqaJnaqmd46emY2ntYJTd2neJdSq7M9cqYueV0J1kxMc8z3rOJv7kJ8IfiHk+s2tG1S3VrfD9M7UY9dza7jR/wDSqns/oT0d3N3l9Z8EcuXJlxbZtzh8TYuBk1R04upVRjXKZ7t6p5tU/Nql5o03fK5qMiY6pU37Ol1c8VcYq74/OGM001dXrbjZFjJtRexr1u9bnqrt1RVE+mFOZlYuHZm/l5NnHtR113a4ppj0y8nLGpZNid7N+5bnvoqmPUjI1DIvzzr165cnvqqmWp+h7H73/t/ux9FHe9GeO+Xzkw4Ts3PG8RWNVy6Y+Di6ZMZFVU93OieZT6aofInLvy/cSco/O0yxT7z6BFW8YVm5M1Xtp6Ju1dHO+btER5Zjdpe5kTPXLgru7ti1b0uk9q3Gau+fy/zKYimno5L12ZneZdS5WXK3DVVu0dRqJrnMsZnKmuVMHWS51VWWEkqUyplVMoQAxEwEDESAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACkTKEiYSpTEsokVEShPWyiTorpqVxW4UwtpuTCcubnomtx9PcdLP0synKvnG6hO6OMyriVUVuLc3ZRcwZc8VnP8AK4N07yz9NKcubnkVuHc3T6WTLn55z3DujnJ9NJlzTWc9xbm6PSyZc0Vpi44N0c5MXpgy7PjCbjrc6SapT6xJlz1XPK46q3HMoV1XplGU1VKetKN1FVSMnUiSZQrmUEqUyhhIAmECQEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACJQqRMJgQAkTulSGRVundTubssirdO6jdJkVbm6k3Tk5qt07qN07p4hUKdzc4jKoU7m/lTxGVRup38qd/KcScp3N0bm5xGU7m6Nzc4jKRG6NziMqkbo3RujKFUyjdCN2MyJRKBjkAATCQYgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACJhCoTkUidjYEAJAAAABO6AE7m6AyJ3N0Bkync3QGRO5ugTkVI3QGRO5ugRkync3QGQAAE7GyAiEggAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEbJARsbJARsbJARsbJDIjY2SJyI2QqDIpFQZFIqDIpFQZEbGyQyI2SCAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAB/9k=" alt="VendasPRO" style="height:36px;object-fit:contain;" />
+    <div style="width:1px;height:28px;background:rgba(255,255,255,0.1);"></div>
+    <div class="header-sub">PRODUCT BACKLOG DASHBOARD</div>
+  </div>
+  <div class="header-pills">
+    <span class="hpill">195 FEATURES</span>
+    <span class="hpill">15 MÓDULOS</span>
+    <span class="hpill">~7 MESES</span>
+    <span class="hpill">3 DEVS</span>
+  </div>
+</header>
+
+<main class="main">
+
+  <!-- PREMISSAS -->
+  <div class="section">
+    <div class="section-label">Premissas do planejamento</div>
+    <div class="card">
+      <div class="premissas-grid">
+        <div class="p-item"><div class="p-cx">XS</div><div class="p-h">3h</div><div class="p-d">Trivial</div></div>
+        <div class="p-item"><div class="p-cx">S</div><div class="p-h">6h</div><div class="p-d">Simples</div></div>
+        <div class="p-item"><div class="p-cx">M</div><div class="p-h">12h</div><div class="p-d">1–2 dias</div></div>
+        <div class="p-item"><div class="p-cx">L</div><div class="p-h">20h</div><div class="p-d">2–3 dias</div></div>
+        <div class="p-item"><div class="p-cx">XL</div><div class="p-h">36h</div><div class="p-d">4–5 dias</div></div>
+      </div>
+      <div class="team-row">
+        <div class="t-item"><div class="t-lbl">Time</div><div class="t-val">3 devs full-time</div></div>
+        <div class="t-item"><div class="t-lbl">Capacidade diária</div><div class="t-val">24h/dia (3 × 8h)</div></div>
+        <div class="t-item"><div class="t-lbl">Overhead aplicado</div><div class="t-val">+35% — reuniões, review, bugs, deploys</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- KPIs -->
+  <div class="section">
+    <div class="section-label">Visão geral</div>
+    <div class="kpi-grid">
+      <div class="kpi-card"><div class="kpi-lbl">Features</div><div class="kpi-val">195</div><div class="kpi-sub">15 módulos · 58 épicos</div></div>
+      <div class="kpi-card"><div class="kpi-lbl">Pontos totais</div><div class="kpi-val">682</div><div class="kpi-sub">Escala XS → XL</div></div>
+      <div class="kpi-card"><div class="kpi-lbl">Horas brutas</div><div class="kpi-val">2.660h</div><div class="kpi-sub">Antes do overhead</div></div>
+      <div class="kpi-card"><div class="kpi-lbl">Prazo estimado</div><div class="kpi-val">~7 meses</div><div class="kpi-sub">Backlog completo</div></div>
+    </div>
+  </div>
+
+  <!-- CHARTS ROW -->
+  <div class="section">
+    <div class="section-label">Análise de esforço</div>
+    <div class="two-col">
+      <div class="card">
+        <div class="card-title">Esforço por módulo (pontos)</div>
+        <div style="position:relative;width:100%;height:460px;">
+          <canvas id="c1" role="img" aria-label="Esforço por módulo em pontos">CRM lidera com 77pts.</canvas>
+        </div>
+      </div>
+      <div class="col-stack">
+        <div class="card">
+          <div class="card-title">Distribuição por complexidade</div>
+          <div class="legend">
+            <span><span class="ld" style="background:#7f77dd"></span>M – 90 (46%)</span>
+            <span><span class="ld" style="background:#1d9e75"></span>L – 64 (33%)</span>
+            <span><span class="ld" style="background:#378add"></span>S – 37 (19%)</span>
+            <span><span class="ld" style="background:#d85a30"></span>XL – 2</span>
+            <span><span class="ld" style="background:#639922"></span>XS – 2</span>
+          </div>
+          <div style="position:relative;width:100%;height:200px;">
+            <canvas id="c2" role="img" aria-label="Distribuição por complexidade">M domina com 90.</canvas>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-title">Prioridade vs esforço</div>
+          <div class="legend">
+            <span><span class="ld" style="background:#e24b4a"></span>P0 – 121 feat · 442pts</span>
+            <span><span class="ld" style="background:#ef9f27"></span>P1 – 64 feat · 214pts</span>
+            <span><span class="ld" style="background:#639922"></span>P2 – 10 feat · 26pts</span>
+          </div>
+          <div style="position:relative;width:100%;height:160px;">
+            <canvas id="c3" role="img" aria-label="Prioridade vs esforço">P0 domina com 442pts.</canvas>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PRAZOS -->
+  <div class="section">
+    <div class="section-label">Prazo por prioridade — 3 devs · overhead 35%</div>
+    <div class="prio-row">
+      <div class="prio-card"><div class="prio-lbl">Só P0 Crítico</div><div class="prio-val" style="color:#e24b4a;">4,5 meses</div><div class="prio-sub">1.730h · 97 dias úteis</div></div>
+      <div class="prio-card"><div class="prio-lbl">P0 + P1</div><div class="prio-val" style="color:#ef9f27;">6,5 meses</div><div class="prio-sub">2.564h · 145 dias úteis</div></div>
+      <div class="prio-card"><div class="prio-lbl">Backlog completo</div><div class="prio-val" style="color:#a78bfa;">~7 meses</div><div class="prio-sub">2.660h · 150 dias úteis</div></div>
+    </div>
+  </div>
+
+  <!-- CARGA POR MÓDULO -->
+  <div class="section">
+    <div class="section-label">Carga por módulo (dias do time com overhead)</div>
+    <div class="card">
+      <div style="position:relative;width:100%;height:420px;">
+        <canvas id="c4" role="img" aria-label="Dias úteis por módulo com overhead">CRM lidera com 17 dias.</canvas>
+      </div>
+    </div>
+  </div>
+
+  <!-- GANTT -->
+  <div class="section">
+    <div class="section-label">Gantt simplificado — sequência sugerida (semanas)</div>
+    <div class="card">
+      <div class="gantt-wrap">
+        <table class="gantt-tbl">
+          <thead>
+            <tr id="month-row"><th class="col-name"></th><th class="col-dias"></th></tr>
+            <tr id="week-row"><th class="col-name">Módulo</th><th class="col-dias">Dias</th></tr>
+          </thead>
+          <tbody id="gantt-body"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- SPRINT 0 -->
+  <div class="section">
+    <div class="section-label">Features prontas para desenvolvimento (12) — Sprint 0</div>
+    <div class="card">
+      <ul class="ready-list">
+        <li><span class="name">F01 · Domínio, DNS e SSL</span><span class="tag tag-admin">Admin</span><span class="tag tag-s">S</span><span class="tag tag-p0">P0</span></li>
+        <li><span class="name">F02 · Repositório GitHub e Organização</span><span class="tag tag-admin">Admin</span><span class="tag tag-s">S</span><span class="tag tag-p0">P0</span></li>
+        <li><span class="name">F03 · Vercel — Deploy e Domínios</span><span class="tag tag-admin">Admin</span><span class="tag tag-s">S</span><span class="tag tag-p0">P0</span></li>
+        <li><span class="name">F04 · Neon — Banco de Dados e Branches</span><span class="tag tag-admin">Admin</span><span class="tag tag-s">S</span><span class="tag tag-p0">P0</span></li>
+        <li><span class="name">F05 · Upstash — Redis / BullMQ</span><span class="tag tag-admin">Admin</span><span class="tag tag-s">S</span><span class="tag tag-p0">P0</span></li>
+        <li><span class="name">F06 · Pusher — Real-time Channels</span><span class="tag tag-admin">Admin</span><span class="tag tag-s">S</span><span class="tag tag-p1">P1</span></li>
+        <li><span class="name">F07 · APIs de IA — Anthropic e OpenAI</span><span class="tag tag-admin">Admin</span><span class="tag tag-xs">XS</span><span class="tag tag-p1">P1</span></li>
+        <li><span class="name">F08 · Meta Business — App e WABA</span><span class="tag tag-int">Integrações</span><span class="tag tag-m">M</span><span class="tag tag-p0">P0</span></li>
+        <li><span class="name">F09 · Autenticação — Auth.js Setup</span><span class="tag tag-admin">Admin</span><span class="tag tag-m">M</span><span class="tag tag-p0">P0</span></li>
+        <li><span class="name">F10 · Email Transacional — Resend</span><span class="tag tag-admin">Admin</span><span class="tag tag-xs">XS</span><span class="tag tag-p1">P1</span></li>
+        <li><span class="name">F11 · Monitoramento — Sentry e PostHog</span><span class="tag tag-admin">Admin</span><span class="tag tag-s">S</span><span class="tag tag-p1">P1</span></li>
+        <li><span class="name">F12 · Boilerplate Next.js e Variáveis</span><span class="tag tag-admin">Admin</span><span class="tag tag-m">M</span><span class="tag tag-p0">P0</span></li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- TODAS AS FEATURES -->
+  <div class="section">
+    <div class="section-label">Todas as features (195)</div>
+    <div class="card">
+      <div class="feat-filters">
+        <input type="text" id="search" placeholder="Buscar por nome ou épico…" />
+        <select id="fModulo"><option value="">Todos os módulos</option></select>
+        <select id="fPrio"><option value="">Todas as prioridades</option><option>P0 Critico</option><option>P1 Alto</option><option>P2 Medio</option></select>
+        <select id="fCx"><option value="">Todas as complexidades</option><option>XS</option><option>S</option><option>M</option><option>L</option><option>XL</option></select>
+        <select id="fStatus"><option value="">Todos os status</option><option>Ideia</option><option>Pronto para Dev</option></select>
+        <span class="feat-count" id="feat-count">195 features</span>
+      </div>
+      <div class="feat-table-wrap">
+        <table class="feat-tbl">
+          <thead>
+            <tr>
+              <th class="td-id" data-col="id">#</th>
+              <th data-col="nome">Feature</th>
+              <th data-col="modulo">Módulo</th>
+              <th data-col="cx">Cx</th>
+              <th data-col="prio">Prioridade</th>
+              <th data-col="status">Status</th>
+              <th data-col="impacto">Impacto</th>
+              <th data-col="horas" style="text-align:right">Horas</th>
+            </tr>
+          </thead>
+          <tbody id="feat-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<footer class="footer">
+  <span class="footer-txt">SAAS HQ · PRODUCT BACKLOG · 195 FEATURES · 682 PTS · ~7 MESES</span>
+  <span class="footer-txt">GERADO COM ROMPI SOLUÇÕES INTELIGENTES</span>
+</footer>
+
+<script>
+const FEATURES = [{"id": 1, "nome": "Editor drag-and-drop de campos", "epico": "Form Builder Visual", "modulo": "01 · Forms", "cx": "M", "prio": "P0 Critico", "status": "Ideia", "impacto": "Alto", "horas": 12}, {"id": 2, "nome": "Lógica condicional entre campos", "epico": "Form Builder Visual", "modulo": "01 · Forms", "cx": "L", "prio": "P0 Critico", "status": "Ideia", "impacto": "Alto", "horas": 20}, {"id": 3, "nome": "Steps e páginas múltiplas no form", "epico": "Form Builder Visual", "modulo": "01 · Forms", "cx": "M", "prio": "P1 Alto", "status": "Ideia", "impacto": "Alto", "horas": 12}, {"id": 4, "nome": "Preview em tempo real do form", "epico": "Form Builder Visual", "modulo": "01 · Forms", "cx": "S", "prio": "P1 Alto", "status": "Ideia", "impacto": "Medio", "horas": 6}, {"id": 5, "nome": "Validações customizadas por campo", "epico": "Form Builder Visual", "modulo": "01 · Forms", "cx": "M", "prio": "P1 Alto", "status": "Ideia", "impacto": "Alto", "horas": 12}, {"id": 6, "nome": "Criação automática de contato ao submeter form", "epico": "Integração Form → CRM", "modulo": "01 · Forms", "cx": "M", "prio": "P0 Critico", "status": "Ideia", "impacto": "Alto", "horas": 12}, {"id": 7, "nome": "Criação automática de oportunidade com pipeline configurável", "epico": "Integração Form → CRM", "modulo": "01 · Forms", "cx": "M", "prio": "P0 Critico", "status": "Ideia", "impacto": "Alto", "horas": 12}, {"id": 8, "nome": "Mapeamento de campos form → campos CRM", "epico": "Integração Form → CRM", "modulo": "01 · Forms", "cx": "M", "prio": "P1 Alto", "status": "Ideia", "impacto": "Alto", "horas": 12}, {"id": 9, "nome": "Deduplicação de contato por email e telefone", "epico": "Integração Form → CRM", "modulo": "01 · Forms", "cx": "S", "prio": "P0 Critico", "status": "Ideia", "impacto": "Alto", "horas": 6}, {"id": 10, "nome": "Script de pixel para embed em sites externos", "epico": "Pixel e Tracking de Formulário", "modulo": "01 · Forms", "cx": "M", "prio": "P0 Critico", "status": "Ideia", "impacto": "Alto", "horas": 12}, {"id": 11, "nome": "Captura de UTMs no carregamento do form", "epico": "Pixel e Tracking de Formulário", "modulo": "01 · Forms", "cx": "S", "prio": "P0 Critico", "status": "Ideia", "impacto": "Alto", "horas": 6}, {"id": 12, "nome": "Eventos de tracking: pageview, start, submit, abandon", "epico": "Pixel e Tracking de Formulário", "modulo": "01 · Forms", "cx": "M", "prio": "P1 Alto", "status": "Ideia", "impacto": "Alto", "horas": 12}, {"id": 13, "nome": "Integração com Meta CAPI (Conversions API)", "epico": "Pixel e Tracking de Formulário", "modulo": "01 · Forms", "cx": "L", "prio": "P1 Alto", "status": "Ideia", "impacto": "Alto", "horas": 20}, {"id": 14, "nome": "Link público compartilhável com domínio customizado", "epico": "Publicação, Embed e Templates", "modulo": "01 · Forms", "cx": "S", "prio": "P1 Alto", "status": "Ideia", "impacto": "Medio", "horas": 6}, {"id": 15, "nome": "Embed via iframe e script JS", "epico": "Publicação, Embed e Templates", "modulo": "01 · Forms", "cx": "S", "prio": "P1 Alto", "status": "Ideia", "impacto": "Medio", "horas": 6}, {"id": 16, "nome": "Biblioteca de templates de formulário", "epico": "Publicação, Embed e Templates", "modulo": "01 · Forms", "cx": "M", "prio": "P2 Medio", "status": "Ideia", "impacto": "Medio", "horas": 12}, {"id": 17, "nome": "Customização de tema, cores e logo do form", "epico": "Publicação, Embed e Templates", "modulo": "01 · Forms", "cx": "S", "prio": "P2 Medio", "status": "Ideia", "impacto": "Baixo", "horas": 6}, {"id": 18, "nome": "Cadastro de contato com campos padrão e customizados", "epico": "Contatos, Empresas e Histórico 360°", "modulo": "02 · CRM", "cx": "M", "prio": "P0 Critico", "status": "Ideia", "impacto": "Alto", "horas": 12}, {"id": 19, "nome": "Vinculação contato → empresa", "epico": "Contatos, Empresas e Histórico 360°", "modulo": "02 · CRM", "cx": "S", "prio": "P1 Alto", "status": "Ideia", "impacto": "Medio", "horas": 6}, {"id": 20, "nome": "Timeline de atividades 360° por contato", "epico": "Contatos, Empresas e Histórico 360°", "modulo": "02 · CRM", "cx": "L", "prio": "P0 Critico", "status": "Ideia", "impacto": "Alto", "horas": 20}, {"id": 21, "nome": "LTV calculado automaticamente por contato", "epico": "Contatos, Empresas e Histórico 360°", "modulo": "02 · CRM", "cx": "M", "prio": "P0 Critico", "status": "Ideia", "impacto": "Alto", "horas": 12}, {"id": 22, "nome": "Importação de contatos via CSV", "epico": "Contatos, Empresas e Histórico 360°", "modulo": "02 · CRM", "cx": "M", "prio": "P1 Alto", "status": "Ideia", "impacto": "Alto", "horas": 12}, {"id": 23, "nome": "Busca e filtros avançados de contatos", "epico": "Contatos, Empresas e Histórico 360°", "modulo": "02 · CRM", "cx": "M", "prio": "P1 Alto", "status": "Ideia", "impacto": "Alto", "horas": 12}, {"id": 24, "nome": "Criação de múltiplos pipelines com estágios customizáveis", "epico": "Múltiplos Pipelines e Oportunidades", "modulo": "02 · CRM", "cx": "L", "prio": "P0 Critico", "status": "Ideia", "impacto": "Alto", "horas": 20}, {"id": 25, "nome": "Card de oportunidade com campos custom por pipeline", "epico": "Múltiplos Pipelines e Oportunidades", "modulo": "02 · CRM", "cx": "L", "prio": "P0 Critico", "status": "Ideia", "impacto": "Alto", "horas": 20}, {"id": 26, "nome": "Kanban view de oportunidades por estágio", "epico": "Múltiplos Pipelines e Oportunidades", "modulo": "02 · CRM", "cx": "M", "prio": "P0 Critico", "status": "Ideia", "impacto": "Alto", "horas": 12}, {"id": 27, "nome": "Lista view de oportunidades com filtros e ordenação", "epico": "Múltiplos Pipelines e Oportunidades", "modulo": "02 · CRM", "cx": "M", "prio": "P1 Alto", "status": "Ideia", "impacto": "Alto", "horas": 12}, {"id": 28, "nome": "Mover oportunidade entre estágios (drag-and-drop)", "epico": "Múltiplos Pipelines e Oportunidades", "modulo": "02 · CRM", "cx": "S", "prio": "P0 Critico", "status": "Ideia", "impacto": "Alto", "horas": 6}, {"id": 29, "nome": "Roteamento de oportunidade para vendedor do squad", "epico": "Múltiplos Pipelines e Oportunidades", "modulo": "02 · CRM", "cx": "M", "prio": "P1 Alto", "status": "Ideia", "impacto": "Alto", "horas": 12}, {"id": 30, "nome": "Criar card em pipeline CS/Onboard ao ganhar venda", "epico": "Pipeline Automation (ganho → novo pipeline)", "modulo": "02 · CRM", "cx": "M", "prio": "P0 Critico", "status": "Ideia", "impacto": "Alto", "horas": 12}, {"id": 31, "nome": "Configurar ação ao ganhar ou perder oportunidade", "epico": "Pipeline Automation (ganho → novo pipeline)", "modulo": "02 · CRM", "cx": "M", "prio": "P0 Critico", "status": "Ideia", "impacto": "Alto", "horas": 12}, {"id": 32, "nome": "Regras de transição automática entre estágios", "epico": "Pipeline Automation (ganho → novo pipeline)", "modulo": "02 · CRM", "cx": "L", "prio": "P1 Alto", "status": "Ideia", "impacto": "Alto", "horas": 20}, {"id": 33, "nome": "Campos custom por tipo: texto, select, data, moeda, número", "epico": "Campos Personalizados, Tags e Lead Scoring", "modulo": "02 · CRM", "cx": "M", "prio": "P0 Critico", "status": "Ideia", "impacto": "Alto", "horas": 12}, {"id": 34, "nome": "Sistema de tags em contatos, oportunidades e conversas", "epico": "Campos Personalizados, Tags e Lead Scoring", "modulo": "02 · CRM", "cx": "S", "prio": "P0 Critico", "status": "Ideia", "impacto": "Alto", "horas": 6}, {"id": 35, "nome": "Score de lead calculado por regras configuráveis", "epico": "Campos Personalizados, Tags e Lead Scoring", "modulo": "02 · CRM", "cx": "L", "prio": "P0 Critico", "status": "Ideia", "impacto": "Alto", "horas": 20}, {"id": 36, "nome": "Configurar framework de vendas por pipeline (SPIN, BANT, GPCT)", "epico": "Framework de Vendas (SPIN, BANT, GPCT)", "modulo": "02 · CRM", "cx": "M", "prio": "P1 Alto", "status": "Ideia", "impacto": "Alto", "horas": 12}, {"id": 37, "nome": "Perguntas do framework exibidas no card da oportunidade", "epico": "Framework de Vendas (SPIN, BANT, GPCT)", "modulo": "02 · CRM", "cx": "M", "prio": "P1 Alto", "status": "Ideia", "impacto": "Alto", "horas": 12}, {"id": 38, "nome": "Framework usado para calibrar RAG dos agentes de IA", "epico": "Framework de Vendas (SPIN, BANT, GPCT)", "modulo": "02 · CRM", "cx": "M", "prio": "P1 Alto", "status": "Ideia", "impacto": "Alto", "horas": 12}, {"id": 39, "nome": "Biblioteca de templates de pipeline prontos (B2B, B2C, CS, SDR)", "epico": "Templates de Pipeline", "modulo": "02 · CRM", "cx": "M", "prio": "P2 Medio", "status": "Ideia", "impacto": "Medio", "horas": 12}, {"id": 40, "nome": "Instalar template de pipeline em 1 clique", "epico": "Templates de Pipeline", "modulo": "02 · CRM", "cx": "S", "prio": "P2 Medio", "status": "Ideia", "impacto": "Medio", "horas": 6}, {"id": 41, "nome": "Salvar pipeline atual como template reutilizável", "epico": "Templates de Pipeline", "modulo": "02 · CRM", "cx": "S", "prio": "P2 Medio", "status": "Ideia", "impacto": "Baixo", "horas": 6}, {"id": 42, "nome": "Conectar número via WABA (Business API oficial Meta)", "epico": "Canal WhatsApp Multi-número (WABA)", "modulo": "03 · Inbox", "cx": "L", "prio": "P0 Critico", "status": "Ideia", "impacto": "Alto", "horas": 20}, {"id": 43, "nome": "Gerenciar múltiplos números WABA no mesmo workspace", "epico": "Canal WhatsApp Multi-número (WABA)", "modulo": "03 · Inbox", "cx": "M", "prio": "P0 Critico", "status": "Ideia", "impacto": "Alto", "horas": 12}, {"id": 44, "nome": "Enviar e receber mensagens de texto, mídia e documentos", "epico": "Canal WhatsApp Multi-número (WABA)", "modulo": "03 · Inbox", "cx": "M", "prio": "P0 Critico", "status": "Ideia", "impacto": "Alto", "horas": 12}, {"id": 45, "nome": "Status de entrega e leitura das mensagens WhatsApp", "epico": "Canal WhatsApp Multi-número (WABA)", "modulo": "03 · Inbox", "cx": "S", "prio": "P0 Critico", "status": "Ideia", "impacto": "Alto", "horas": 6}, {"id": 46, "nome": "Conectar conta Instagram Business para DMs", "epico": "Canal Instagram DM e Gmail", "modulo": "03 · Inbox", "cx": "L", "prio": "P1 Alto", "status": "Ideia", "impacto": "Alto", "horas": 20}, {"id": 47, "nome": "Conectar Gmail para email bidirecional no inbox", "epico": "Canal Instagram DM e Gmail", "modulo": "03 · Inbox", "cx": "L", "prio": "P1 Alto", "status": "Ideia", "impacto": "Alto", "horas": 20}, {"id": 48, "nome": "Unificar conversas de todos os canais no mesmo inbox", "epico": "Canal Instagram DM e Gmail", "modulo": "03 · Inbox", "cx": "L", "prio": "P0 Critico", "status": "Ideia", "impacto": "Alto", "horas": 20}, {"id": 49, "nome": "Exibir dados do contato no sidepanel da conversa", "epico": "Sidepanel 360° (contato, oportunidade, LTV, histórico)", "modulo": "03 · Inbox", "cx": "M", "prio": "P0 Critico", "status": "Ideia", "impacto": "Alto", "horas": 12}, {"id": 50, "nome": "Mostrar oportunidades vinculadas ao contato no sidepanel", "epico": "Sidepanel 360° (contato, oportunidade, LTV, histórico)", "modulo": "03 · Inbox", "cx": "M", "prio": "P0 Critico", "status": "Ideia", "impacto": "Alto", "horas": 12}, {"id": 51, "nome": "Mostrar LTV e histórico de transações no sidepanel", "epico": "Sidepanel 360° (contato, oportunidade, LTV, histórico)", "modulo": "03 · Inbox", "cx": "M", "prio": "P0 Critico", "status": "Ideia", "impacto": "Alto", "horas": 12}, {"id": 52, "nome": "Ações rápidas da conversa: criar tarefa, oportunidade ou reunião", "epico": "Sidepanel 360° (contato, oportunidade, LTV, histórico)", "modulo": "03 · Inbox", "cx": "M", "prio": "P1 Alto", "status": "Ideia", "impacto": "Alto", "horas": 12}, {"id": 53, "nome": "Atribuir conversa a agente ou squad", "epico": "Gestão de Conversas (atribuição, status, tags)", "modulo": "03 · Inbox", "cx": "S", "prio": "P0 Critico", "status": "Ideia", "impacto": "Alto", "horas": 6}, {"id": 54, "nome": "Status de conversa: aberta, aguardando, resolvida", "epico": "Gestão de Conversas (atribuição, status, tags)", "modulo": "03 · Inbox", "cx": "S", "prio": "P0 Critico", "status": "Ideia", "impacto": "Alto", "horas": 6}, {"id": 55, "nome": "Filtros de inbox por canal, agente, status e tag", "epico": "Gestão de Conversas (atribuição, status, tags)", "modulo": "03 · Inbox", "cx": "M", "prio": "P1 Alto", "status": "Ideia", "impacto": "Alto", "horas": 12}, {"id": 56, "nome": "Respostas rápidas (canned responses) por canal", "epico": "Gestão de Conversas (atribuição, status, tags)", "modulo": "03 · Inbox", "cx": "S", "prio": "P1 Alto", "status": "Ideia", "impacto": "Alto", "horas": 6}, {"id": 57, "nome": "SLA e alertas de tempo sem resposta", "epico": "Gestão de Conversas (atribuição, status, tags)", "modulo": "03 · Inbox", "cx": "M", "prio": "P2 Medio", "status": "Ideia", "impacto": "Medio", "horas": 12}, {"id": 58, "nome": "Cadastro e envio de templates WABA aprovados", "epico": "Templates WABA e Integração Meta Business", "modulo": "03 · Inbox", "cx": "M", "prio": "P0 Critico", "status": "Ideia", "impacto": "Alto", "horas": 12}, {"id": 59, "nome": "Aprovação de templates via Meta Business API na plataforma", "epico": "Templates WABA e Integração Meta Business", "modulo": "03 · Inbox", "cx": "L", "prio": "P0 Critico", "status": "Ideia", "impacto": "Alto", "horas": 20}, {"id": 60, "nome": "Variáveis dinâmicas nos templates (nome, produto, link)", "epico": "Templates WABA e Integração Meta Business", "modulo": "03 · Inbox", "cx": "M", "prio": "P0 Critico", "status": "Ideia", "impacto": "Alto", "horas": 12}, {"id": 61, "nome": "Disparo em massa de template para lista segmentada", "epico": "Templates WABA e Integração Meta Business", "modulo": "03 · Inbox", "cx": "L", "prio": "P1 Alto", "status": "Ideia", "impacto": "Alto", "horas": 20}, {"id": 62, "nome": "Histórico de disparos com taxa de entrega e leitura", "epico": "Templates WABA e Integração Meta Business", "modulo": "03 · Inbox", "cx": "M", "prio": "P1 Alto", "status": "Ideia", "impacto": "Medio", "horas": 12}, {"id": 63, "nome": "Canvas drag-and-drop para montar flows de chatbot", "epico": "Flow Builder Visual (canvas drag-and-drop)", "modulo": "04 · Chatbot Builder", "cx": "XL", "prio": "P0 Critico", "status": "Ideia", "impacto": "Alto", "horas": 36}, {"id": 64, "nome": "Nó de mensagem de texto com variáveis do contato", "epico": "Flow Builder Visual (canvas drag-and-drop)", "modulo": "04 · Chatbot Builder", "cx": "M", "prio": "P0 Critico", "status": "Ideia", "impacto": "Alto", "horas": 12}, {"id": 65, "nome": "Nó de menu e botões (quick replies) no WhatsApp", "epico": "Flow Builder Visual (canvas drag-and-drop)", "modulo": "04 · Chatbot Builder", "cx": "M", "prio": "P0 Critico", "status": "Ideia", "impacto": "Alto", "horas": 12}, {"id": 66, "nome": "Nó de condição (if/else por campo do CRM)", "epico": "Flow Builder Visual (canvas drag-and-drop)", "modulo": "04 · Chatbot Builder", "cx": "L", "prio": "P0 Critico", "status": "Ideia", "impacto": "Alto", "horas": 20}, {"id": 67, "nome": "Nó de coleta de dado: salva resposta no CRM", "epico": "Flow Builder Visual (canvas drag-and-drop)", "modulo": "04 · Chatbot Builder", "cx": "M", "prio": "P0 Critico", "status": "Ideia", "impacto": "Alto", "horas": 12}, {"id": 68, "nome": "Nó de delay e espera configurável", "epico": "Flow Builder Visual (canvas drag-and-drop)", "modulo": "04 · Chatbot Builder", "cx": "S", "prio": "P1 Alto", "status": "Ideia", "impacto": "Medio", "horas": 6}, {"id": 69, "nome": "Nó de IA com LLM configurável (OpenAI, Anthropic)", "epico": "Nós de IA e Handoff Bot → Humano", "modulo": "04 · Chatbot Builder", "cx": "L", "prio": "P0 Critico", "status": "Ideia", "impacto": "Alto", "horas": 20}, {"id": 70, "nome": "Contexto do CRM injetado no nó de IA", "epico": "Nós de IA e Handoff Bot → Humano", "modulo": "04 · Chatbot Builder", "cx": "L", "prio": "P0 Critico", "status": "Ideia", "impacto": "Alto", "horas": 20}, {"id": 71, "nome": "Handoff bot → agente humano com contexto da conversa", "epico": "Nós de IA e Handoff Bot → Humano", "modulo": "04 · Chatbot Builder", "cx": "M", "prio": "P0 Critico", "status": "Ideia", "impacto": "Alto", "horas": 12}, {"id": 72, "nome": "Horário de atendimento para handoff automático", "epico": "Nós de IA e Handoff Bot → Humano", "modulo": "04 · Chatbot Builder", "cx": "M", "prio": "P1 Alto", "status": "Ideia", "impacto": "Alto", "horas": 12}, {"id": 73, "nome": "Trigger de flow por palavra-chave recebida", "epico": "Multi-número por Flow e Analytics", "modulo": "04 · Chatbot Builder", "cx": "S", "prio": "P0 Critico", "status": "Ideia", "impacto": "Alto", "horas": 6}, {"id": 74, "nome": "Associar flow a múltiplos números WABA", "epico": "Multi-número por Flow e Analytics", "modulo": "04 · Chatbot Builder", "cx": "M", "prio": "P1 Alto", "status": "Ideia", "impacto": "Alto", "horas": 12}, {"id": 75, "nome": "Dashboard de analytics do chatbot (sessões, conclusão, handoffs)", "epico": "Multi-número por Flow e Analytics", "modulo": "04 · Chatbot Builder", "cx": "L", "prio": "P1 Alto", "status": "Ideia", "impacto": "Medio", "horas": 20}, {"id": 76, "nome": "Biblioteca de templates de flow (SDR, suporte, agendamento)", "epico": "Templates de Flow de Chatbot", "modulo": "04 · Chatbot Builder", "cx": "M", "prio": "P2 Medio", "status": "Ideia", "impacto": "Medio", "horas": 12}, {"id": 77, "nome": "Instalar e customizar template de flow em 1 clique", "epico": "Templates de Flow de Chatbot", "modulo": "04 · Chatbot Builder", "cx": "S", "prio": "P2 Medio", "status": "Ideia", "impacto": "Medio", "horas": 6}, {"id": 78, "nome": "OAuth com Google Calendar", "epico": "Google Calendar Sync e Agendamento Público", "modulo": "05 · Calendário e Reuniões", "cx": "M", "prio": "P0 Critico", "status": "Ideia", "impacto": "Alto", "horas": 12}, {"id": 79, "nome": "Sincronização bidirecional de eventos com Google Calendar", "epico": "Google Calendar Sync e Agendamento Público", "modulo": "05 · Calendário e Reuniões", "cx": "L", "prio": "P0 Critico", "status": "Ideia", "impacto": "Alto", "horas": 20}, {"id": 80, "nome": "Link de agendamento público (tipo Calendly) por usuário", "epico": "Google Calendar Sync e Agendamento Público", "modulo": "05 · Calendário e Reuniões", "cx": "L", "prio": "P0 Critico", "status": "Ideia", "impacto": "Alto", "horas": 20}, {"id": 81, "nome": "Configurar disponibilidade e horários por usuário", "epico": "Google Calendar Sync e Agendamento Público", "modulo": "05 · Calendário e Reuniões", "cx": "M", "prio": "P1 Alto", "status": "Ideia", "impacto": "Alto", "horas": 12}, {"id": 82, "nome": "Confirmação e lembrete automático de reunião por WhatsApp", "epico": "Google Calendar Sync e Agendamento Público", "modulo": "05 · Calendário e Reuniões", "cx": "M", "prio": "P1 Alto", "status": "Ideia", "impacto": "Alto", "horas": 12}, {"id": 83, "nome": "Integração com Granola via webhook para receber transcrições", "epico": "Transcrições e Tarefas Automáticas pós-reunião", "modulo": "05 · Calendário e Reuniões", "cx": "M", "prio": "P1 Alto", "status": "Ideia", "impacto": "Alto", "horas": 12}, {"id": 84, "nome": "Extrair tarefas da transcrição e criar no CRM automaticamente", "epico": "Transcrições e Tarefas Automáticas pós-reunião", "modulo": "05 · Calendário e Reuniões", "cx": "L", "prio": "P0 Critico", "status": "Ideia", "impacto": "Alto", "horas": 20}, {"id": 85, "nome": "Associar transcrição ao contato e oportunidade automaticamente", "epico": "Transcrições e Tarefas Automáticas pós-reunião", "modulo": "05 · Calendário e Reuniões", "cx": "M", "prio": "P0 Critico", "status": "Ideia", "impacto": "Alto", "horas": 12}, {"id": 86, "nome": "Criar reunião a partir do card de oportunidade", "epico": "Reuniões Vinculadas a Oportunidades", "modulo": "05 · Calendário e Reuniões", "cx": "S", "prio": "P0 Critico", "status": "Ideia", "impacto": "Alto", "horas": 6}, {"id": 87, "nome": "Histórico de reuniões na timeline do contato", "epico": "Reuniões Vinculadas a Oportunidades", "modulo": "05 · Calendário e Reuniões", "cx": "S", "prio": "P1 Alto", "status": "Ideia", "impacto": "Alto", "horas": 6}, {"id": 88, "nome": "Configurar regras de score (perfil, comportamento, engajamento)", "epico": "Lead Scoring Engine", "modulo": "06 · IA e Copiloto", "cx": "L", "prio": "P0 Critico", "status": "Ideia", "impacto": "Alto", "horas": 20}, {"id": 89, "nome": "Score calculado automaticamente em tempo real", "epico": "Lead Scoring Engine", "modulo": "06 · IA e Copiloto", "cx": "L", "prio": "P0 Critico", "status": "Ideia", "impacto": "Alto", "horas": 20}, {"id": 90, "nome": "Exibir score no card de oportunidade, lista e inbox", "epico": "Lead Scoring Engine", "modulo": "06 · IA e Copiloto", "cx": "S", "prio": "P0 Critico", "status": "Ideia", "impacto": "Alto", "horas": 6}, {"id": 91, "nome": "Alerta quando lead atinge threshold de score configurado", "epico": "Lead Scoring Engine", "modulo": "06 · IA e Copiloto", "cx": "M", "prio": "P1 Alto", "status": "Ideia", "impacto": "Alto", "horas": 12}, {"id": 92, "nome": "Decay automático de score por inatividade do lead", "epico": "Lead Scoring Engine", "modulo": "06 · IA e Copiloto", "cx": "M", "prio": "P1 Alto", "status": "Ideia", "impacto": "Medio", "horas": 12}, {"id": 93, "nome": "Sugestão de próxima ação por oportunidade (copiloto)", "epico": "Copiloto do Closer (próxima ação, prioridades)", "modulo": "06 · IA e Copiloto", "cx": "L", "prio": "P0 Critico", "status": "Ideia", "impacto": "Alto", "horas": 20}, {"id": 94, "nome": "Lista de leads quentes priorizados para contato hoje", "epico": "Copiloto do Closer (próxima ação, prioridades)", "modulo": "06 · IA e Copiloto", "cx": "M", "prio": "P0 Critico", "status": "Ideia", "impacto": "Alto", "horas": 12}, {"id": 95, "nome": "Alerta de oportunidades paradas (sem atividade em X dias)", "epico": "Copiloto do Closer (próxima ação, prioridades)", "modulo": "06 · IA e Copiloto", "cx": "M", "prio": "P0 Critico", "status": "Ideia", "impacto": "Alto", "horas": 12}, {"id": 96, "nome": "Sugestão de mensagem de follow-up baseada no histórico", "epico": "Copiloto do Closer (próxima ação, prioridades)", "modulo": "06 · IA e Copiloto", "cx": "L", "prio": "P1 Alto", "status": "Ideia", "impacto": "Alto", "horas": 20}, {"id": 97, "nome": "Resumo do pipeline vs meta do mês em linguagem natural", "epico": "Copiloto do Líder Comercial (pipeline vs meta)", "modulo": "06 · IA e Copiloto", "cx": "L", "prio": "P0 Critico", "status": "Ideia", "impacto": "Alto", "horas": 20}, {"id": 98, "nome": "Projeção de fechamento do mês com base no pipeline atual", "epico": "Copiloto do Líder Comercial (pipeline vs meta)", "modulo": "06 · IA e Copiloto", "cx": "L", "prio": "P0 Critico", "status": "Ideia", "impacto": "Alto", "horas": 20}, {"id": 99, "nome": "Ranking de performance do time em tempo real", "epico": "Copiloto do Líder Comercial (pipeline vs meta)", "modulo": "06 · IA e Copiloto", "cx": "M", "prio": "P0 Critico", "status": "Ideia", "impacto": "Alto", "horas": 12}, {"id": 100, "nome": "Sugestão de ações para recuperar meta pelo copiloto", "epico": "Copiloto do Líder Comercial (pipeline vs meta)", "modulo": "06 · IA e Copiloto", "cx": "L", "prio": "P1 Alto", "status": "Ideia", "impacto": "Alto", "horas": 20}, {"id": 101, "nome": "Dashboard executivo simplificado (receita, conversão, MRR)", "epico": "Copiloto do Empresário (visão executiva)", "modulo": "06 · IA e Copiloto", "cx": "L", "prio": "P1 Alto", "status": "Ideia", "impacto": "Alto", "horas": 20}, {"id": 102, "nome": "Resumo semanal em linguagem natural por WhatsApp ou email", "epico": "Copiloto do Empresário (visão executiva)", "modulo": "06 · IA e Copiloto", "cx": "M", "prio": "P1 Alto", "status": "Ideia", "impacto": "Medio", "horas": 12}, {"id": 103, "nome": "Carregar playbook de vendas como base de conhecimento do RAG", "epico": "RAG com Framework de Vendas", "modulo": "06 · IA e Copiloto", "cx": "L", "prio": "P1 Alto", "status": "Ideia", "impacto": "Alto", "horas": 20}, {"id": 104, "nome": "Indexar framework de vendas escolhido no agente (SPIN, BANT)", "epico": "RAG com Framework de Vendas", "modulo": "06 · IA e Copiloto", "cx": "L", "prio": "P1 Alto", "status": "Ideia", "impacto": "Alto", "horas": 20}, {"id": 105, "nome": "Atualizar base RAG sem reimplantar o agente", "epico": "RAG com Framework de Vendas", "modulo": "06 · IA e Copiloto", "cx": "M", "prio": "P2 Medio", "status": "Ideia", "impacto": "Medio", "horas": 12}, {"id": 106, "nome": "Configurar persona, objetivo e instruções do agente de IA", "epico": "Builder de Agentes Visual", "modulo": "07 · AI Agent Builder", "cx": "L", "prio": "P0 Critico", "status": "Ideia", "impacto": "Alto", "horas": 20}, {"id": 107, "nome": "Selecionar model provider e modelo (GPT-4o, Claude Sonnet)", "epico": "Builder de Agentes Visual", "modulo": "07 · AI Agent Builder", "cx": "M", "prio": "P0 Critico", "status": "Ideia", "impacto": "Alto", "horas": 12}, {"id": 108, "nome": "Adicionar ferramentas ao agente (consulta CRM, calendário, API)", "epico": "Builder de Agentes Visual", "modulo": "07 · AI Agent Builder", "cx": "L", "prio": "P0 Critico", "status": "Ideia", "impacto": "Alto", "horas": 20}, {"id": 109, "nome": "Testar agente em sandbox antes de publicar", "epico": "Builder de Agentes Visual", "modulo": "07 · AI Agent Builder", "cx": "M", "prio": "P1 Alto", "status": "Ideia", "impacto": "Alto", "horas": 12}, {"id": 110, "nome": "Agente SDR pré-configurado para prospecção ativa via WhatsApp", "epico": "Agente SDR (prospecção e qualificação)", "modulo": "07 · AI Agent Builder", "cx": "L", "prio": "P0 Critico", "status": "Ideia", "impacto": "Alto", "horas": 20}, {"id": 111, "nome": "Qualificação via perguntas do framework de vendas configurado", "epico": "Agente SDR (prospecção e qualificação)", "modulo": "07 · AI Agent Builder", "cx": "L", "prio": "P0 Critico", "status": "Ideia", "impacto": "Alto", "horas": 20}, {"id": 112, "nome": "Criar contato e oportunidade ao qualificar lead", "epico": "Agente SDR (prospecção e qualificação)", "modulo": "07 · AI Agent Builder", "cx": "M", "prio": "P0 Critico", "status": "Ideia", "impacto": "Alto", "horas": 12}, {"id": 113, "nome": "Agendar reunião automaticamente ao qualificar lead", "epico": "Agente SDR (prospecção e qualificação)", "modulo": "07 · AI Agent Builder", "cx": "L", "prio": "P0 Critico", "status": "Ideia", "impacto": "Alto", "horas": 20}, {"id": 114, "nome": "Agente de reativação para leads perdidos e inativos", "epico": "Agente de Recuperação de Vendas", "modulo": "07 · AI Agent Builder", "cx": "L", "prio": "P1 Alto", "status": "Ideia", "impacto": "Alto", "horas": 20}, {"id": 115, "nome": "Sequência de mensagens configurável para recuperação", "epico": "Agente de Recuperação de Vendas", "modulo": "07 · AI Agent Builder", "cx": "M", "prio": "P1 Alto", "status": "Ideia", "impacto": "Alto", "horas": 12}, {"id": 116, "nome": "CRUD de API Keys por provider (OpenAI, Anthropic, Meta, Google)", "epico": "Gestão de API Keys de IA (OpenAI, Anthropic, Meta)", "modulo": "07 · AI Agent Builder", "cx": "M", "prio": "P0 Critico", "status": "Ideia", "impacto": "Alto", "horas": 12}, {"id": 117, "nome": "Criptografia de API Keys em repouso (AES-256)", "epico": "Gestão de API Keys de IA (OpenAI, Anthropic, Meta)", "modulo": "07 · AI Agent Builder", "cx": "S", "prio": "P0 Critico", "status": "Ideia", "impacto": "Alto", "horas": 6}, {"id": 118, "nome": "Criar automação com trigger + condições + ações encadeadas", "epico": "Motor de Regras (trigger + condição + ação)", "modulo": "08 · Automações", "cx": "L", "prio": "P0 Critico", "status": "Ideia", "impacto": "Alto", "horas": 20}, {"id": 119, "nome": "Ativar e desativar automação sem excluir", "epico": "Motor de Regras (trigger + condição + ação)", "modulo": "08 · Automações", "cx": "S", "prio": "P0 Critico", "status": "Ideia", "impacto": "Alto", "horas": 6}, {"id": 120, "nome": "Trigger: formulário submetido", "epico": "Triggers (webhook, evento CRM, tempo, formulário)", "modulo": "08 · Automações", "cx": "S", "prio": "P0 Critico", "status": "Ideia", "impacto": "Alto", "horas": 6}, {"id": 121, "nome": "Trigger: oportunidade mudou de estágio", "epico": "Triggers (webhook, evento CRM, tempo, formulário)", "modulo": "08 · Automações", "cx": "S", "prio": "P0 Critico", "status": "Ideia", "impacto": "Alto", "horas": 6}, {"id": 122, "nome": "Trigger: oportunidade ganha ou perdida", "epico": "Triggers (webhook, evento CRM, tempo, formulário)", "modulo": "08 · Automações", "cx": "S", "prio": "P0 Critico", "status": "Ideia", "impacto": "Alto", "horas": 6}, {"id": 123, "nome": "Trigger: webhook externo recebido", "epico": "Triggers (webhook, evento CRM, tempo, formulário)", "modulo": "08 · Automações", "cx": "M", "prio": "P0 Critico", "status": "Ideia", "impacto": "Alto", "horas": 12}, {"id": 124, "nome": "Trigger: X dias sem atividade na oportunidade", "epico": "Triggers (webhook, evento CRM, tempo, formulário)", "modulo": "08 · Automações", "cx": "M", "prio": "P1 Alto", "status": "Ideia", "impacto": "Alto", "horas": 12}, {"id": 125, "nome": "Ação: mover oportunidade de estágio", "epico": "Ações (mover card, enviar mensagem, criar tarefa, HTTP)", "modulo": "08 · Automações", "cx": "S", "prio": "P0 Critico", "status": "Ideia", "impacto": "Alto", "horas": 6}, {"id": 126, "nome": "Ação: criar tarefa vinculada à oportunidade", "epico": "Ações (mover card, enviar mensagem, criar tarefa, HTTP)", "modulo": "08 · Automações", "cx": "S", "prio": "P0 Critico", "status": "Ideia", "impacto": "Alto", "horas": 6}, {"id": 127, "nome": "Ação: enviar mensagem WhatsApp ou email ao contato", "epico": "Ações (mover card, enviar mensagem, criar tarefa, HTTP)", "modulo": "08 · Automações", "cx": "M", "prio": "P0 Critico", "status": "Ideia", "impacto": "Alto", "horas": 12}, {"id": 128, "nome": "Ação: criar oportunidade em outro pipeline", "epico": "Ações (mover card, enviar mensagem, criar tarefa, HTTP)", "modulo": "08 · Automações", "cx": "M", "prio": "P0 Critico", "status": "Ideia", "impacto": "Alto", "horas": 12}, {"id": 129, "nome": "Ação: HTTP request (POST/GET para sistema externo)", "epico": "Ações (mover card, enviar mensagem, criar tarefa, HTTP)", "modulo": "08 · Automações", "cx": "M", "prio": "P1 Alto", "status": "Ideia", "impacto": "Alto", "horas": 12}, {"id": 130, "nome": "Log de execução por automação com payload e status", "epico": "Templates de Automação e Log de Execução", "modulo": "08 · Automações", "cx": "M", "prio": "P1 Alto", "status": "Ideia", "impacto": "Alto", "horas": 12}, {"id": 131, "nome": "Biblioteca de templates de automação prontos", "epico": "Templates de Automação e Log de Execução", "modulo": "08 · Automações", "cx": "M", "prio": "P2 Medio", "status": "Ideia", "impacto": "Medio", "horas": 12}, {"id": 132, "nome": "Script JS de pixel para instalar em qualquer site", "epico": "Pixel Próprio de Rastreamento", "modulo": "09 · Tracking e Analytics", "cx": "L", "prio": "P0 Critico", "status": "Ideia", "impacto": "Alto", "horas": 20}, {"id": 133, "nome": "Capturar eventos: pageview, lead, purchase, custom", "epico": "Pixel Próprio de Rastreamento", "modulo": "09 · Tracking e Analytics", "cx": "M", "prio": "P0 Critico", "status": "Ideia", "impacto": "Alto", "horas": 12}, {"id": 134, "nome": "Identificar visitante por cookie e cruzar com CRM", "epico": "Pixel Próprio de Rastreamento", "modulo": "09 · Tracking e Analytics", "cx": "L", "prio": "P0 Critico", "status": "Ideia", "impacto": "Alto", "horas": 20}, {"id": 135, "nome": "Capturar UTMs ao submeter formulário", "epico": "UTM Tracking e Atribuição de Vendas", "modulo": "09 · Tracking e Analytics", "cx": "S", "prio": "P0 Critico", "status": "Ideia", "impacto": "Alto", "horas": 6}, {"id": 136, "nome": "Armazenar UTMs no contato: first-touch e last-touch", "epico": "UTM Tracking e Atribuição de Vendas", "modulo": "09 · Tracking e Analytics", "cx": "M", "prio": "P0 Critico", "status": "Ideia", "impacto": "Alto", "horas": 12}, {"id": 137, "nome": "Atribuição de deal à campanha e canal de origem", "epico": "UTM Tracking e Atribuição de Vendas", "modulo": "09 · Tracking e Analytics", "cx": "M", "prio": "P0 Critico", "status": "Ideia", "impacto": "Alto", "horas": 12}, {"id": 138, "nome": "Relatório de vendas por origem UTM e canal", "epico": "UTM Tracking e Atribuição de Vendas", "modulo": "09 · Tracking e Analytics", "cx": "L", "prio": "P1 Alto", "status": "Ideia", "impacto": "Alto", "horas": 20}, {"id": 139, "nome": "KPIs do empresário: receita, vendas, ticket médio, conversão", "epico": "Dashboard Empresário (visão executiva simplificada)", "modulo": "09 · Tracking e Analytics", "cx": "L", "prio": "P0 Critico", "status": "Ideia", "impacto": "Alto", "horas": 20}, {"id": 140, "nome": "Gráfico de receita no tempo com comparativo mensal", "epico": "Dashboard Empresário (visão executiva simplificada)", "modulo": "09 · Tracking e Analytics", "cx": "M", "prio": "P1 Alto", "status": "Ideia", "impacto": "Alto", "horas": 12}, {"id": 141, "nome": "Performance individual de cada vendedor para o líder", "epico": "Dashboard Líder Comercial (time, metas, performance)", "modulo": "09 · Tracking e Analytics", "cx": "L", "prio": "P0 Critico", "status": "Ideia", "impacto": "Alto", "horas": 20}, {"id": 142, "nome": "Meta vs realizado por vendedor e squad para o líder", "epico": "Dashboard Líder Comercial (time, metas, performance)", "modulo": "09 · Tracking e Analytics", "cx": "L", "prio": "P0 Critico", "status": "Ideia", "impacto": "Alto", "horas": 20}, {"id": 143, "nome": "Relatório de funil de conversão por estágio do pipeline", "epico": "Dashboard Líder Comercial (time, metas, performance)", "modulo": "09 · Tracking e Analytics", "cx": "L", "prio": "P1 Alto", "status": "Ideia", "impacto": "Alto", "horas": 20}, {"id": 144, "nome": "Minha meta do mês e progresso em tempo real (closer)", "epico": "Dashboard Closer (rotina, produtividade, metas pessoais)", "modulo": "09 · Tracking e Analytics", "cx": "M", "prio": "P0 Critico", "status": "Ideia", "impacto": "Alto", "horas": 12}, {"id": 145, "nome": "Lista de tarefas do dia e leads prioritários (closer)", "epico": "Dashboard Closer (rotina, produtividade, metas pessoais)", "modulo": "09 · Tracking e Analytics", "cx": "M", "prio": "P0 Critico", "status": "Ideia", "impacto": "Alto", "horas": 12}, {"id": 146, "nome": "Enviar eventos de conversão para Meta CAPI", "epico": "Integração Meta Ads (eventos de conversão)", "modulo": "09 · Tracking e Analytics", "cx": "L", "prio": "P1 Alto", "status": "Ideia", "impacto": "Alto", "horas": 20}, {"id": 147, "nome": "Definir meta anual global por produto e serviço", "epico": "Plano Anual por Produto", "modulo": "10 · Planejamento Comercial", "cx": "M", "prio": "P0 Critico", "status": "Ideia", "impacto": "Alto", "horas": 12}, {"id": 148, "nome": "Dividir meta por produto com sazonalidade mensal configurável", "epico": "Plano Anual por Produto", "modulo": "10 · Planejamento Comercial", "cx": "M", "prio": "P0 Critico", "status": "Ideia", "impacto": "Alto", "horas": 12}, {"id": 149, "nome": "Distribuir meta por squad e vendedor (cascata)", "epico": "Cascata por Squads e Vendedores", "modulo": "10 · Planejamento Comercial", "cx": "L", "prio": "P0 Critico", "status": "Ideia", "impacto": "Alto", "horas": 20}, {"id": 150, "nome": "Visualização em árvore da cascata de metas", "epico": "Cascata por Squads e Vendedores", "modulo": "10 · Planejamento Comercial", "cx": "L", "prio": "P1 Alto", "status": "Ideia", "impacto": "Alto", "horas": 20}, {"id": 151, "nome": "Painel meta vs realizado em tempo real por período", "epico": "Acompanhamento Meta vs Realizado em Tempo Real", "modulo": "10 · Planejamento Comercial", "cx": "L", "prio": "P0 Critico", "status": "Ideia", "impacto": "Alto", "horas": 20}, {"id": 152, "nome": "Alerta automático quando abaixo de X% da meta", "epico": "Acompanhamento Meta vs Realizado em Tempo Real", "modulo": "10 · Planejamento Comercial", "cx": "M", "prio": "P0 Critico", "status": "Ideia", "impacto": "Alto", "horas": 12}, {"id": 153, "nome": "Apuração de vendas do mês por vendedor com validação", "epico": "Apuração Mensal e Cálculo OTES", "modulo": "11 · Folha Comercial", "cx": "L", "prio": "P0 Critico", "status": "Ideia", "impacto": "Alto", "horas": 20}, {"id": 154, "nome": "Configurar regras OTES: metas, aceleradores, deceleradores", "epico": "Apuração Mensal e Cálculo OTES", "modulo": "11 · Folha Comercial", "cx": "L", "prio": "P0 Critico", "status": "Ideia", "impacto": "Alto", "horas": 20}, {"id": 155, "nome": "Cálculo automático de remuneração variável pela metodologia OTES", "epico": "Apuração Mensal e Cálculo OTES", "modulo": "11 · Folha Comercial", "cx": "L", "prio": "P0 Critico", "status": "Ideia", "impacto": "Alto", "horas": 20}, {"id": 156, "nome": "Gerar holerite detalhado por vendedor (fixo + variável + acelerador)", "epico": "Geração de Folha de Pagamento Comercial", "modulo": "11 · Folha Comercial", "cx": "L", "prio": "P0 Critico", "status": "Ideia", "impacto": "Alto", "horas": 20}, {"id": 157, "nome": "Aprovação do líder antes de publicar folha ao vendedor", "epico": "Geração de Folha de Pagamento Comercial", "modulo": "11 · Folha Comercial", "cx": "M", "prio": "P1 Alto", "status": "Ideia", "impacto": "Alto", "horas": 12}, {"id": 158, "nome": "Exportar folha de pagamento em PDF", "epico": "Geração de Folha de Pagamento Comercial", "modulo": "11 · Folha Comercial", "cx": "S", "prio": "P1 Alto", "status": "Ideia", "impacto": "Medio", "horas": 6}, {"id": 159, "nome": "Webhook de compra aprovada do Hotmart", "epico": "Hotmart e Gateways de Pagamento", "modulo": "12 · Integrações", "cx": "M", "prio": "P0 Critico", "status": "Ideia", "impacto": "Alto", "horas": 12}, {"id": 160, "nome": "Criar deal e vincular ao contato ao receber compra Hotmart", "epico": "Hotmart e Gateways de Pagamento", "modulo": "12 · Integrações", "cx": "M", "prio": "P0 Critico", "status": "Ideia", "impacto": "Alto", "horas": 12}, {"id": 161, "nome": "Webhook de reembolso e cancelamento Hotmart", "epico": "Hotmart e Gateways de Pagamento", "modulo": "12 · Integrações", "cx": "M", "prio": "P1 Alto", "status": "Ideia", "impacto": "Alto", "horas": 12}, {"id": 162, "nome": "Endpoints REST para contatos, oportunidades e deals", "epico": "API Pública REST e MCP Server", "modulo": "12 · Integrações", "cx": "XL", "prio": "P0 Critico", "status": "Ideia", "impacto": "Alto", "horas": 36}, {"id": 163, "nome": "Autenticação via API Key com escopos de permissão", "epico": "API Pública REST e MCP Server", "modulo": "12 · Integrações", "cx": "M", "prio": "P0 Critico", "status": "Ideia", "impacto": "Alto", "horas": 12}, {"id": 164, "nome": "Documentação Swagger / OpenAPI interativa", "epico": "API Pública REST e MCP Server", "modulo": "12 · Integrações", "cx": "L", "prio": "P1 Alto", "status": "Ideia", "impacto": "Alto", "horas": 20}, {"id": 165, "nome": "MCP Server para integração com Claude e agentes de IA", "epico": "API Pública REST e MCP Server", "modulo": "12 · Integrações", "cx": "L", "prio": "P0 Critico", "status": "Ideia", "impacto": "Alto", "horas": 20}, {"id": 166, "nome": "Webhooks de saída configuráveis por evento do CRM", "epico": "Webhooks Entrada e Saída com Log", "modulo": "12 · Integrações", "cx": "L", "prio": "P0 Critico", "status": "Ideia", "impacto": "Alto", "horas": 20}, {"id": 167, "nome": "Webhooks de entrada com validação de assinatura HMAC", "epico": "Webhooks Entrada e Saída com Log", "modulo": "12 · Integrações", "cx": "M", "prio": "P0 Critico", "status": "Ideia", "impacto": "Alto", "horas": 12}, {"id": 168, "nome": "Log de envio e recebimento de webhooks com retry automático", "epico": "Webhooks Entrada e Saída com Log", "modulo": "12 · Integrações", "cx": "M", "prio": "P1 Alto", "status": "Ideia", "impacto": "Alto", "horas": 12}, {"id": 191, "nome": "F08 · Meta Business — App e WABA", "epico": "Sprint 0 — Setup de Infraestrutura e Contas", "modulo": "12 · Integrações", "cx": "M", "prio": "P0 Critico", "status": "Pronto para Dev", "impacto": "Alto", "horas": 12}, {"id": 169, "nome": "Publicar vaga e gerenciar candidatos (Jobs Pro)", "epico": "Marketplace de Vagas e Perfil Portável", "modulo": "13 · Jobs Pro", "cx": "L", "prio": "P0 Critico", "status": "Ideia", "impacto": "Alto", "horas": 20}, {"id": 170, "nome": "Perfil profissional com histórico de performance portável", "epico": "Marketplace de Vagas e Perfil Portável", "modulo": "13 · Jobs Pro", "cx": "L", "prio": "P0 Critico", "status": "Ideia", "impacto": "Alto", "horas": 20}, {"id": 171, "nome": "Vendedor migra de empresa mantendo histórico no Jobs Pro", "epico": "Migração entre Workspaces e Histórico", "modulo": "13 · Jobs Pro", "cx": "L", "prio": "P1 Alto", "status": "Ideia", "impacto": "Alto", "horas": 20}, {"id": 172, "nome": "Cadastro de cursos, módulos e aulas com player de vídeo", "epico": "Plataforma de Aulas e Trilhas de Formação", "modulo": "14 · Academy", "cx": "L", "prio": "P0 Critico", "status": "Ideia", "impacto": "Alto", "horas": 20}, {"id": 173, "nome": "Trilhas de formação: Closer, SDR e Líder Comercial", "epico": "Plataforma de Aulas e Trilhas de Formação", "modulo": "14 · Academy", "cx": "M", "prio": "P0 Critico", "status": "Ideia", "impacto": "Alto", "horas": 12}, {"id": 174, "nome": "Emitir certificado ao concluir trilha de formação", "epico": "Certificação Integrada ao Jobs Pro", "modulo": "14 · Academy", "cx": "M", "prio": "P1 Alto", "status": "Ideia", "impacto": "Alto", "horas": 12}, {"id": 175, "nome": "Certificado vinculado ao perfil do Jobs Pro automaticamente", "epico": "Certificação Integrada ao Jobs Pro", "modulo": "14 · Academy", "cx": "M", "prio": "P1 Alto", "status": "Ideia", "impacto": "Alto", "horas": 12}, {"id": 176, "nome": "Criação de workspace isolado por empresa (multi-tenant)", "epico": "Multi-tenant e Perfis de Acesso", "modulo": "15 · Admin e Workspace", "cx": "L", "prio": "P0 Critico", "status": "Ideia", "impacto": "Alto", "horas": 20}, {"id": 177, "nome": "Perfis de acesso: Empresário, Líder, Closer, SDR, Admin", "epico": "Multi-tenant e Perfis de Acesso", "modulo": "15 · Admin e Workspace", "cx": "L", "prio": "P0 Critico", "status": "Ideia", "impacto": "Alto", "horas": 20}, {"id": 178, "nome": "Permissões granulares por perfil e módulo", "epico": "Multi-tenant e Perfis de Acesso", "modulo": "15 · Admin e Workspace", "cx": "L", "prio": "P0 Critico", "status": "Ideia", "impacto": "Alto", "horas": 20}, {"id": 179, "nome": "Criar squads e atribuir líderes e pipelines", "epico": "Times, Squads e Configuração de Pipelines", "modulo": "15 · Admin e Workspace", "cx": "M", "prio": "P0 Critico", "status": "Ideia", "impacto": "Alto", "horas": 12}, {"id": 180, "nome": "Tela central de configuração de todas as integrações", "epico": "Central de Integrações no Admin", "modulo": "15 · Admin e Workspace", "cx": "L", "prio": "P0 Critico", "status": "Ideia", "impacto": "Alto", "horas": 20}, {"id": 181, "nome": "Status de cada integração: ativo, erro, desconectado", "epico": "Central de Integrações no Admin", "modulo": "15 · Admin e Workspace", "cx": "M", "prio": "P0 Critico", "status": "Ideia", "impacto": "Alto", "horas": 12}, {"id": 182, "nome": "Conectar números WABA via Meta Business Manager", "epico": "Gestão de Números WhatsApp e Templates", "modulo": "15 · Admin e Workspace", "cx": "L", "prio": "P0 Critico", "status": "Ideia", "impacto": "Alto", "horas": 20}, {"id": 183, "nome": "Configurar número padrão por squad e pipeline", "epico": "Gestão de Números WhatsApp e Templates", "modulo": "15 · Admin e Workspace", "cx": "M", "prio": "P1 Alto", "status": "Ideia", "impacto": "Alto", "horas": 12}, {"id": 184, "nome": "F01 · Domínio, DNS e SSL", "epico": "Sprint 0 — Setup de Infraestrutura e Contas", "modulo": "15 · Admin e Workspace", "cx": "S", "prio": "P0 Critico", "status": "Pronto para Dev", "impacto": "Alto", "horas": 6}, {"id": 185, "nome": "F02 · Repositório GitHub e Organização", "epico": "Sprint 0 — Setup de Infraestrutura e Contas", "modulo": "15 · Admin e Workspace", "cx": "S", "prio": "P0 Critico", "status": "Pronto para Dev", "impacto": "Alto", "horas": 6}, {"id": 186, "nome": "F03 · Vercel — Projeto, Deploy e Domínios", "epico": "Sprint 0 — Setup de Infraestrutura e Contas", "modulo": "15 · Admin e Workspace", "cx": "S", "prio": "P0 Critico", "status": "Pronto para Dev", "impacto": "Alto", "horas": 6}, {"id": 187, "nome": "F04 · Neon — Banco de Dados e Branches", "epico": "Sprint 0 — Setup de Infraestrutura e Contas", "modulo": "15 · Admin e Workspace", "cx": "S", "prio": "P0 Critico", "status": "Pronto para Dev", "impacto": "Alto", "horas": 6}, {"id": 188, "nome": "F05 · Upstash — Redis (BullMQ + Rate Limiting)", "epico": "Sprint 0 — Setup de Infraestrutura e Contas", "modulo": "15 · Admin e Workspace", "cx": "S", "prio": "P0 Critico", "status": "Pronto para Dev", "impacto": "Alto", "horas": 6}, {"id": 189, "nome": "F06 · Pusher — Real-time Channels", "epico": "Sprint 0 — Setup de Infraestrutura e Contas", "modulo": "15 · Admin e Workspace", "cx": "S", "prio": "P1 Alto", "status": "Pronto para Dev", "impacto": "Alto", "horas": 6}, {"id": 190, "nome": "F07 · APIs de IA — Anthropic e OpenAI", "epico": "Sprint 0 — Setup de Infraestrutura e Contas", "modulo": "15 · Admin e Workspace", "cx": "XS", "prio": "P1 Alto", "status": "Pronto para Dev", "impacto": "Alto", "horas": 3}, {"id": 192, "nome": "F09 · Autenticação — Auth.js Setup", "epico": "Sprint 0 — Setup de Infraestrutura e Contas", "modulo": "15 · Admin e Workspace", "cx": "M", "prio": "P0 Critico", "status": "Pronto para Dev", "impacto": "Alto", "horas": 12}, {"id": 193, "nome": "F10 · Email Transacional — Resend", "epico": "Sprint 0 — Setup de Infraestrutura e Contas", "modulo": "15 · Admin e Workspace", "cx": "XS", "prio": "P1 Alto", "status": "Pronto para Dev", "impacto": "Medio", "horas": 3}, {"id": 194, "nome": "F11 · Monitoramento — Sentry e PostHog", "epico": "Sprint 0 — Setup de Infraestrutura e Contas", "modulo": "15 · Admin e Workspace", "cx": "S", "prio": "P1 Alto", "status": "Pronto para Dev", "impacto": "Medio", "horas": 6}, {"id": 195, "nome": "F12 · Boilerplate Next.js e Variáveis de Ambiente", "epico": "Sprint 0 — Setup de Infraestrutura e Contas", "modulo": "15 · Admin e Workspace", "cx": "M", "prio": "P0 Critico", "status": "Pronto para Dev", "impacto": "Alto", "horas": 12}];
+
+const cxClass={XS:'xs',S:'s',M:'m',L:'l',XL:'xl'};
+const prioClass={'P0 Critico':'p0','P1 Alto':'p1','P2 Medio':'p2'};
+const impClass={'Alto':'alto','Medio':'medio','Baixo':'baixo'};
+const statusClass={'Pronto para Dev':'dev','Ideia':'ideia'};
+
+// Populate module filter
+const modulos=[...new Set(FEATURES.map(f=>f.modulo))].sort();
+const fModuloEl=document.getElementById('fModulo');
+modulos.forEach(m=>{const o=document.createElement('option');o.value=m;o.textContent=m;fModuloEl.appendChild(o);});
+
+let sortCol='id',sortAsc=true;
+
+function renderTable(){
+  const tbody=document.getElementById('feat-tbody');
+  tbody.innerHTML='';
+  const s=document.getElementById('search').value.toLowerCase();
+  const fm=document.getElementById('fModulo').value;
+  const fp=document.getElementById('fPrio').value;
+  const fc=document.getElementById('fCx').value;
+  const fs=document.getElementById('fStatus').value;
+  let filtered=FEATURES.filter(f=>
+    (!s||f.nome.toLowerCase().includes(s)||f.epico.toLowerCase().includes(s))&&
+    (!fm||f.modulo===fm)&&(!fp||f.prio===fp)&&(!fc||f.cx===fc)&&(!fs||f.status===fs)
+  );
+  filtered.sort((a,b)=>{
+    let va=a[sortCol],vb=b[sortCol];
+    if(typeof va==='string')return sortAsc?va.localeCompare(vb,'pt'):vb.localeCompare(va,'pt');
+    return sortAsc?va-vb:vb-va;
+  });
+  document.getElementById('feat-count').textContent=filtered.length+' feature'+(filtered.length!==1?'s':'');
+  filtered.forEach(f=>{
+    const tr=document.createElement('tr');
+    tr.innerHTML=`<td class="td-id">${f.id}</td>
+      <td class="td-nome">${f.nome}</td>
+      <td class="td-modulo">${f.modulo}</td>
+      <td><span class="tag tag-${cxClass[f.cx]}">${f.cx}</span></td>
+      <td><span class="tag tag-${prioClass[f.prio]}">${f.prio}</span></td>
+      <td><span class="tag tag-${statusClass[f.status]}">${f.status}</span></td>
+      <td><span class="tag tag-${impClass[f.impacto]}">${f.impacto}</span></td>
+      <td class="td-hrs">${f.horas}h</td>`;
+    tbody.appendChild(tr);
+  });
+}
+document.querySelectorAll('.feat-tbl thead th[data-col]').forEach(th=>{
+  th.addEventListener('click',()=>{
+    const col=th.dataset.col;
+    if(sortCol===col)sortAsc=!sortAsc;else{sortCol=col;sortAsc=true;}
+    document.querySelectorAll('.feat-tbl thead th').forEach(t=>t.classList.remove('sorted'));
+    th.classList.add('sorted');
+    renderTable();
+  });
+});
+['search','fModulo','fPrio','fCx','fStatus'].forEach(id=>document.getElementById(id).addEventListener('input',renderTable));
+renderTable();
+
+// Chart defaults
+Chart.defaults.color='#52555c';
+Chart.defaults.borderColor='rgba(255,255,255,0.06)';
+
+// C1 – Esforço por módulo
+new Chart(document.getElementById('c1'),{
+  type:'bar',
+  data:{
+    labels:['02·CRM','06·IA/Copiloto','03·Inbox','09·Tracking','15·Admin','04·Chatbot','01·Forms','07·AI Agent','12·Integrações','08·Automações','05·Calendário','11·Folha Com.','10·Plan.Com.','13·Jobs Pro','14·Academy'],
+    datasets:[{data:[77,73,71,60,56,55,49,47,44,38,34,25,24,15,14],
+      backgroundColor:['#378ADD','#BA7517','#D85A30','#E24B4A','#7F77DD','#639922','#1D9E75','#993C1D','#0F6E56','#185FA5','#534AB7','#72243E','#3B6D11','#888780','#5F5E5A'],
+      borderWidth:0,borderRadius:5}]},
+  options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,
+    plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>` ${ctx.parsed.x} pts`},backgroundColor:'#17191d',borderColor:'rgba(255,255,255,0.1)',borderWidth:1}},
+    scales:{x:{grid:{color:'rgba(255,255,255,0.04)'},ticks:{color:'#52555c',font:{size:10}}},y:{grid:{display:false},ticks:{color:'#8a8d94',font:{size:10}}}}}
+});
+
+// C2 – Complexidade
+new Chart(document.getElementById('c2'),{
+  type:'doughnut',
+  data:{labels:['M (90)','L (64)','S (37)','XL (2)','XS (2)'],
+    datasets:[{data:[90,64,37,2,2],backgroundColor:['#7F77DD','#1D9E75','#378ADD','#D85A30','#639922'],borderWidth:0,hoverOffset:6}]},
+  options:{responsive:true,maintainAspectRatio:false,cutout:'62%',
+    plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>` ${ctx.label}: ${ctx.parsed}`},backgroundColor:'#17191d',borderColor:'rgba(255,255,255,0.1)',borderWidth:1}}}
+});
+
+// C3 – Prioridade vs esforço
+new Chart(document.getElementById('c3'),{
+  type:'bar',
+  data:{labels:['P0 Crítico','P1 Alto','P2 Médio'],
+    datasets:[
+      {label:'Features',data:[121,64,10],backgroundColor:['rgba(226,75,74,0.75)','rgba(239,159,39,0.75)','rgba(99,153,34,0.75)'],borderWidth:0,borderRadius:4,yAxisID:'y'},
+      {label:'Pontos',data:[442,214,26],backgroundColor:['rgba(226,75,74,0.2)','rgba(239,159,39,0.2)','rgba(99,153,34,0.2)'],borderWidth:0,borderRadius:4,yAxisID:'y2'}]},
+  options:{responsive:true,maintainAspectRatio:false,
+    plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>` ${ctx.dataset.label}: ${ctx.parsed.y}`},backgroundColor:'#17191d',borderColor:'rgba(255,255,255,0.1)',borderWidth:1}},
+    scales:{y:{grid:{color:'rgba(255,255,255,0.04)'},ticks:{color:'#52555c',font:{size:10}},title:{display:true,text:'features',color:'#52555c',font:{size:10}}},
+      y2:{position:'right',grid:{display:false},ticks:{color:'#52555c',font:{size:10}},title:{display:true,text:'pontos',color:'#52555c',font:{size:10}}}}}
+});
+
+// C4 – Carga por módulo (dias)
+const sortedMod=[
+  {name:'02 · CRM',hrs:298,color:'#378ADD'},{name:'06 · IA e Copiloto',hrs:290,color:'#BA7517'},
+  {name:'03 · Inbox',hrs:276,color:'#D85A30'},{name:'09 · Tracking',hrs:238,color:'#E24B4A'},
+  {name:'04 · Chatbot Builder',hrs:218,color:'#639922'},{name:'15 · Admin',hrs:208,color:'#7F77DD'},
+  {name:'07 · AI Agent Builder',hrs:186,color:'#993C1D'},{name:'01 · Forms',hrs:184,color:'#1D9E75'},
+  {name:'12 · Integrações',hrs:180,color:'#0F6E56'},{name:'08 · Automações',hrs:140,color:'#185FA5'},
+  {name:'05 · Calendário',hrs:132,color:'#534AB7'},{name:'11 · Folha Comercial',hrs:98,color:'#72243E'},
+  {name:'10 · Plan. Comercial',hrs:96,color:'#3B6D11'},{name:'13 · Jobs Pro',hrs:60,color:'#888780'},
+  {name:'14 · Academy',hrs:56,color:'#5F5E5A'}
+].map(m=>({...m,dias:Math.round(m.hrs*1.35/24)})).sort((a,b)=>b.dias-a.dias);
+
+new Chart(document.getElementById('c4'),{
+  type:'bar',
+  data:{labels:sortedMod.map(m=>m.name),datasets:[{label:'Dias',data:sortedMod.map(m=>m.dias),backgroundColor:sortedMod.map(m=>m.color),borderWidth:0,borderRadius:5}]},
+  options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,
+    plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>` ${ctx.parsed.x} dias úteis do time`},backgroundColor:'#17191d',borderColor:'rgba(255,255,255,0.1)',borderWidth:1}},
+    scales:{x:{grid:{color:'rgba(255,255,255,0.04)'},ticks:{color:'#52555c',font:{size:10}}},y:{grid:{display:false},ticks:{color:'#8a8d94',font:{size:10}}}}}
+});
+
+// GANTT
+const TOTAL_WEEKS=30;
+const ganttSeq=[
+  {name:'15 · Admin / Sprint 0',start:0,weeks:1.8,color:'#7F77DD'},
+  {name:'01 · Forms',start:1.8,weeks:3.2,color:'#1D9E75'},
+  {name:'02 · CRM',start:1.8,weeks:5.2,color:'#378ADD'},
+  {name:'03 · Inbox',start:1.8,weeks:4.8,color:'#D85A30'},
+  {name:'04 · Chatbot Builder',start:7,weeks:3.8,color:'#639922'},
+  {name:'06 · IA e Copiloto',start:7,weeks:5.1,color:'#BA7517'},
+  {name:'07 · AI Agent Builder',start:7,weeks:3.3,color:'#993C1D'},
+  {name:'08 · Automações',start:12,weeks:2.5,color:'#185FA5'},
+  {name:'09 · Tracking',start:12,weeks:4.2,color:'#E24B4A'},
+  {name:'05 · Calendário',start:12,weeks:2.3,color:'#534AB7'},
+  {name:'12 · Integrações',start:16,weeks:3.2,color:'#0F6E56'},
+  {name:'10 · Plan. Comercial',start:19,weeks:1.7,color:'#3B6D11'},
+  {name:'11 · Folha Comercial',start:19,weeks:1.7,color:'#72243E'},
+  {name:'13 · Jobs Pro',start:22,weeks:1.1,color:'#888780'},
+  {name:'14 · Academy',start:22,weeks:1.0,color:'#5F5E5A'}
+];
+const monthSpans=[{label:'Mês 1',cols:4},{label:'Mês 2',cols:4},{label:'Mês 3',cols:4},{label:'Mês 4',cols:4},{label:'Mês 5',cols:4},{label:'Mês 6',cols:4},{label:'Mês 7',cols:6}];
+const mRow=document.getElementById('month-row');
+[document.createElement('th'),document.createElement('th')].forEach((t,i)=>{if(i===0)t.className='col-name';else t.className='col-dias';mRow.appendChild(t);});
+monthSpans.forEach(ms=>{const th=document.createElement('th');th.colSpan=ms.cols;th.textContent=ms.label;th.className='month-th';mRow.appendChild(th);});
+const wRow=document.getElementById('week-row');
+for(let w=0;w<TOTAL_WEEKS;w++){const th=document.createElement('th');th.textContent='S'+(w+1);th.style.cssText='min-width:22px;width:22px;'+(w%4===0?'border-left:1px solid rgba(255,255,255,0.1);':'');wRow.appendChild(th);}
+const gbody=document.getElementById('gantt-body');
+ganttSeq.forEach(row=>{
+  const tr=document.createElement('tr');
+  const tn=document.createElement('td');tn.className='g-name';tn.textContent=row.name;tr.appendChild(tn);
+  const td2=document.createElement('td');td2.className='g-dias';td2.textContent=Math.round(row.weeks*5)+'d';tr.appendChild(td2);
+  for(let w=0;w<TOTAL_WEEKS;w++){
+    const td=document.createElement('td');td.className='g-cell';
+    td.style.cssText='padding:3px 2px;width:22px;min-width:22px;'+(w%4===0?'border-left:1px solid rgba(255,255,255,0.07);':'');
+    if(w>=row.start&&w<(row.start+row.weeks)){const b=document.createElement('div');b.className='g-bar';b.style.background=row.color;td.appendChild(b);}
+    tr.appendChild(td);
+  }
+  gbody.appendChild(tr);
+});
+</script>
+</body>
+</html>

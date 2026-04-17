@@ -1,0 +1,2056 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TechVendasPro — SDR Prototype</title>
+  <style>
+    :root {
+      --bg1: #0d0f12;
+      --bg2: #13161b;
+      --bg3: #1a1e26;
+      --bg4: #21263180;
+      --text: #e2e6ed;
+      --muted: #6b7280;
+      --accent: #378ADD;
+      --border: #252a35;
+      --coberto: #22c55e;
+      --parcial: #f59e0b;
+      --gap: #ef4444;
+      --novo: #a78bfa;
+      --radius: 8px;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background: var(--bg1); color: var(--text); font-family: 'Inter', -apple-system, sans-serif; font-size: 14px; }
+
+    /* ── HEADER ── */
+    .header {
+      background: var(--bg2);
+      border-bottom: 1px solid var(--border);
+      padding: 0 24px;
+      display: flex;
+      align-items: center;
+      gap: 24px;
+      height: 56px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .logo { font-weight: 700; font-size: 15px; color: var(--accent); letter-spacing: -0.5px; }
+    .logo span { color: var(--text); }
+    .mode-switcher {
+      margin-left: auto;
+      display: flex;
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 3px;
+      gap: 2px;
+    }
+    .mode-btn {
+      padding: 5px 14px;
+      border-radius: 4px;
+      border: none;
+      background: transparent;
+      color: var(--muted);
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 500;
+      transition: all .15s;
+    }
+    .mode-btn.active { background: var(--accent); color: #fff; }
+
+    /* ── LAYOUT ── */
+    .shell { display: flex; height: calc(100vh - 56px); overflow: hidden; }
+    .sidebar {
+      width: 220px;
+      background: var(--bg2);
+      border-right: 1px solid var(--border);
+      padding: 16px 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      overflow-y: auto;
+      flex-shrink: 0;
+    }
+    .nav-section-label {
+      font-size: 10px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--muted);
+      padding: 10px 10px 4px;
+    }
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 10px;
+      border-radius: 6px;
+      cursor: pointer;
+      color: var(--muted);
+      font-size: 13px;
+      transition: all .15s;
+      border: none;
+      background: none;
+      width: 100%;
+      text-align: left;
+    }
+    .nav-item:hover { background: var(--bg3); color: var(--text); }
+    .nav-item.active { background: var(--bg3); color: var(--accent); }
+    .nav-item .fid {
+      font-size: 10px;
+      background: var(--bg1);
+      color: var(--muted);
+      border-radius: 3px;
+      padding: 1px 4px;
+      margin-left: auto;
+    }
+    .nav-item .gap-badge {
+      font-size: 10px;
+      background: #ef444420;
+      color: var(--gap);
+      border-radius: 3px;
+      padding: 1px 5px;
+      margin-left: auto;
+    }
+    .nav-item .novo-badge {
+      font-size: 9px;
+      background: #a78bfa20;
+      color: var(--novo);
+      border-radius: 3px;
+      padding: 1px 5px;
+      margin-left: auto;
+      font-weight: 700;
+      letter-spacing: .5px;
+    }
+
+    .main { flex: 1; overflow-y: auto; padding: 24px; display: flex; flex-direction: column; gap: 20px; }
+
+    /* ── PIPELINE BANNER ── */
+    .pipeline-banner {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px;
+    }
+    .pipeline-banner h3 { font-size: 13px; color: var(--muted); font-weight: 600; text-transform: uppercase; letter-spacing: .8px; margin-bottom: 16px; }
+    .pipeline-flow {
+      display: flex;
+      align-items: center;
+      gap: 0;
+      overflow-x: auto;
+      padding-bottom: 4px;
+    }
+    .pipeline-step {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      min-width: 110px;
+    }
+    .pipeline-node {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      border: 2px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all .2s;
+      background: var(--bg3);
+      font-size: 20px;
+      position: relative;
+    }
+    .pipeline-node:hover { border-color: var(--accent); transform: scale(1.06); }
+    .pipeline-node.active { border-color: var(--accent); background: #378add15; }
+    .pipeline-node .node-fid {
+      position: absolute;
+      top: -8px;
+      right: -8px;
+      font-size: 9px;
+      background: var(--bg1);
+      color: var(--muted);
+      border: 1px solid var(--border);
+      border-radius: 3px;
+      padding: 1px 4px;
+      white-space: nowrap;
+    }
+    .pipeline-node.gap-node { border-color: #ef444440; }
+    .pipeline-node.gap-node:hover { border-color: var(--gap); }
+    .pipeline-step .node-label { font-size: 11px; color: var(--muted); text-align: center; max-width: 100px; }
+    .pipeline-arrow { color: var(--border); font-size: 18px; padding: 0 4px; margin-top: -20px; }
+
+    /* ── PANEL ── */
+    .panel { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px; display: none; }
+    .panel.visible { display: block; }
+    .panel-header { display: flex; align-items: center; gap: 12px; margin-bottom: 20px; }
+    .panel-header h2 { font-size: 16px; font-weight: 600; }
+    .panel-header .feature-tag {
+      font-size: 11px;
+      padding: 3px 8px;
+      border-radius: 4px;
+      font-weight: 600;
+    }
+    .tag-coberto { background: #22c55e20; color: var(--coberto); border: 1px solid #22c55e40; }
+    .tag-parcial { background: #f59e0b20; color: var(--parcial); border: 1px solid #f59e0b40; }
+    .tag-gap { background: #ef444420; color: var(--gap); border: 1px solid #ef444440; }
+    .tag-novo { background: #a78bfa20; color: var(--novo); border: 1px solid #a78bfa40; }
+
+    /* ── GRIDS ── */
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
+
+    /* ── CARDS ── */
+    .card { background: var(--bg3); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px; }
+    .card h4 { font-size: 13px; font-weight: 600; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+    .card h4 .icon { font-size: 16px; }
+
+    /* ── LEAD LIST ── */
+    .lead-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 12px;
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      margin-bottom: 8px;
+      cursor: pointer;
+      transition: border-color .15s;
+    }
+    .lead-item:hover { border-color: var(--accent); }
+    .lead-avatar {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: var(--accent);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 13px;
+      flex-shrink: 0;
+    }
+    .lead-info { flex: 1; min-width: 0; }
+    .lead-name { font-weight: 600; font-size: 13px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .lead-sub { font-size: 11px; color: var(--muted); }
+    .score-pill {
+      padding: 3px 10px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 700;
+    }
+    .score-high { background: #22c55e20; color: var(--coberto); border: 1px solid #22c55e40; }
+    .score-mid { background: #f59e0b20; color: var(--parcial); border: 1px solid #f59e0b40; }
+    .score-low { background: #ef444420; color: var(--gap); border: 1px solid #ef444440; }
+
+    /* ── FORM CONTROLS ── */
+    label { font-size: 12px; color: var(--muted); display: block; margin-bottom: 4px; }
+    input[type="text"], input[type="number"], select, textarea {
+      width: 100%;
+      background: var(--bg1);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      color: var(--text);
+      padding: 8px 10px;
+      font-size: 13px;
+      margin-bottom: 12px;
+      outline: none;
+      transition: border-color .15s;
+    }
+    input:focus, select:focus, textarea:focus { border-color: var(--accent); }
+    textarea { resize: vertical; min-height: 80px; }
+    .btn {
+      padding: 8px 16px;
+      border-radius: 6px;
+      border: none;
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 600;
+      transition: all .15s;
+    }
+    .btn-primary { background: var(--accent); color: #fff; }
+    .btn-primary:hover { opacity: .85; }
+    .btn-ghost { background: var(--bg3); color: var(--text); border: 1px solid var(--border); }
+    .btn-ghost:hover { border-color: var(--accent); }
+    .btn-danger { background: #ef444420; color: var(--gap); border: 1px solid #ef444440; }
+
+    /* ── RULE BUILDER ── */
+    .rule-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px;
+      background: var(--bg1);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      margin-bottom: 8px;
+    }
+    .rule-row select, .rule-row input {
+      margin-bottom: 0;
+      flex: 1;
+    }
+    .rule-connector {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--accent);
+      background: #378add20;
+      padding: 2px 8px;
+      border-radius: 4px;
+    }
+
+    /* ── SEQUENCE BUILDER ── */
+    .seq-step {
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+      margin-bottom: 12px;
+    }
+    .seq-step-num {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: var(--accent);
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      font-weight: 700;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+    .seq-step-body { flex: 1; background: var(--bg1); border: 1px solid var(--border); border-radius: 6px; padding: 12px; }
+    .seq-step-body .row { display: flex; gap: 8px; align-items: center; margin-bottom: 8px; }
+    .seq-step-body .row label { margin: 0; white-space: nowrap; }
+    .seq-step-body .row select, .seq-step-body .row input { margin: 0; }
+    .seq-connector-line {
+      width: 2px;
+      height: 16px;
+      background: var(--border);
+      margin: 4px 0 4px 13px;
+    }
+
+    /* ── INBOX ── */
+    .inbox-layout { display: flex; gap: 0; height: 480px; border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; }
+    .inbox-list { width: 260px; border-right: 1px solid var(--border); overflow-y: auto; background: var(--bg3); }
+    .inbox-filters { padding: 10px; border-bottom: 1px solid var(--border); display: flex; gap: 6px; flex-wrap: wrap; }
+    .filter-chip {
+      padding: 3px 8px;
+      border-radius: 20px;
+      font-size: 11px;
+      border: 1px solid var(--border);
+      background: var(--bg2);
+      color: var(--muted);
+      cursor: pointer;
+      transition: all .15s;
+    }
+    .filter-chip.active { background: #378add20; border-color: var(--accent); color: var(--accent); }
+    .conv-item {
+      padding: 12px;
+      border-bottom: 1px solid var(--border);
+      cursor: pointer;
+      transition: background .15s;
+      display: flex;
+      gap: 10px;
+      align-items: flex-start;
+    }
+    .conv-item:hover { background: var(--bg2); }
+    .conv-item.active { background: #378add10; border-left: 3px solid var(--accent); }
+    .conv-avatar {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: var(--bg1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+    .conv-info { flex: 1; min-width: 0; }
+    .conv-name { font-size: 13px; font-weight: 600; }
+    .conv-preview { font-size: 11px; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .conv-time { font-size: 10px; color: var(--muted); white-space: nowrap; }
+    .inbox-chat { flex: 1; display: flex; flex-direction: column; background: var(--bg2); }
+    .chat-header { padding: 12px 16px; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 10px; }
+    .chat-messages { flex: 1; padding: 16px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; }
+    .msg { max-width: 70%; padding: 10px 14px; border-radius: 10px; font-size: 13px; line-height: 1.4; }
+    .msg-in { background: var(--bg3); border-radius: 10px 10px 10px 2px; align-self: flex-start; }
+    .msg-out { background: #378add25; border-radius: 10px 10px 2px 10px; align-self: flex-end; border: 1px solid #378add40; }
+    .msg-out.ai { border-color: #a78bfa40; background: #a78bfa15; }
+    .msg-label { font-size: 10px; color: var(--muted); margin-top: 4px; }
+    .chat-input-area { padding: 12px; border-top: 1px solid var(--border); }
+    .chat-input-row { display: flex; gap: 8px; }
+    .chat-input-row input { margin: 0; flex: 1; }
+    .canned-bar { display: flex; gap: 6px; margin-bottom: 8px; flex-wrap: wrap; }
+    .canned-chip {
+      padding: 4px 10px;
+      border-radius: 4px;
+      font-size: 11px;
+      background: #a78bfa15;
+      border: 1px solid #a78bfa40;
+      color: var(--novo);
+      cursor: pointer;
+      transition: all .15s;
+    }
+    .canned-chip:hover { background: #a78bfa25; }
+
+    /* ── COPILOTO ── */
+    .copilot-box {
+      background: #378add08;
+      border: 1px solid #378add30;
+      border-radius: 6px;
+      padding: 12px;
+      margin-top: 8px;
+    }
+    .copilot-box .copilot-label { font-size: 10px; color: var(--accent); font-weight: 700; text-transform: uppercase; letter-spacing: .8px; margin-bottom: 6px; }
+    .copilot-suggestion {
+      font-size: 12px;
+      color: var(--text);
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 8px;
+      margin-bottom: 6px;
+      cursor: pointer;
+      transition: border-color .15s;
+    }
+    .copilot-suggestion:hover { border-color: var(--accent); }
+
+    /* ── QUALIFICATION ── */
+    .qual-step {
+      display: flex;
+      gap: 12px;
+      padding: 12px;
+      background: var(--bg1);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      margin-bottom: 8px;
+      align-items: flex-start;
+    }
+    .qual-step-num {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      color: var(--muted);
+      flex-shrink: 0;
+    }
+    .qual-step-content { flex: 1; }
+    .qual-step-q { font-size: 13px; margin-bottom: 6px; }
+    .qual-step-meta { font-size: 11px; color: var(--muted); display: flex; gap: 8px; }
+    .qual-tag { padding: 2px 6px; border-radius: 3px; background: var(--bg2); border: 1px solid var(--border); }
+
+    /* ── FRAMEWORK SELECTOR ── */
+    .framework-cards { display: flex; gap: 12px; margin-bottom: 16px; }
+    .fw-card {
+      flex: 1;
+      border: 2px solid var(--border);
+      border-radius: 8px;
+      padding: 14px;
+      cursor: pointer;
+      transition: all .2s;
+      background: var(--bg3);
+    }
+    .fw-card:hover { border-color: var(--accent); }
+    .fw-card.selected { border-color: var(--accent); background: #378add10; }
+    .fw-card .fw-name { font-size: 14px; font-weight: 700; margin-bottom: 4px; }
+    .fw-card .fw-desc { font-size: 11px; color: var(--muted); }
+
+    /* ── ROUTING ── */
+    .routing-matrix {
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      overflow: hidden;
+    }
+    .routing-matrix table { width: 100%; border-collapse: collapse; }
+    .routing-matrix th {
+      background: var(--bg1);
+      padding: 8px 12px;
+      font-size: 11px;
+      color: var(--muted);
+      text-align: left;
+      font-weight: 600;
+      border-bottom: 1px solid var(--border);
+    }
+    .routing-matrix td {
+      padding: 10px 12px;
+      border-bottom: 1px solid var(--border);
+      font-size: 13px;
+    }
+    .routing-matrix tr:last-child td { border-bottom: none; }
+    .routing-matrix tr:hover td { background: var(--bg3); }
+
+    /* ── TOGGLE ── */
+    .toggle-row { display: flex; align-items: center; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid var(--border); }
+    .toggle-row:last-child { border-bottom: none; }
+    .toggle-label { font-size: 13px; }
+    .toggle-sub { font-size: 11px; color: var(--muted); }
+    .toggle {
+      width: 40px;
+      height: 22px;
+      border-radius: 11px;
+      background: var(--bg1);
+      border: 1px solid var(--border);
+      position: relative;
+      cursor: pointer;
+      transition: background .2s;
+    }
+    .toggle.on { background: var(--accent); border-color: var(--accent); }
+    .toggle::after {
+      content: '';
+      position: absolute;
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: var(--muted);
+      top: 2px;
+      left: 2px;
+      transition: all .2s;
+    }
+    .toggle.on::after { left: 20px; background: #fff; }
+
+    /* ── TASK LIST ── */
+    .task-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      padding: 10px;
+      background: var(--bg1);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      margin-bottom: 6px;
+    }
+    .task-check {
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      border: 2px solid var(--border);
+      flex-shrink: 0;
+      cursor: pointer;
+      margin-top: 1px;
+      transition: all .15s;
+    }
+    .task-check.done { background: var(--coberto); border-color: var(--coberto); }
+    .task-content { flex: 1; }
+    .task-title { font-size: 13px; }
+    .task-meta { font-size: 11px; color: var(--muted); margin-top: 3px; }
+    .task-priority { width: 6px; border-radius: 3px; align-self: stretch; flex-shrink: 0; }
+    .priority-high { background: var(--gap); }
+    .priority-med { background: var(--parcial); }
+    .priority-low { background: var(--coberto); }
+
+    /* ── STATUS BADGES ── */
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-size: 11px;
+      font-weight: 600;
+    }
+    .badge-green { background: #22c55e20; color: var(--coberto); }
+    .badge-yellow { background: #f59e0b20; color: var(--parcial); }
+    .badge-red { background: #ef444420; color: var(--gap); }
+    .badge-blue { background: #378add20; color: var(--accent); }
+    .badge-purple { background: #a78bfa20; color: var(--novo); }
+
+    /* ── AGENT BUILDER ── */
+    .agent-card {
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 16px;
+      margin-bottom: 12px;
+    }
+    .agent-header { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; }
+    .agent-avatar {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #378add, #a78bfa);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+    }
+    .agent-meta { flex: 1; }
+    .agent-name { font-size: 15px; font-weight: 700; }
+    .agent-role { font-size: 12px; color: var(--muted); }
+
+    /* ── MISC ── */
+    .divider { height: 1px; background: var(--border); margin: 16px 0; }
+    .info-box {
+      background: #378add10;
+      border: 1px solid #378add30;
+      border-radius: 6px;
+      padding: 10px 14px;
+      font-size: 12px;
+      color: var(--muted);
+      margin-bottom: 12px;
+    }
+    .info-box strong { color: var(--accent); }
+    .gap-box {
+      background: #ef444410;
+      border: 1px solid #ef444430;
+      border-radius: 6px;
+      padding: 10px 14px;
+      font-size: 12px;
+      color: var(--muted);
+      margin-bottom: 12px;
+    }
+    .gap-box strong { color: var(--gap); }
+    .novo-box {
+      background: #a78bfa10;
+      border: 1px solid #a78bfa30;
+      border-radius: 6px;
+      padding: 10px 14px;
+      font-size: 12px;
+      margin-bottom: 12px;
+    }
+    .novo-box strong { color: var(--novo); }
+
+    /* ── STAT CARDS ── */
+    .stat-card {
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .stat-value { font-size: 28px; font-weight: 700; color: var(--accent); }
+    .stat-label { font-size: 12px; color: var(--muted); }
+
+    /* ── PROGRESS BAR ── */
+    .progress-bar { height: 6px; background: var(--bg1); border-radius: 3px; overflow: hidden; margin-top: 8px; }
+    .progress-fill { height: 100%; border-radius: 3px; background: var(--accent); transition: width .5s; }
+    .progress-fill.green { background: var(--coberto); }
+    .progress-fill.yellow { background: var(--parcial); }
+
+    /* Hide panels initially */
+    .view { display: none; }
+    .view.active { display: block; }
+
+    /* Admin-only items highlight in manager mode */
+    body.admin-mode .admin-panel-indicator { display: flex; }
+    body:not(.admin-mode) .admin-panel-indicator { display: none; }
+
+    /* Tooltip */
+    [data-tip] { position: relative; }
+    [data-tip]:hover::after {
+      content: attr(data-tip);
+      position: absolute;
+      bottom: calc(100% + 6px);
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--bg1);
+      border: 1px solid var(--border);
+      color: var(--text);
+      font-size: 11px;
+      padding: 4px 8px;
+      border-radius: 4px;
+      white-space: nowrap;
+      z-index: 999;
+      pointer-events: none;
+    }
+  </style>
+</head>
+<body>
+
+<!-- ══ HEADER ══ -->
+<div class="header">
+  <div class="logo">TechVendas<span>Pro</span></div>
+  <span style="color:var(--muted); font-size:12px;">SDR Workspace — Prototype v1</span>
+  <div class="mode-switcher">
+    <button class="mode-btn active" onclick="setMode('sdr')">SDR</button>
+    <button class="mode-btn" onclick="setMode('gestor')">Gestor</button>
+    <button class="mode-btn" onclick="setMode('admin')">Admin</button>
+  </div>
+</div>
+
+<!-- ══ SHELL ══ -->
+<div class="shell">
+
+  <!-- ══ SIDEBAR ══ -->
+  <nav class="sidebar" id="sidebar">
+    <!-- SDR nav -->
+    <div id="nav-sdr">
+      <div class="nav-section-label">SDR</div>
+      <button class="nav-item active" onclick="showView('meu-dia')">
+        📋 Meu Dia
+        <span class="fid" style="background:#ef444420;color:var(--gap);">145</span>
+      </button>
+      <button class="nav-item" onclick="showView('leads-quentes')">
+        🔥 Leads Quentes
+        <span class="fid" style="background:#f59e0b20;color:var(--parcial);">094</span>
+      </button>
+      <button class="nav-item" onclick="showView('inbox')">
+        💬 Inbox
+      </button>
+      <button class="nav-item" onclick="showView('agendamentos')">
+        📅 Agendamentos
+      </button>
+      <button class="nav-item" onclick="showView('copiloto')">
+        🤖 Copiloto IA
+      </button>
+    </div>
+
+    <!-- Gestor/Admin nav -->
+    <div id="nav-config" style="display:none;">
+      <div class="nav-section-label">Configuração</div>
+      <button class="nav-item" onclick="showView('pipeline-entrada')">
+        🔄 Pipeline Entrada
+      </button>
+      <button class="nav-item" onclick="showView('ai-agent')">
+        🤖 AI Agent SDR
+        <span class="novo-badge">NOVO</span>
+      </button>
+      <button class="nav-item" onclick="showView('reativacao')">
+        ♻️ Reativação
+        <span class="novo-badge">NOVO</span>
+      </button>
+      <button class="nav-item" onclick="showView('scoring')">
+        📊 Scoring Rules
+      </button>
+      <button class="nav-item" onclick="showView('roteamento')">
+        🔀 Roteamento
+      </button>
+      <button class="nav-item" onclick="showView('framework-qual')">
+        📝 Framework Qualif.
+        <span class="novo-badge">NOVO</span>
+      </button>
+      <button class="nav-item" onclick="showView('canned')">
+        ⚡ Respostas Rápidas
+        <span class="gap-badge">GAP</span>
+      </button>
+      <div id="nav-admin" style="display:none;">
+        <div class="nav-section-label" style="margin-top:8px;">Admin</div>
+        <button class="nav-item" onclick="showView('waba')">📱 WABA / Canais</button>
+        <button class="nav-item" onclick="showView('calendario')">📅 Calendário</button>
+        <button class="nav-item" onclick="showView('api-keys')">🔑 API Keys IA</button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ══ MAIN ══ -->
+  <main class="main">
+
+    <!-- Pipeline Banner (always visible) -->
+    <div class="pipeline-banner">
+      <h3>Pipeline Automático de Entrada de Lead</h3>
+      <div class="pipeline-flow">
+
+        <div class="pipeline-step">
+          <div class="pipeline-node active" onclick="showView('pipeline-entrada')" data-tip="#035 · Score">
+            <span>📥</span>
+            <span class="node-fid">Entrada</span>
+          </div>
+          <div class="node-label">Lead Entra</div>
+        </div>
+
+        <div class="pipeline-arrow">→</div>
+
+        <div class="pipeline-step">
+          <div class="pipeline-node" onclick="showView('scoring')" data-tip="#035 · #089 · Scoring">
+            <span>📊</span>
+            <span class="node-fid">035/089</span>
+          </div>
+          <div class="node-label">Score Calculado</div>
+        </div>
+
+        <div class="pipeline-arrow">→</div>
+
+        <div class="pipeline-step">
+          <div class="pipeline-node" onclick="showView('roteamento')" data-tip="#029 · Roteamento">
+            <span>🔀</span>
+            <span class="node-fid">029</span>
+          </div>
+          <div class="node-label">Roteamento p/ SDR</div>
+        </div>
+
+        <div class="pipeline-arrow">→</div>
+
+        <div class="pipeline-step">
+          <div class="pipeline-node gap-node" onclick="showView('ai-agent')" data-tip="#110 · AI Agent SDR — GAP">
+            <span>🤖</span>
+            <span class="node-fid">110</span>
+          </div>
+          <div class="node-label" style="color:var(--gap)">Outreach IA</div>
+        </div>
+
+        <div class="pipeline-arrow">→</div>
+
+        <div class="pipeline-step">
+          <div class="pipeline-node gap-node" onclick="showView('framework-qual')" data-tip="#111 · Qualificação — GAP">
+            <span>📝</span>
+            <span class="node-fid">111</span>
+          </div>
+          <div class="node-label" style="color:var(--gap)">Qualificação</div>
+        </div>
+
+        <div class="pipeline-arrow">→</div>
+
+        <div class="pipeline-step">
+          <div class="pipeline-node gap-node" onclick="showView('ai-agent')" data-tip="#112/#113 · CRM + Agenda — GAP">
+            <span>✅</span>
+            <span class="node-fid">112/113</span>
+          </div>
+          <div class="node-label" style="color:var(--gap)">CRM + Reunião</div>
+        </div>
+
+        <div class="pipeline-arrow" style="color:var(--muted)">↓</div>
+
+        <div class="pipeline-step">
+          <div class="pipeline-node gap-node" onclick="showView('reativacao')" data-tip="#114/#115 · Reativação — GAP">
+            <span>♻️</span>
+            <span class="node-fid">114/115</span>
+          </div>
+          <div class="node-label" style="color:var(--gap)">Reativação</div>
+        </div>
+
+      </div>
+      <div style="margin-top:12px; display:flex; gap:16px; font-size:11px; color:var(--muted);">
+        <span>● <span style="color:var(--accent)">Nó ativo</span></span>
+        <span>● <span style="color:var(--gap)">Nó GAP (a implementar)</span></span>
+        <span style="margin-left:auto;">Clique em qualquer nó para configurar →</span>
+      </div>
+    </div>
+
+    <!-- ══════════ SDR VIEWS ══════════ -->
+
+    <!-- VIEW: Meu Dia -->
+    <div class="view active" id="view-meu-dia">
+      <div class="panel visible">
+        <div class="panel-header">
+          <h2>📋 Meu Dia</h2>
+          <span class="feature-tag tag-gap">#145 GAP</span>
+          <span class="feature-tag tag-parcial">#094 PARCIAL</span>
+          <span class="feature-tag tag-coberto">#093 COBERTO</span>
+        </div>
+        <div class="gap-box">
+          <strong>GAP #145:</strong> Esta visão diária do SDR com tarefas e leads prioritários ainda não está mapeada como RF. Este protótipo define a estrutura esperada.
+        </div>
+        <div class="grid-3" style="margin-bottom:20px;">
+          <div class="stat-card">
+            <div class="stat-value">7</div>
+            <div class="stat-label">Leads para contatar hoje</div>
+            <div class="progress-bar"><div class="progress-fill" style="width:40%"></div></div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-value">3</div>
+            <div class="stat-label">Reuniões agendadas</div>
+            <div class="progress-bar"><div class="progress-fill green" style="width:75%"></div></div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-value">12</div>
+            <div class="stat-label">Leads em qualificação</div>
+            <div class="progress-bar"><div class="progress-fill yellow" style="width:60%"></div></div>
+          </div>
+        </div>
+
+        <div class="grid-2">
+          <div class="card">
+            <h4><span class="icon">✅</span> Tarefas do Dia <span class="badge badge-red" style="margin-left:auto; font-size:10px;">#145 GAP</span></h4>
+            <div class="task-item">
+              <div class="task-priority priority-high"></div>
+              <div class="task-check"></div>
+              <div class="task-content">
+                <div class="task-title">Follow-up: Empresa Alpha — sem resposta há 2 dias</div>
+                <div class="task-meta">🔥 Alta prioridade · Score 87 · Suggested by IA</div>
+              </div>
+            </div>
+            <div class="task-item">
+              <div class="task-priority priority-high"></div>
+              <div class="task-check"></div>
+              <div class="task-content">
+                <div class="task-title">Qualificar: Marcos Silva — novo lead via WhatsApp</div>
+                <div class="task-meta">🆕 Score 72 · Entrada 09h14</div>
+              </div>
+            </div>
+            <div class="task-item">
+              <div class="task-priority priority-med"></div>
+              <div class="task-check done"></div>
+              <div class="task-content">
+                <div class="task-title">Confirmar reunião: Beatriz Santos às 15h</div>
+                <div class="task-meta">📅 Lembrete enviado automaticamente</div>
+              </div>
+            </div>
+            <div class="task-item">
+              <div class="task-priority priority-low"></div>
+              <div class="task-check"></div>
+              <div class="task-content">
+                <div class="task-title">Reativar: Carlos Lima — inativo há 14 dias</div>
+                <div class="task-meta">♻️ Agente de reativação disponível</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="card">
+            <h4><span class="icon">🤖</span> Copiloto — Sugestões <span class="badge badge-blue" style="margin-left:auto; font-size:10px;">#093</span></h4>
+            <div class="copilot-box">
+              <div class="copilot-label">🎯 Ação Recomendada para agora</div>
+              <div class="copilot-suggestion">
+                "Empresa Alpha abriu o link de agendamento mas não confirmou. Envie uma mensagem de follow-up com uma proposta de horário."
+              </div>
+              <div class="copilot-suggestion">
+                "Marcos Silva respondeu 'tenho interesse'. Inicie o fluxo de qualificação SPIN agora."
+              </div>
+            </div>
+            <div style="margin-top:12px;">
+              <div class="copilot-label" style="color:var(--muted); font-size:11px;">SUGESTÃO DE FOLLOW-UP <span class="badge badge-blue" style="font-size:9px;">#096</span></div>
+              <div style="margin-top:8px; font-size:12px; color:var(--text); background:var(--bg1); border:1px solid var(--border); border-radius:6px; padding:10px; font-style:italic;">
+                "Olá {nome}, vi que você visitou nossa página de agendamento. Que tal marcarmos 20 minutos para eu mostrar como funciona? Tenho disponibilidade hoje às 16h ou amanhã às 10h. 🗓️"
+              </div>
+              <button class="btn btn-primary" style="margin-top:8px; font-size:12px;">Usar esta mensagem</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- VIEW: Leads Quentes -->
+    <div class="view" id="view-leads-quentes">
+      <div class="panel visible">
+        <div class="panel-header">
+          <h2>🔥 Leads Quentes</h2>
+          <span class="feature-tag tag-parcial">#094 PARCIAL</span>
+          <span class="feature-tag tag-coberto">#089 COBERTO</span>
+          <span class="feature-tag tag-coberto">#090 COBERTO</span>
+        </div>
+        <div class="info-box">
+          <strong>#094 PARCIAL:</strong> Lead Lock existe, mas a lista diária de leads priorizados para contato não está explicitada como feature standalone. Este protótipo define a estrutura esperada.
+        </div>
+
+        <div style="display:flex; gap:8px; margin-bottom:16px; align-items:center;">
+          <span style="font-size:12px; color:var(--muted);">Filtrar por:</span>
+          <span class="filter-chip active">Todos</span>
+          <span class="filter-chip">Score Alto (80+)</span>
+          <span class="filter-chip">Novos hoje</span>
+          <span class="filter-chip">Sem atividade</span>
+          <span style="margin-left:auto; font-size:12px; color:var(--muted);">24 leads · ordenado por score ↓</span>
+        </div>
+
+        <div class="lead-item">
+          <div class="lead-avatar" style="background:#22c55e;">MA</div>
+          <div class="lead-info">
+            <div class="lead-name">Marcos Silva — Alpha Tech</div>
+            <div class="lead-sub">💬 Respondeu há 5min · SPIN pendente · Etapa: Interesse confirmado</div>
+          </div>
+          <span class="score-pill score-high">Score 94</span>
+          <button class="btn btn-primary" style="font-size:12px;">Qualificar</button>
+        </div>
+
+        <div class="lead-item">
+          <div class="lead-avatar" style="background:#378add;">BS</div>
+          <div class="lead-info">
+            <div class="lead-name">Beatriz Santos — StartupX</div>
+            <div class="lead-sub">📅 Reunião hoje 15h · Confirmado via WhatsApp</div>
+          </div>
+          <span class="score-pill score-high">Score 88</span>
+          <button class="btn btn-ghost" style="font-size:12px;">Ver conversa</button>
+        </div>
+
+        <div class="lead-item">
+          <div class="lead-avatar" style="background:#f59e0b;">RA</div>
+          <div class="lead-info">
+            <div class="lead-name">Rafael Andrade — Loja Plus</div>
+            <div class="lead-sub">⏱ Sem atividade há 2 dias · Score decaindo</div>
+          </div>
+          <span class="score-pill score-mid">Score 71</span>
+          <button class="btn btn-ghost" style="font-size:12px;">Follow-up IA</button>
+        </div>
+
+        <div class="lead-item">
+          <div class="lead-avatar" style="background:#ef4444;">CL</div>
+          <div class="lead-info">
+            <div class="lead-name">Carlos Lima — Distribuidora Nova</div>
+            <div class="lead-sub">⚠️ Perdido — inativo 14 dias · Candidato a reativação</div>
+          </div>
+          <span class="score-pill score-low">Score 32</span>
+          <button class="btn btn-ghost" style="font-size:12px;">Reativar</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- VIEW: Inbox -->
+    <div class="view" id="view-inbox">
+      <div class="panel visible">
+        <div class="panel-header">
+          <h2>💬 Inbox</h2>
+          <span class="feature-tag tag-coberto">#042 COBERTO</span>
+          <span class="feature-tag tag-coberto">#044 COBERTO</span>
+          <span class="feature-tag tag-coberto">#053 COBERTO</span>
+          <span class="feature-tag tag-coberto">#055 COBERTO</span>
+          <span class="feature-tag tag-gap">#056 GAP</span>
+        </div>
+        <div class="inbox-layout">
+          <div class="inbox-list">
+            <div class="inbox-filters">
+              <span class="filter-chip active">#055 Todos</span>
+              <span class="filter-chip">WhatsApp</span>
+              <span class="filter-chip">Abertos</span>
+              <span class="filter-chip">Meus</span>
+            </div>
+            <div class="conv-item active">
+              <div class="conv-avatar" style="background:#22c55e20; color:var(--coberto);">MS</div>
+              <div class="conv-info">
+                <div class="conv-name">Marcos Silva</div>
+                <div class="conv-preview">Tenho interesse sim! Como funciona...</div>
+              </div>
+              <div class="conv-time">5min</div>
+            </div>
+            <div class="conv-item">
+              <div class="conv-avatar" style="background:#378add20; color:var(--accent);">BS</div>
+              <div class="conv-info">
+                <div class="conv-name">Beatriz Santos</div>
+                <div class="conv-preview">Confirmo às 15h, obrigada!</div>
+              </div>
+              <div class="conv-time">1h</div>
+            </div>
+            <div class="conv-item">
+              <div class="conv-avatar" style="background:#f59e0b20; color:var(--parcial);">RA</div>
+              <div class="conv-info">
+                <div class="conv-name">Rafael Andrade</div>
+                <div class="conv-preview">Vou analisar e retorno</div>
+              </div>
+              <div class="conv-time">2d</div>
+            </div>
+          </div>
+
+          <div class="inbox-chat">
+            <div class="chat-header">
+              <div class="lead-avatar" style="width:32px;height:32px;font-size:12px;background:#22c55e;">MS</div>
+              <div>
+                <div style="font-weight:600; font-size:13px;">Marcos Silva</div>
+                <div style="font-size:11px; color:var(--muted);">Alpha Tech · <span class="badge badge-green" style="font-size:9px;">Score 94</span></div>
+              </div>
+              <div style="margin-left:auto; display:flex; gap:8px;">
+                <button class="btn btn-ghost" style="font-size:11px;">#053 Atribuir</button>
+                <button class="btn btn-ghost" style="font-size:11px;">Ver contato</button>
+              </div>
+            </div>
+
+            <div class="chat-messages">
+              <div class="msg msg-in">
+                Olá, vi o anúncio de vocês sobre o TechVendasPro. Tenho uma empresa de 8 vendedores. Tem demo?
+                <div class="msg-label">Marcos · 09h02</div>
+              </div>
+              <div class="msg msg-out ai">
+                🤖 Olá Marcos! Claro que sim. Para eu te mostrar o que faz mais sentido para seu time, me conta: vocês usam WhatsApp para vender hoje?
+                <div class="msg-label">IA SDR Agent (#110) · 09h03</div>
+              </div>
+              <div class="msg msg-in">
+                Usamos sim, muito! Mas é tudo bagunçado, sem controle.
+                <div class="msg-label">Marcos · 09h14</div>
+              </div>
+              <div class="msg msg-out ai">
+                🤖 Perfeito, esse é exatamente o problema que resolvemos. Com 8 vendedores, vocês têm metas definidas por vendedor ou só global?
+                <div class="msg-label">IA SDR Agent · Pergunta #2/5 SPIN (#111) · 09h15</div>
+              </div>
+              <div class="msg msg-in">
+                Tenho interesse sim! Como funciona o plano para equipes?
+                <div class="msg-label">Marcos · 09h41</div>
+              </div>
+            </div>
+
+            <div class="chat-input-area">
+              <div class="canned-bar">
+                <span style="font-size:10px; color:var(--novo); font-weight:600; align-self:center;">⚡ #056:</span>
+                <span class="canned-chip" onclick="this.closest('.chat-input-area').querySelector('input').value='Ótima pergunta! Nosso plano Equipe cobre até 15 vendedores...'">📦 Plano Equipe</span>
+                <span class="canned-chip" onclick="this.closest('.chat-input-area').querySelector('input').value='Claro! Segue o link para você escolher o melhor horário: '">📅 Link agendamento</span>
+                <span class="canned-chip" onclick="this.closest('.chat-input-area').querySelector('input').value='Obrigado pelo interesse! Vou passar para nosso closer especializado...'">🔀 Passar para closer</span>
+              </div>
+              <div class="chat-input-row">
+                <input type="text" placeholder="Digite uma mensagem ou use resposta rápida acima...">
+                <button class="btn btn-primary">Enviar</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- VIEW: Agendamentos -->
+    <div class="view" id="view-agendamentos">
+      <div class="panel visible">
+        <div class="panel-header">
+          <h2>📅 Agendamentos</h2>
+          <span class="feature-tag tag-coberto">#078 COBERTO</span>
+          <span class="feature-tag tag-coberto">#080 COBERTO</span>
+          <span class="feature-tag tag-coberto">#082 COBERTO</span>
+        </div>
+        <div class="grid-2">
+          <div class="card">
+            <h4><span class="icon">🔗</span> Meu Link de Agendamento <span class="badge badge-green" style="margin-left:auto;">#080</span></h4>
+            <div style="background:var(--bg1); border:1px solid var(--border); border-radius:6px; padding:10px; font-size:12px; color:var(--accent); margin-bottom:12px;">
+              https://agenda.techvendaspro.com/sdr/marcos
+            </div>
+            <div class="grid-2">
+              <button class="btn btn-ghost" style="font-size:12px;">Copiar link</button>
+              <button class="btn btn-ghost" style="font-size:12px;">QR Code</button>
+            </div>
+            <div class="divider"></div>
+            <h4 style="margin-bottom:8px;"><span class="icon">📅</span> Hoje — Quarta, 15 Abr</h4>
+            <div style="display:flex; flex-direction:column; gap:6px;">
+              <div style="display:flex; gap:10px; align-items:center; padding:8px; background:var(--bg1); border-radius:6px; border:1px solid var(--border);">
+                <span style="font-size:12px; color:var(--accent); font-weight:600; white-space:nowrap;">10:00</span>
+                <div>
+                  <div style="font-size:13px; font-weight:600;">Beatriz Santos — Demo</div>
+                  <div style="font-size:11px; color:var(--muted);">✅ Confirmado · Lembrete enviado #082</div>
+                </div>
+              </div>
+              <div style="display:flex; gap:10px; align-items:center; padding:8px; background:var(--bg1); border-radius:6px; border:1px solid var(--border);">
+                <span style="font-size:12px; color:var(--parcial); font-weight:600; white-space:nowrap;">15:00</span>
+                <div>
+                  <div style="font-size:13px; font-weight:600;">Rafael Andrade — Apresentação</div>
+                  <div style="font-size:11px; color:var(--muted);">⏳ Aguardando confirmação</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="card">
+            <h4><span class="icon">🔔</span> Lembretes Automáticos <span class="badge badge-green" style="margin-left:auto;">#082</span></h4>
+            <div class="info-box">
+              <strong>Ativo:</strong> WhatsApp automático 24h antes e 1h antes da reunião.
+            </div>
+            <div class="toggle-row">
+              <div>
+                <div class="toggle-label">Lembrete 24h antes</div>
+                <div class="toggle-sub">via WhatsApp</div>
+              </div>
+              <div class="toggle on" onclick="this.classList.toggle('on')"></div>
+            </div>
+            <div class="toggle-row">
+              <div>
+                <div class="toggle-label">Lembrete 1h antes</div>
+                <div class="toggle-sub">via WhatsApp</div>
+              </div>
+              <div class="toggle on" onclick="this.classList.toggle('on')"></div>
+            </div>
+            <div class="toggle-row">
+              <div>
+                <div class="toggle-label">Confirmação de presença</div>
+                <div class="toggle-sub">Pede confirmação na mensagem</div>
+              </div>
+              <div class="toggle on" onclick="this.classList.toggle('on')"></div>
+            </div>
+            <div class="toggle-row">
+              <div>
+                <div class="toggle-label">Sincronizar com Google Calendar</div>
+                <div class="toggle-sub">#078 OAuth ativo</div>
+              </div>
+              <div class="toggle on" onclick="this.classList.toggle('on')"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- VIEW: Copiloto -->
+    <div class="view" id="view-copiloto">
+      <div class="panel visible">
+        <div class="panel-header">
+          <h2>🤖 Copiloto IA</h2>
+          <span class="feature-tag tag-coberto">#093 COBERTO</span>
+          <span class="feature-tag tag-coberto">#096 COBERTO</span>
+          <span class="feature-tag tag-coberto">#089 COBERTO</span>
+        </div>
+        <div class="grid-2">
+          <div>
+            <div class="card" style="margin-bottom:16px;">
+              <h4><span class="icon">🎯</span> Próxima Ação Sugerida <span class="badge badge-blue" style="margin-left:auto;">#093</span></h4>
+              <div class="copilot-box">
+                <div class="copilot-label">Para Marcos Silva — Score 94</div>
+                <div class="copilot-suggestion">📱 Enviar proposta comercial agora — lead respondeu positivamente à pergunta de orçamento</div>
+                <div class="copilot-suggestion">📅 Oferecer agendamento de demo — lead demonstrou interesse no produto</div>
+                <div class="copilot-suggestion">🔀 Passar para Closer — lead já qualificado, orçamento acima de R$500/mês</div>
+              </div>
+            </div>
+
+            <div class="card">
+              <h4><span class="icon">✍️</span> Sugestão de Follow-Up <span class="badge badge-blue" style="margin-left:auto;">#096</span></h4>
+              <div style="font-size:12px; color:var(--muted); margin-bottom:8px;">Baseado no histórico de conversa com Marcos Silva:</div>
+              <div style="font-size:13px; background:var(--bg1); border:1px solid var(--border); border-radius:6px; padding:12px; font-style:italic; line-height:1.6;">
+                "Oi Marcos! 😊 Ficou com alguma dúvida sobre o plano para equipe? Pelo que você me contou, 8 vendedores no WhatsApp sem controle é exatamente o cenário que nossa plataforma resolve em 1 semana. Posso te mostrar ao vivo em 20 minutos?"
+              </div>
+              <div style="display:flex; gap:8px; margin-top:12px;">
+                <button class="btn btn-primary" style="font-size:12px;">Usar mensagem</button>
+                <button class="btn btn-ghost" style="font-size:12px;">Regenerar</button>
+                <button class="btn btn-ghost" style="font-size:12px;">Editar antes</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="card">
+            <h4><span class="icon">📊</span> Score em Tempo Real <span class="badge badge-green" style="margin-left:auto;">#089/#090</span></h4>
+            <div style="text-align:center; padding:24px 0;">
+              <div style="font-size:64px; font-weight:800; color:var(--coberto); line-height:1;">94</div>
+              <div style="font-size:13px; color:var(--muted); margin-top:4px;">Lead Score · Marcos Silva</div>
+              <div class="badge badge-green" style="margin: 8px auto; display:inline-flex;">🔥 Hot Lead</div>
+            </div>
+            <div class="divider"></div>
+            <div style="font-size:12px; color:var(--muted); margin-bottom:10px; font-weight:600;">FATORES DO SCORE</div>
+            <div style="display:flex; flex-direction:column; gap:8px;">
+              <div style="display:flex; justify-content:space-between; font-size:12px;">
+                <span>Respondeu em &lt;10min</span>
+                <span style="color:var(--coberto);">+15</span>
+              </div>
+              <div style="display:flex; justify-content:space-between; font-size:12px;">
+                <span>Empresa com 8 vendedores</span>
+                <span style="color:var(--coberto);">+20</span>
+              </div>
+              <div style="display:flex; justify-content:space-between; font-size:12px;">
+                <span>Visitou página de preços</span>
+                <span style="color:var(--coberto);">+25</span>
+              </div>
+              <div style="display:flex; justify-content:space-between; font-size:12px;">
+                <span>Confirmou orçamento disponível</span>
+                <span style="color:var(--coberto);">+20</span>
+              </div>
+              <div style="display:flex; justify-content:space-between; font-size:12px;">
+                <span>Sem decay (ativo há 45min)</span>
+                <span style="color:var(--muted);">+0</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════ GESTOR/ADMIN VIEWS ══════════ -->
+
+    <!-- VIEW: Pipeline Entrada -->
+    <div class="view" id="view-pipeline-entrada">
+      <div class="panel visible">
+        <div class="panel-header">
+          <h2>🔄 Configuração — Pipeline de Entrada</h2>
+          <span class="feature-tag tag-coberto">#029</span>
+          <span class="feature-tag tag-coberto">#035</span>
+        </div>
+        <div class="info-box">
+          <strong>Gestor/Admin:</strong> Configure como cada novo lead é processado automaticamente ao entrar no sistema. Cada etapa pode ser ativada, reordenada ou parametrizada.
+        </div>
+        <div class="card">
+          <h4>Gatilhos de Entrada de Lead</h4>
+          <div class="toggle-row">
+            <div><div class="toggle-label">Formulário Web</div><div class="toggle-sub">Lead submete form público</div></div>
+            <div class="toggle on" onclick="this.classList.toggle('on')"></div>
+          </div>
+          <div class="toggle-row">
+            <div><div class="toggle-label">WhatsApp Inbound</div><div class="toggle-sub">Mensagem em número WABA #042</div></div>
+            <div class="toggle on" onclick="this.classList.toggle('on')"></div>
+          </div>
+          <div class="toggle-row">
+            <div><div class="toggle-label">Importação CSV</div><div class="toggle-sub">Upload manual em lote</div></div>
+            <div class="toggle" onclick="this.classList.toggle('on')"></div>
+          </div>
+          <div class="toggle-row">
+            <div><div class="toggle-label">API Webhook (entrada)</div><div class="toggle-sub">Integração externa</div></div>
+            <div class="toggle on" onclick="this.classList.toggle('on')"></div>
+          </div>
+        </div>
+
+        <div class="card" style="margin-top:16px;">
+          <h4>Ações Automáticas ao Entrar</h4>
+          <div style="display:flex; flex-direction:column; gap:0;">
+            <div class="seq-step">
+              <div class="seq-step-num">1</div>
+              <div class="seq-step-body">
+                <div class="row">
+                  <label>Ação:</label>
+                  <select><option>Calcular score inicial</option></select>
+                  <span class="badge badge-green">#089</span>
+                </div>
+                <div class="row">
+                  <label>Modelo:</label>
+                  <select><option>Regras configuradas em Scoring Rules</option></select>
+                </div>
+              </div>
+            </div>
+            <div class="seq-connector-line"></div>
+            <div class="seq-step">
+              <div class="seq-step-num">2</div>
+              <div class="seq-step-body">
+                <div class="row">
+                  <label>Ação:</label>
+                  <select><option>Rotear para SDR/squad</option></select>
+                  <span class="badge badge-green">#029</span>
+                </div>
+                <div class="row">
+                  <label>Regra:</label>
+                  <select><option>Round-robin por squad ativo</option><option>Menor fila</option><option>Por região do lead</option></select>
+                </div>
+              </div>
+            </div>
+            <div class="seq-connector-line"></div>
+            <div class="seq-step">
+              <div class="seq-step-num">3</div>
+              <div class="seq-step-body">
+                <div class="row">
+                  <label>Ação:</label>
+                  <select><option>Iniciar AI Agent SDR</option></select>
+                  <span class="badge badge-purple">#110 NOVO</span>
+                </div>
+                <div class="row">
+                  <label>Delay:</label>
+                  <input type="number" value="0" style="width:80px;">
+                  <select style="width:100px;"><option>segundos</option><option>minutos</option></select>
+                  <label>após entrada</label>
+                </div>
+                <div class="row">
+                  <label>Condição:</label>
+                  <select><option>Sempre</option><option>Score ≥ 50</option><option>Fora do horário comercial</option></select>
+                </div>
+              </div>
+            </div>
+          </div>
+          <button class="btn btn-ghost" style="margin-top:12px; font-size:12px;">+ Adicionar etapa</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- VIEW: AI Agent SDR -->
+    <div class="view" id="view-ai-agent">
+      <div class="panel visible">
+        <div class="panel-header">
+          <h2>🤖 AI Agent SDR</h2>
+          <span class="feature-tag tag-gap">#110 GAP</span>
+          <span class="feature-tag tag-gap">#111 GAP</span>
+          <span class="feature-tag tag-gap">#112 GAP</span>
+          <span class="feature-tag tag-gap">#113 GAP</span>
+          <span class="feature-tag tag-novo">NOVO</span>
+        </div>
+        <div class="novo-box">
+          <strong style="color:var(--novo);">Módulo 07 — AI Agent Builder (inteiro ausente):</strong> Estas features (#110–#113) requerem implementação completa do AI Agent Builder. Este protótipo define a interface de configuração esperada pelo gestor/admin.
+        </div>
+
+        <div class="agent-card">
+          <div class="agent-header">
+            <div class="agent-avatar">🤖</div>
+            <div class="agent-meta">
+              <div class="agent-name">Agente SDR — Prospecção Ativa</div>
+              <div class="agent-role">Prospecção via WhatsApp · Qualificação · Agendamento</div>
+            </div>
+            <div style="margin-left:auto; display:flex; gap:8px; align-items:center;">
+              <span class="badge badge-green">Ativo</span>
+              <button class="btn btn-ghost" style="font-size:12px;">Testar em Sandbox</button>
+            </div>
+          </div>
+
+          <div class="grid-2">
+            <div>
+              <label>Nome do Agente <span style="color:var(--muted);">(exibido ao lead)</span></label>
+              <input type="text" value="Sofia — TechVendasPro">
+
+              <label>Persona / Objetivo</label>
+              <textarea>Você é Sofia, SDR da TechVendasPro. Seu objetivo é qualificar leads inbound via WhatsApp, entender a dor do cliente e agendar uma demo com o closer mais adequado. Seja empática, objetiva e sempre use o framework configurado.</textarea>
+
+              <label>Model Provider <span class="badge badge-green" style="font-size:10px;">#107</span></label>
+              <select>
+                <option>Anthropic — Claude Sonnet</option>
+                <option>OpenAI — GPT-4o</option>
+                <option>Groq — LLaMA 3</option>
+              </select>
+
+              <label>Ferramentas disponíveis para o agente <span class="badge badge-purple" style="font-size:10px;">#108</span></label>
+              <div style="display:flex; flex-direction:column; gap:6px;">
+                <div class="toggle-row" style="padding:6px 0;">
+                  <div><div class="toggle-label" style="font-size:12px;">Consultar CRM</div></div>
+                  <div class="toggle on" onclick="this.classList.toggle('on')"></div>
+                </div>
+                <div class="toggle-row" style="padding:6px 0;">
+                  <div><div class="toggle-label" style="font-size:12px;">Agendar reunião (#113)</div></div>
+                  <div class="toggle on" onclick="this.classList.toggle('on')"></div>
+                </div>
+                <div class="toggle-row" style="padding:6px 0;">
+                  <div><div class="toggle-label" style="font-size:12px;">Criar contato/oportunidade (#112)</div></div>
+                  <div class="toggle on" onclick="this.classList.toggle('on')"></div>
+                </div>
+                <div class="toggle-row" style="padding:6px 0;">
+                  <div><div class="toggle-label" style="font-size:12px;">Enviar link de agendamento</div></div>
+                  <div class="toggle on" onclick="this.classList.toggle('on')"></div>
+                </div>
+              </div>
+            </div>
+
+            <div>
+              <label>Framework de Qualificação usado pelo agente</label>
+              <div class="framework-cards" style="flex-direction:column; gap:8px;">
+                <div class="fw-card selected">
+                  <div class="fw-name">SPIN Selling</div>
+                  <div class="fw-desc">Situação · Problema · Implicação · Necessidade</div>
+                </div>
+                <div class="fw-card">
+                  <div class="fw-name">BANT</div>
+                  <div class="fw-desc">Budget · Authority · Need · Timeline</div>
+                </div>
+                <div class="fw-card">
+                  <div class="fw-name">GPCT</div>
+                  <div class="fw-desc">Goals · Plans · Challenges · Timeline</div>
+                </div>
+              </div>
+
+              <label style="margin-top:8px;">Escalar para humano quando</label>
+              <select>
+                <option>Lead pede para falar com pessoa real</option>
+                <option>Score atinge threshold configurado</option>
+                <option>Lead demonstra insatisfação</option>
+                <option>Após N mensagens sem qualificação</option>
+              </select>
+
+              <label>Horário de operação do agente</label>
+              <div style="display:flex; gap:8px;">
+                <input type="text" placeholder="08:00" style="margin:0; flex:1;">
+                <span style="align-self:center; color:var(--muted);">até</span>
+                <input type="text" placeholder="22:00" style="margin:0; flex:1;">
+              </div>
+            </div>
+          </div>
+
+          <div style="margin-top:16px; display:flex; gap:8px;">
+            <button class="btn btn-primary">Salvar configuração</button>
+            <button class="btn btn-ghost">Testar em Sandbox #109</button>
+            <button class="btn btn-ghost" style="margin-left:auto;">Ver logs do agente</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- VIEW: Reativação -->
+    <div class="view" id="view-reativacao">
+      <div class="panel visible">
+        <div class="panel-header">
+          <h2>♻️ Agente de Reativação</h2>
+          <span class="feature-tag tag-gap">#114 GAP</span>
+          <span class="feature-tag tag-gap">#115 GAP</span>
+          <span class="feature-tag tag-novo">NOVO</span>
+        </div>
+        <div class="novo-box">
+          <strong style="color:var(--novo);">#114/#115 GAP:</strong> Agente de reativação para leads perdidos/inativos e sequência de mensagens configurável. Requer Módulo 07 (AI Agent Builder) + Módulo 08 (Automações).
+        </div>
+
+        <div class="grid-2">
+          <div class="card">
+            <h4>⚙️ Condições de Reativação <span class="badge badge-purple" style="margin-left:auto;">#114</span></h4>
+            <label>Considerar lead inativo após</label>
+            <div style="display:flex; gap:8px; align-items:center; margin-bottom:12px;">
+              <input type="number" value="7" style="width:80px; margin:0;">
+              <select style="margin:0; flex:1;"><option>dias sem atividade</option><option>dias sem resposta</option></select>
+            </div>
+
+            <label>Estágios elegíveis para reativação</label>
+            <div style="display:flex; flex-direction:column; gap:6px; margin-bottom:12px;">
+              <div class="toggle-row" style="padding:4px 0;">
+                <div class="toggle-label" style="font-size:12px;">Leads perdidos (marcados como lost)</div>
+                <div class="toggle on" onclick="this.classList.toggle('on')"></div>
+              </div>
+              <div class="toggle-row" style="padding:4px 0;">
+                <div class="toggle-label" style="font-size:12px;">Leads inativos em qualquer estágio</div>
+                <div class="toggle on" onclick="this.classList.toggle('on')"></div>
+              </div>
+              <div class="toggle-row" style="padding:4px 0;">
+                <div class="toggle-label" style="font-size:12px;">Leads que não agendaram (no-show)</div>
+                <div class="toggle" onclick="this.classList.toggle('on')"></div>
+              </div>
+            </div>
+
+            <label>Score mínimo para tentar reativar</label>
+            <input type="number" value="20" placeholder="0–100">
+          </div>
+
+          <div class="card">
+            <h4>📋 Sequência de Mensagens <span class="badge badge-purple" style="margin-left:auto;">#115</span></h4>
+            <div class="seq-step">
+              <div class="seq-step-num">1</div>
+              <div class="seq-step-body">
+                <div class="row">
+                  <label>Delay:</label>
+                  <input type="number" value="0" style="width:60px;">
+                  <label>dias após inatividade</label>
+                </div>
+                <textarea style="margin:0; min-height:60px;">Oi {nome}! 👋 Tudo bem? Vi que você tinha interesse no TechVendasPro. Ainda está buscando uma solução para seu time de vendas?</textarea>
+              </div>
+            </div>
+            <div class="seq-connector-line"></div>
+            <div class="seq-step">
+              <div class="seq-step-num">2</div>
+              <div class="seq-step-body">
+                <div class="row">
+                  <label>Delay:</label>
+                  <input type="number" value="3" style="width:60px;">
+                  <label>dias após msg 1</label>
+                </div>
+                <textarea style="margin:0; min-height:60px;">Ei {nome}, semana passada você perguntou sobre {ultimo_topico}. Temos uma novidade que pode te interessar! 🚀</textarea>
+              </div>
+            </div>
+            <div class="seq-connector-line"></div>
+            <div class="seq-step">
+              <div class="seq-step-num">3</div>
+              <div class="seq-step-body">
+                <div class="row">
+                  <label>Delay:</label>
+                  <input type="number" value="7" style="width:60px;">
+                  <label>dias após msg 2</label>
+                </div>
+                <textarea style="margin:0; min-height:60px;">Última tentativa {nome} 😊 — se não for o momento certo, sem problema. Mas se mudar de ideia, estamos aqui!</textarea>
+              </div>
+            </div>
+            <button class="btn btn-ghost" style="margin-top:8px; font-size:12px;">+ Adicionar mensagem</button>
+          </div>
+        </div>
+
+        <div style="margin-top:16px; display:flex; gap:8px;">
+          <button class="btn btn-primary">Salvar sequência</button>
+          <button class="btn btn-ghost">Testar com lead de exemplo</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- VIEW: Scoring Rules -->
+    <div class="view" id="view-scoring">
+      <div class="panel visible">
+        <div class="panel-header">
+          <h2>📊 Scoring Rules</h2>
+          <span class="feature-tag tag-coberto">#035 COBERTO</span>
+          <span class="feature-tag tag-coberto">#089 COBERTO</span>
+          <span class="feature-tag tag-coberto">#090 COBERTO</span>
+        </div>
+        <div class="info-box">
+          <strong>Gestor/Admin:</strong> Defina as regras que calculam o score de cada lead em tempo real (#089). O score é exibido no card, lista e inbox (#090).
+        </div>
+
+        <div class="card" style="margin-bottom:16px;">
+          <h4>🏷️ Regras de Score Positivo</h4>
+          <div class="rule-row">
+            <select style="flex:2;"><option>Respondeu mensagem</option></select>
+            <span class="rule-connector">em menos de</span>
+            <input type="number" value="10" style="flex:1;">
+            <select><option>minutos</option><option>horas</option></select>
+            <span class="rule-connector">→ +</span>
+            <input type="number" value="15" style="flex:1;">
+            <span style="font-size:12px; color:var(--muted);">pts</span>
+            <button class="btn btn-danger" style="padding:4px 8px; font-size:11px;">×</button>
+          </div>
+          <div class="rule-row">
+            <select style="flex:2;"><option>Tamanho da empresa</option></select>
+            <span class="rule-connector">é</span>
+            <select style="flex:2;"><option>6–20 vendedores</option><option>21–50</option><option>50+</option></select>
+            <span class="rule-connector">→ +</span>
+            <input type="number" value="20" style="flex:1;">
+            <span style="font-size:12px; color:var(--muted);">pts</span>
+            <button class="btn btn-danger" style="padding:4px 8px; font-size:11px;">×</button>
+          </div>
+          <div class="rule-row">
+            <select style="flex:2;"><option>Visitou página de preços</option></select>
+            <span class="rule-connector">sim</span>
+            <span style="flex:2;"></span>
+            <span class="rule-connector">→ +</span>
+            <input type="number" value="25" style="flex:1;">
+            <span style="font-size:12px; color:var(--muted);">pts</span>
+            <button class="btn btn-danger" style="padding:4px 8px; font-size:11px;">×</button>
+          </div>
+          <button class="btn btn-ghost" style="margin-top:8px; font-size:12px;">+ Adicionar regra positiva</button>
+        </div>
+
+        <div class="card" style="margin-bottom:16px;">
+          <h4>⬇️ Regras de Decay Automático <span class="badge badge-red" style="margin-left:auto; font-size:10px;">#092 GAP</span></h4>
+          <div class="gap-box">
+            <strong>#092 GAP:</strong> Decay automático de score por inatividade ainda não está mapeado como RF. Definindo a interface aqui.
+          </div>
+          <div class="rule-row">
+            <select style="flex:2;"><option>Sem atividade por</option></select>
+            <input type="number" value="2" style="flex:1;">
+            <select><option>dias</option></select>
+            <span class="rule-connector">→ −</span>
+            <input type="number" value="5" style="flex:1;">
+            <span style="font-size:12px; color:var(--muted);">pts/dia</span>
+            <button class="btn btn-danger" style="padding:4px 8px; font-size:11px;">×</button>
+          </div>
+          <button class="btn btn-ghost" style="margin-top:8px; font-size:12px;">+ Adicionar decay</button>
+        </div>
+
+        <div class="card">
+          <h4>🚨 Thresholds de Alerta</h4>
+          <div class="gap-box"><strong>#091 GAP:</strong> Alerta quando lead atinge threshold de score. Definindo parametrização aqui.</div>
+          <div style="display:flex; flex-direction:column; gap:10px;">
+            <div class="rule-row">
+              <span style="font-size:12px; color:var(--coberto); white-space:nowrap;">🔥 Hot Lead quando score ≥</span>
+              <input type="number" value="80" style="width:80px; margin:0; flex:none;">
+              <select style="flex:1;"><option>Notificar SDR responsável</option></select>
+            </div>
+            <div class="rule-row">
+              <span style="font-size:12px; color:var(--parcial); white-space:nowrap;">⚠️ Atenção quando score ≤</span>
+              <input type="number" value="30" style="width:80px; margin:0; flex:none;">
+              <select style="flex:1;"><option>Iniciar reativação automática</option></select>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- VIEW: Roteamento -->
+    <div class="view" id="view-roteamento">
+      <div class="panel visible">
+        <div class="panel-header">
+          <h2>🔀 Regras de Roteamento</h2>
+          <span class="feature-tag tag-coberto">#029 COBERTO</span>
+          <span class="feature-tag tag-coberto">#053 COBERTO</span>
+        </div>
+        <div class="card" style="margin-bottom:16px;">
+          <h4>⚙️ Estratégia de Roteamento Padrão</h4>
+          <div style="display:flex; gap:10px; margin-bottom:16px;">
+            <div class="fw-card selected" style="cursor:pointer;">
+              <div class="fw-name">Round-Robin</div>
+              <div class="fw-desc">Distribui igualmente entre SDRs ativos</div>
+            </div>
+            <div class="fw-card" style="cursor:pointer;">
+              <div class="fw-name">Menor Fila</div>
+              <div class="fw-desc">Envia para SDR com menos leads ativos</div>
+            </div>
+            <div class="fw-card" style="cursor:pointer;">
+              <div class="fw-name">Por Regra</div>
+              <div class="fw-desc">Condições personalizadas abaixo</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <h4>📋 Matriz de Roteamento por Condição</h4>
+          <div class="routing-matrix" style="margin-top:12px;">
+            <table>
+              <thead>
+                <tr>
+                  <th>Condição</th>
+                  <th>Valor</th>
+                  <th>Rotear para</th>
+                  <th>Prioridade</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><select style="background:transparent; border:none; color:var(--text); font-size:13px;"><option>Score ≥</option></select></td>
+                  <td><input type="number" value="80" style="width:70px; margin:0;"></td>
+                  <td><select><option>Squad Elite</option><option>SDR Sênior</option></select></td>
+                  <td><span class="badge badge-red">Alta</span></td>
+                  <td><button class="btn btn-danger" style="padding:4px 8px; font-size:11px;">×</button></td>
+                </tr>
+                <tr>
+                  <td><select style="background:transparent; border:none; color:var(--text); font-size:13px;"><option>Canal de entrada =</option></select></td>
+                  <td><select><option>WhatsApp Inbound</option></select></td>
+                  <td><select><option>Squad Inbound</option><option>Round-robin</option></select></td>
+                  <td><span class="badge badge-yellow">Média</span></td>
+                  <td><button class="btn btn-danger" style="padding:4px 8px; font-size:11px;">×</button></td>
+                </tr>
+                <tr>
+                  <td colspan="4" style="color:var(--muted); font-style:italic; font-size:12px;">Padrão: Round-robin entre todos os SDRs ativos</td>
+                  <td></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <button class="btn btn-ghost" style="margin-top:12px; font-size:12px;">+ Adicionar regra de roteamento</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- VIEW: Framework Qualificação -->
+    <div class="view" id="view-framework-qual">
+      <div class="panel visible">
+        <div class="panel-header">
+          <h2>📝 Framework de Qualificação</h2>
+          <span class="feature-tag tag-gap">#111 GAP</span>
+          <span class="feature-tag tag-parcial">#036 PARCIAL</span>
+          <span class="feature-tag tag-novo">NOVO</span>
+        </div>
+        <div class="novo-box">
+          <strong style="color:var(--novo);">#111 GAP:</strong> Qualificação via perguntas do framework de vendas configurado. O gestor escolhe o framework e customiza as perguntas que o AI Agent usa na conversa.
+        </div>
+
+        <div class="card" style="margin-bottom:16px;">
+          <h4>Selecionar Framework Base</h4>
+          <div class="framework-cards">
+            <div class="fw-card selected" onclick="selectFw(this)">
+              <div class="fw-name">SPIN Selling</div>
+              <div class="fw-desc">Situação · Problema · Implicação · Necessidade de solução</div>
+            </div>
+            <div class="fw-card" onclick="selectFw(this)">
+              <div class="fw-name">BANT</div>
+              <div class="fw-desc">Budget · Authority · Need · Timeline</div>
+            </div>
+            <div class="fw-card" onclick="selectFw(this)">
+              <div class="fw-name">GPCT</div>
+              <div class="fw-desc">Goals · Plans · Challenges · Timeline</div>
+            </div>
+            <div class="fw-card" onclick="selectFw(this)">
+              <div class="fw-name">Personalizado</div>
+              <div class="fw-desc">Crie suas próprias perguntas do zero</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <h4>📋 Perguntas de Qualificação — SPIN Selling</h4>
+          <div style="font-size:12px; color:var(--muted); margin-bottom:12px;">O AI Agent faz estas perguntas na sequência. Edite o texto e configure a variável CRM que será preenchida com a resposta.</div>
+
+          <div class="qual-step">
+            <div class="qual-step-num">S</div>
+            <div class="qual-step-content">
+              <div class="qual-step-q">
+                <input type="text" value="Quantos vendedores tem no seu time hoje?" style="margin:0; font-size:13px;">
+              </div>
+              <div style="display:flex; gap:8px; margin-top:8px;">
+                <select style="flex:1; margin:0; font-size:11px;"><option>Salvar em: tamanho_equipe (campo CRM)</option></select>
+                <select style="flex:1; margin:0; font-size:11px;"><option>Tipo: texto livre</option><option>Múltipla escolha</option><option>Número</option></select>
+              </div>
+              <div class="qual-step-meta" style="margin-top:6px;"><span class="qual-tag">Situação</span> <span class="qual-tag">Obrigatória</span></div>
+            </div>
+          </div>
+
+          <div class="qual-step">
+            <div class="qual-step-num">P</div>
+            <div class="qual-step-content">
+              <div class="qual-step-q">
+                <input type="text" value="Qual é o maior desafio que você tem com seu processo de vendas hoje?" style="margin:0; font-size:13px;">
+              </div>
+              <div style="display:flex; gap:8px; margin-top:8px;">
+                <select style="flex:1; margin:0; font-size:11px;"><option>Salvar em: maior_dor (campo CRM)</option></select>
+                <select style="flex:1; margin:0; font-size:11px;"><option>Tipo: texto livre</option></select>
+              </div>
+              <div class="qual-step-meta" style="margin-top:6px;"><span class="qual-tag">Problema</span> <span class="qual-tag">Obrigatória</span></div>
+            </div>
+          </div>
+
+          <div class="qual-step">
+            <div class="qual-step-num">I</div>
+            <div class="qual-step-content">
+              <div class="qual-step-q">
+                <input type="text" value="O que acontece quando o time perde um lead por falta de follow-up?" style="margin:0; font-size:13px;">
+              </div>
+              <div style="display:flex; gap:8px; margin-top:8px;">
+                <select style="flex:1; margin:0; font-size:11px;"><option>Salvar em: impacto_perda (campo CRM)</option></select>
+                <select style="flex:1; margin:0; font-size:11px;"><option>Tipo: texto livre</option></select>
+              </div>
+              <div class="qual-step-meta" style="margin-top:6px;"><span class="qual-tag">Implicação</span></div>
+            </div>
+          </div>
+
+          <div class="qual-step">
+            <div class="qual-step-num">N</div>
+            <div class="qual-step-content">
+              <div class="qual-step-q">
+                <input type="text" value="Se você conseguisse ver todos os leads num só lugar e nunca perder um follow-up, quanto valeria isso para o negócio?" style="margin:0; font-size:13px;">
+              </div>
+              <div style="display:flex; gap:8px; margin-top:8px;">
+                <select style="flex:1; margin:0; font-size:11px;"><option>Salvar em: valor_percebido (campo CRM)</option></select>
+                <select style="flex:1; margin:0; font-size:11px;"><option>Tipo: texto livre</option></select>
+              </div>
+              <div class="qual-step-meta" style="margin-top:6px;"><span class="qual-tag">Necessidade</span></div>
+            </div>
+          </div>
+
+          <button class="btn btn-ghost" style="margin-top:8px; font-size:12px;">+ Adicionar pergunta</button>
+
+          <div class="divider"></div>
+          <div style="font-size:12px; color:var(--muted); margin-bottom:8px; font-weight:600;">CRITÉRIO DE LEAD QUALIFICADO</div>
+          <div class="rule-row">
+            <span style="font-size:12px; color:var(--muted); white-space:nowrap;">Considerar qualificado se:</span>
+            <select style="flex:1;"><option>Respondeu ≥ 3 perguntas</option></select>
+            <span class="rule-connector">E</span>
+            <select style="flex:1;"><option>Score ≥ 60</option></select>
+          </div>
+          <div class="rule-row" style="margin-top:8px;">
+            <span style="font-size:12px; color:var(--muted); white-space:nowrap;">Ao qualificar:</span>
+            <select style="flex:1;"><option>Criar contato + oportunidade no CRM (#112)</option></select>
+            <span class="rule-connector">E</span>
+            <select style="flex:1;"><option>Agendar reunião com closer (#113)</option></select>
+          </div>
+        </div>
+
+        <div style="margin-top:16px; display:flex; gap:8px;">
+          <button class="btn btn-primary">Salvar framework</button>
+          <button class="btn btn-ghost">Pré-visualizar conversa</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- VIEW: Canned Responses -->
+    <div class="view" id="view-canned">
+      <div class="panel visible">
+        <div class="panel-header">
+          <h2>⚡ Respostas Rápidas</h2>
+          <span class="feature-tag tag-gap">#056 GAP</span>
+        </div>
+        <div class="gap-box">
+          <strong>#056 GAP:</strong> Canned responses por canal não estão mapeadas. Este protótipo define o CRUD esperado para que Admin/Gestor configure e SDR utilize no inbox.
+        </div>
+
+        <div class="grid-2">
+          <div class="card">
+            <h4>Respostas Cadastradas</h4>
+            <div style="display:flex; gap:8px; margin-bottom:12px;">
+              <input type="text" placeholder="Buscar respostas..." style="margin:0; flex:1;">
+              <select style="margin:0;"><option>WhatsApp</option><option>Email</option><option>Todos</option></select>
+            </div>
+            <div style="display:flex; flex-direction:column; gap:6px;">
+              <div class="lead-item" style="flex-direction:column; align-items:flex-start; gap:4px;">
+                <div style="display:flex; width:100%; align-items:center;">
+                  <span style="font-weight:600; font-size:12px;">📦 Plano Equipe</span>
+                  <span class="badge badge-blue" style="margin-left:auto; font-size:10px;">WhatsApp</span>
+                </div>
+                <span style="font-size:11px; color:var(--muted);">"Ótima pergunta! Nosso plano Equipe cobre até 15 vendedores por R$X/mês..."</span>
+                <div style="display:flex; gap:6px; margin-top:4px;">
+                  <button class="btn btn-ghost" style="font-size:11px; padding:3px 8px;">Editar</button>
+                  <button class="btn btn-danger" style="font-size:11px; padding:3px 8px;">Excluir</button>
+                </div>
+              </div>
+              <div class="lead-item" style="flex-direction:column; align-items:flex-start; gap:4px;">
+                <div style="display:flex; width:100%; align-items:center;">
+                  <span style="font-weight:600; font-size:12px;">📅 Enviar link de agendamento</span>
+                  <span class="badge badge-blue" style="margin-left:auto; font-size:10px;">WhatsApp</span>
+                </div>
+                <span style="font-size:11px; color:var(--muted);">"Claro! Segue meu link para você escolher o melhor horário: https://agenda.techvendaspro.com/..."</span>
+                <div style="display:flex; gap:6px; margin-top:4px;">
+                  <button class="btn btn-ghost" style="font-size:11px; padding:3px 8px;">Editar</button>
+                  <button class="btn btn-danger" style="font-size:11px; padding:3px 8px;">Excluir</button>
+                </div>
+              </div>
+              <div class="lead-item" style="flex-direction:column; align-items:flex-start; gap:4px;">
+                <div style="display:flex; width:100%; align-items:center;">
+                  <span style="font-weight:600; font-size:12px;">🔀 Passar para closer</span>
+                  <span class="badge badge-blue" style="margin-left:auto; font-size:10px;">WhatsApp</span>
+                </div>
+                <span style="font-size:11px; color:var(--muted);">"Obrigado! Vou chamar nosso especialista {nome_closer} que vai te atender agora mesmo."</span>
+                <div style="display:flex; gap:6px; margin-top:4px;">
+                  <button class="btn btn-ghost" style="font-size:11px; padding:3px 8px;">Editar</button>
+                  <button class="btn btn-danger" style="font-size:11px; padding:3px 8px;">Excluir</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="card">
+            <h4>Nova Resposta Rápida</h4>
+            <label>Título (atalho para busca)</label>
+            <input type="text" placeholder="Ex: Plano Equipe">
+            <label>Canal</label>
+            <select><option>WhatsApp</option><option>Email</option><option>Todos</option></select>
+            <label>Conteúdo <span style="color:var(--muted);">— use {variavel} para personalizar</span></label>
+            <textarea placeholder="Digite o texto da resposta rápida...&#10;&#10;Variáveis: {nome}, {empresa}, {nome_closer}"></textarea>
+            <div style="display:flex; gap:8px;">
+              <button class="btn btn-primary">Salvar</button>
+              <button class="btn btn-ghost">Cancelar</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- VIEW: WABA -->
+    <div class="view" id="view-waba">
+      <div class="panel visible">
+        <div class="panel-header">
+          <h2>📱 WABA / Canais</h2>
+          <span class="feature-tag tag-coberto">#042 COBERTO</span>
+          <span class="feature-tag tag-coberto">#043 COBERTO</span>
+        </div>
+        <div class="card">
+          <h4>Números WABA Conectados</h4>
+          <div class="routing-matrix" style="margin-top:12px;">
+            <table>
+              <thead><tr><th>Número</th><th>Nome do Display</th><th>Squad</th><th>Status</th><th></th></tr></thead>
+              <tbody>
+                <tr>
+                  <td>+55 11 99999-0001</td>
+                  <td>TechVendasPro — Vendas</td>
+                  <td>Squad Inbound</td>
+                  <td><span class="badge badge-green">Ativo</span></td>
+                  <td><button class="btn btn-ghost" style="font-size:11px; padding:3px 8px;">Configurar</button></td>
+                </tr>
+                <tr>
+                  <td>+55 11 99999-0002</td>
+                  <td>TechVendasPro — Suporte</td>
+                  <td>Squad CS</td>
+                  <td><span class="badge badge-yellow">Aguardando</span></td>
+                  <td><button class="btn btn-ghost" style="font-size:11px; padding:3px 8px;">Configurar</button></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <button class="btn btn-primary" style="margin-top:12px; font-size:12px;">+ Conectar novo número WABA</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- VIEW: Calendário -->
+    <div class="view" id="view-calendario">
+      <div class="panel visible">
+        <div class="panel-header">
+          <h2>📅 Configuração de Calendário</h2>
+          <span class="feature-tag tag-coberto">#078 COBERTO</span>
+          <span class="feature-tag tag-coberto">#080 COBERTO</span>
+          <span class="feature-tag tag-coberto">#082 COBERTO</span>
+        </div>
+        <div class="card">
+          <h4>Integração Google Calendar <span class="badge badge-green" style="margin-left:auto;">#078 OAuth ativo</span></h4>
+          <div class="toggle-row">
+            <div><div class="toggle-label">Sincronização bidirecional</div><div class="toggle-sub">Eventos TechVendasPro ↔ Google Calendar</div></div>
+            <div class="toggle on" onclick="this.classList.toggle('on')"></div>
+          </div>
+          <div class="toggle-row">
+            <div><div class="toggle-label">Bloquear horários ocupados automaticamente</div><div class="toggle-sub">Indisponível para agendamento quando tem evento no Google</div></div>
+            <div class="toggle on" onclick="this.classList.toggle('on')"></div>
+          </div>
+          <div class="divider"></div>
+          <h4 style="margin-bottom:12px;">Disponibilidade Padrão para SDRs</h4>
+          <div style="display:grid; grid-template-columns: 1fr 1fr; gap:8px;">
+            <div><label>Início do dia</label><input type="text" value="08:00"></div>
+            <div><label>Fim do dia</label><input type="text" value="18:00"></div>
+            <div><label>Duração padrão da reunião</label><input type="text" value="30 min"></div>
+            <div><label>Buffer entre reuniões</label><input type="text" value="10 min"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- VIEW: API Keys -->
+    <div class="view" id="view-api-keys">
+      <div class="panel visible">
+        <div class="panel-header">
+          <h2>🔑 API Keys — Providers de IA</h2>
+          <span class="feature-tag tag-gap">#116 GAP</span>
+          <span class="feature-tag tag-gap">#117 GAP</span>
+          <span class="feature-tag tag-novo">NOVO</span>
+        </div>
+        <div class="novo-box">
+          <strong style="color:var(--novo);">#116/#117 GAP:</strong> CRUD de API Keys por provider e criptografia AES-256 em repouso. Requer Módulo 07.
+        </div>
+        <div class="card">
+          <h4>Providers Configurados</h4>
+          <div class="routing-matrix" style="margin-top:12px;">
+            <table>
+              <thead><tr><th>Provider</th><th>API Key</th><th>Status</th><th></th></tr></thead>
+              <tbody>
+                <tr>
+                  <td>Anthropic (Claude)</td>
+                  <td style="font-family:monospace; color:var(--muted);">sk-ant-••••••••••••4f2a</td>
+                  <td><span class="badge badge-green">Ativo</span></td>
+                  <td><button class="btn btn-ghost" style="font-size:11px; padding:3px 8px;">Rotacionar</button></td>
+                </tr>
+                <tr>
+                  <td>OpenAI</td>
+                  <td style="font-family:monospace; color:var(--muted);">Não configurado</td>
+                  <td><span class="badge badge-red">Inativo</span></td>
+                  <td><button class="btn btn-primary" style="font-size:11px; padding:3px 8px;">Adicionar</button></td>
+                </tr>
+                <tr>
+                  <td>Meta (WABA)</td>
+                  <td style="font-family:monospace; color:var(--muted);">EAAi••••••••••••Bx7</td>
+                  <td><span class="badge badge-green">Ativo</span></td>
+                  <td><button class="btn btn-ghost" style="font-size:11px; padding:3px 8px;">Rotacionar</button></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="info-box" style="margin-top:12px;">
+            <strong>Segurança:</strong> Todas as keys são criptografadas com AES-256 em repouso (#117). Apenas admins podem visualizar ou rotacionar.
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<script>
+  let currentMode = 'sdr';
+  let currentView = 'meu-dia';
+
+  function setMode(mode) {
+    currentMode = mode;
+    document.querySelectorAll('.mode-btn').forEach((b, i) => {
+      b.classList.toggle('active', ['sdr','gestor','admin'][i] === mode);
+    });
+
+    const navSdr = document.getElementById('nav-sdr');
+    const navConfig = document.getElementById('nav-config');
+    const navAdmin = document.getElementById('nav-admin');
+
+    if (mode === 'sdr') {
+      navSdr.style.display = 'block';
+      navConfig.style.display = 'none';
+      showView('meu-dia');
+    } else {
+      navSdr.style.display = 'none';
+      navConfig.style.display = 'block';
+      navAdmin.style.display = mode === 'admin' ? 'block' : 'none';
+      showView('pipeline-entrada');
+    }
+  }
+
+  function showView(id) {
+    currentView = id;
+    document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+    const target = document.getElementById('view-' + id);
+    if (target) target.classList.add('active');
+
+    document.querySelectorAll('.nav-item').forEach(item => {
+      item.classList.toggle('active', item.getAttribute('onclick') === `showView('${id}')`);
+    });
+
+    // Highlight pipeline node
+    document.querySelectorAll('.pipeline-node').forEach(n => n.classList.remove('active'));
+  }
+
+  function selectFw(el) {
+    el.closest('.framework-cards').querySelectorAll('.fw-card').forEach(c => c.classList.remove('selected'));
+    el.classList.add('selected');
+  }
+
+  // Canned response insert
+  document.querySelectorAll('.canned-chip').forEach(chip => {
+    chip.addEventListener('click', function() {
+      const input = document.querySelector('#view-inbox .chat-input-row input');
+      if (input) input.focus();
+    });
+  });
+
+  // Task check toggle
+  document.querySelectorAll('.task-check').forEach(check => {
+    check.addEventListener('click', function() {
+      this.classList.toggle('done');
+    });
+  });
+
+  // Filter chips
+  document.querySelectorAll('.filter-chip').forEach(chip => {
+    chip.addEventListener('click', function() {
+      this.closest('.inbox-filters, div').querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+      this.classList.add('active');
+    });
+  });
+
+  // Conv items
+  document.querySelectorAll('.conv-item').forEach(item => {
+    item.addEventListener('click', function() {
+      document.querySelectorAll('.conv-item').forEach(c => c.classList.remove('active'));
+      this.classList.add('active');
+    });
+  });
+</script>
+</body>
+</html>

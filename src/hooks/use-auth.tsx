@@ -11,8 +11,8 @@ export interface AuthUser {
 
 // Which routes each role can access
 const roleAccess: Record<UserRole, string[]> = {
-  admin: ["/dashboard", "/pipeline", "/inbox", "/schedule", "/contacts", "/team", "/reports", "/settings", "/setup"],
-  gestor: ["/dashboard", "/pipeline", "/inbox", "/schedule", "/contacts", "/team", "/reports", "/settings"],
+  admin: ["/dashboard", "/pipeline", "/inbox", "/schedule", "/contacts", "/team", "/reports", "/sdr", "/settings", "/setup"],
+  gestor: ["/dashboard", "/pipeline", "/inbox", "/schedule", "/contacts", "/team", "/reports", "/sdr", "/settings"],
   closer: ["/dashboard", "/pipeline", "/inbox", "/schedule", "/contacts"],
   sdr: ["/dashboard", "/pipeline", "/inbox", "/contacts"],
 }
@@ -28,6 +28,14 @@ const users: AuthUser[] = [
   { id: "u4", name: "Juliana Santos", email: "juliana@techvendas.com", role: "closer", initials: "JS" },
   { id: "u5", name: "Pedro Henrique", email: "pedro@techvendas.com", role: "sdr", initials: "PH" },
 ]
+
+// During the prototype phase, only the Gestor profile can sign in.
+// Other profiles remain listed for future unlocking but are blocked here.
+export const ENABLED_ROLES: UserRole[] = ["gestor"]
+
+export function isUserEnabled(user: AuthUser): boolean {
+  return ENABLED_ROLES.includes(user.role)
+}
 
 // Credentials: email = email field, password = "123456" for all
 const MOCK_PASSWORD = "123456"
@@ -45,7 +53,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<AuthUser | null>(() => {
     const stored = localStorage.getItem("tv_user")
     if (stored) {
-      try { return JSON.parse(stored) } catch { return null }
+      try {
+        const parsed = JSON.parse(stored) as AuthUser
+        if (!isUserEnabled(parsed)) {
+          localStorage.removeItem("tv_user")
+          return null
+        }
+        return parsed
+      } catch {
+        return null
+      }
     }
     return null
   })
@@ -54,6 +71,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     if (password !== MOCK_PASSWORD) return "Senha incorreta"
     const found = users.find((u) => u.email === email)
     if (!found) return "Usuário não encontrado"
+    if (!isUserEnabled(found)) return "Perfil temporariamente indisponível no protótipo"
     setUser(found)
     localStorage.setItem("tv_user", JSON.stringify(found))
     return null

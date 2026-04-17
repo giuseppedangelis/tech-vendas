@@ -9,6 +9,9 @@ import {
   Settings,
   LogOut,
   Flame,
+  Gauge,
+  Activity,
+  SlidersHorizontal,
 } from "lucide-react"
 import { useLocation, Link, useNavigate } from "react-router-dom"
 import {
@@ -64,6 +67,14 @@ const allMenuGroups: MenuGroup[] = [
     ],
   },
   {
+    label: "SDR",
+    items: [
+      { title: "Visão Geral", icon: Gauge, path: "/sdr" },
+      { title: "Operação", icon: Activity, path: "/sdr/operacao" },
+      { title: "Configuração", icon: SlidersHorizontal, path: "/sdr/configuracao" },
+    ],
+  },
+  {
     label: "Configuração",
     items: [
       { title: "Configurações", icon: Settings, path: "/settings" },
@@ -90,8 +101,17 @@ export function AppSidebar() {
   const navigate = useNavigate()
   const { user, logout } = useAuth()
 
+  const allPaths = allMenuGroups.flatMap((g) => g.items.map((i) => i.path))
+
   function isActive(path: string) {
-    return location.pathname === path || location.pathname.startsWith(path + "/")
+    if (location.pathname === path) return true
+    if (!location.pathname.startsWith(path + "/")) return false
+    return !allPaths.some(
+      (p) =>
+        p !== path &&
+        p.startsWith(path + "/") &&
+        (location.pathname === p || location.pathname.startsWith(p + "/"))
+    )
   }
 
   const menuGroups = allMenuGroups
