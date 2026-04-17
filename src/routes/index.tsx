@@ -125,8 +125,8 @@ export function AppRoutes() {
           <Route path="/reports" element={<RoleRoute allow={["admin","gestor"]}><ReportsPage /></RoleRoute>} />
           <Route path="/reports/:section" element={<RoleRoute allow={["admin","gestor"]}><ReportsPage /></RoleRoute>} />
           <Route path="/sdr" element={<RoleRoute allow={["admin","gestor"]}><SdrOverviewPage /></RoleRoute>} />
-          <Route path="/sdr/operacao" element={<RoleRoute allow={["admin","gestor"]}><SdrOperationsPage /></RoleRoute>} />
-          <Route path="/sdr/operacao/:tab" element={<RoleRoute allow={["admin","gestor"]}><SdrOperationsPage /></RoleRoute>} />
+          <Route path="/sdr/monitoramento" element={<RoleRoute allow={["admin","gestor"]}><SdrOperationsPage /></RoleRoute>} />
+          <Route path="/sdr/monitoramento/:tab" element={<RoleRoute allow={["admin","gestor"]}><SdrOperationsPage /></RoleRoute>} />
           <Route path="/sdr/configuracao" element={<RoleRoute allow={["admin","gestor"]}><SdrConfigurationPage /></RoleRoute>} />
           <Route path="/sdr/configuracao/:tab" element={<RoleRoute allow={["admin","gestor"]}><SdrConfigurationPage /></RoleRoute>} />
           <Route path="/settings" element={<RoleRoute allow={["admin","gestor"]}><SettingsPage /></RoleRoute>} />

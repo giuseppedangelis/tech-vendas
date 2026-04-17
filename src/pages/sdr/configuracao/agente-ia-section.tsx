@@ -6,586 +6,521 @@ import {
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
 import { Switch } from "@/components/ui/switch"
 import { Separator } from "@/components/ui/separator"
 import {
   Bot,
+  Plus,
+  Search,
   Sparkles,
-  Cpu,
-  Shield,
-  Volume2,
-  Target,
-  AlertTriangle,
   Flame,
-  MessageCircle,
-  Zap,
-  User,
-  Check,
+  TestTube2,
+  Edit3,
+  Copy,
+  Pause,
+  Play,
+  GitBranch,
+  TrendingUp,
+  Users,
+  MoreVertical,
+  Heart,
+  Phone,
+  ShoppingCart,
+  Trophy,
 } from "lucide-react"
 import { cn } from "@/lib/utils"
+import { AgenteIaEditor } from "./agente-ia-editor"
 
-type Tone = "formal" | "consultivo" | "casual" | "direto"
-
-const toneOptions: { id: Tone; label: string; hint: string }[] = [
-  { id: "formal", label: "Formal", hint: "Corporativo, 3ª pessoa" },
-  { id: "consultivo", label: "Consultivo", hint: "Especialista próximo" },
-  { id: "casual", label: "Casual", hint: "Descontraído, 1ª pessoa" },
-  { id: "direto", label: "Direto", hint: "Objetivo, sem floreio" },
-]
-
-const models = [
-  {
-    provider: "Anthropic",
-    id: "claude-sonnet-4-6",
-    name: "Claude Sonnet 4.6",
-    badge: "Recomendado",
-    note: "Raciocínio + custo equilibrado",
-  },
-  {
-    provider: "Anthropic",
-    id: "claude-opus-4-7",
-    name: "Claude Opus 4.7",
-    note: "Máxima qualidade",
-  },
-  {
-    provider: "OpenAI",
-    id: "gpt-4o",
-    name: "GPT-4o",
-    note: "Multimodal rápido",
-  },
-  {
-    provider: "Google",
-    id: "gemini-2-flash",
-    name: "Gemini 2 Flash",
-    note: "Alta latência baixa",
-  },
-]
-
-const tonePreview: Record<Tone, string> = {
-  formal:
-    "Prezado Marcos, identifiquei potencial de otimização no processo comercial da Logibras. Gostaria de agendar uma apresentação?",
-  consultivo:
-    "Marcos, olhando o perfil da Logibras, vejo que vocês podem estar perdendo deals por tempo de resposta. Posso te mostrar como resolver em 15 min?",
-  casual:
-    "Oi Marcos! Bati o olho aqui e acho que temos algo que vai encaixar bastante na Logibras. Topa um papo rápido?",
-  direto:
-    "Marcos, tenho uma solução que reduz tempo de resposta em 60%. Topa 15 min esta semana?",
+export interface AgentSummary {
+  id: string
+  name: string
+  objective: string
+  tone: string
+  model: string
+  destinationFunnelId: string
+  destinationFunnelLabel: string
+  active: boolean
+  instructions: string
+  icon: typeof Bot
+  accent: string
+  metrics: {
+    leadsProcessed: number
+    handoffRate: number
+    activeNow: number
+    avgScore: number
+  }
 }
 
-export function AgenteIaSection() {
-  const [enabled, setEnabled] = useState(true)
-  const [name, setName] = useState("Ana · SDR Virtual")
-  const [objective, setObjective] = useState(
-    "Qualificar leads inbound B2B com foco em decisores de operações e vendas. Extrair BANT completo e agendar reunião com closer quando score ≥ 80."
-  )
-  const [tone, setTone] = useState<Tone>("consultivo")
-  const [model, setModel] = useState("claude-sonnet-4-6")
-  const [temperature, setTemperature] = useState(0.5)
-  const [instructions, setInstructions] = useState(
-    "- Fale sempre em português do Brasil\n- Nunca prometa descontos sem validar com gestor\n- Se o lead perguntar sobre preço, responda 'depende do escopo, quer que eu agende 15 min pra te mostrar?'\n- Evite jargão técnico com contatos não-técnicos"
-  )
+const initialAgents: AgentSummary[] = [
+  {
+    id: "ag1",
+    name: "Ana Prospectora",
+    objective:
+      "Qualificar leads inbound B2B com foco em decisores de operações e vendas. Extrair BANT completo e agendar reunião com closer quando score ≥ 80.",
+    tone: "consultivo",
+    model: "anthropic/claude-sonnet-4-6",
+    destinationFunnelId: "vendas-principal",
+    destinationFunnelLabel: "Vendas Principal",
+    active: true,
+    instructions:
+      "- Fale sempre em português do Brasil\n- Nunca prometa descontos sem validar com gestor\n- Se lead perguntar sobre preço, pivote para qualificação primeiro\n- Evite jargão técnico com contatos não-técnicos",
+    icon: Phone,
+    accent:
+      "from-primary/15 to-orange-500/10 text-primary border-primary/20",
+    metrics: {
+      leadsProcessed: 1842,
+      handoffRate: 38,
+      activeNow: 64,
+      avgScore: 72,
+    },
+  },
+  {
+    id: "ag2",
+    name: "Roberto Recuperador",
+    objective:
+      "Reativar leads inativos há 30+ dias com abordagem consultiva e leve. Re-qualificar e devolver ao funil de vendas se houver fit.",
+    tone: "casual",
+    model: "anthropic/claude-haiku-4-5",
+    destinationFunnelId: "reativacao",
+    destinationFunnelLabel: "Reativação",
+    active: true,
+    instructions:
+      "- Comece reconhecendo o tempo sem contato\n- Não pressione, ofereça valor primeiro\n- Se lead disser 'agora não', pergunte quando faz sentido retomar",
+    icon: Heart,
+    accent:
+      "from-sky-500/15 to-sky-500/5 text-sky-700 dark:text-sky-400 border-sky-500/20",
+    metrics: {
+      leadsProcessed: 612,
+      handoffRate: 22,
+      activeNow: 41,
+      avgScore: 54,
+    },
+  },
+  {
+    id: "ag3",
+    name: "Sofia Pré-Vendas",
+    objective:
+      "Qualificação avançada de contas enterprise (500+ funcionários). Investigar stakeholders, processo de compra e timeline com profundidade antes do handoff.",
+    tone: "formal",
+    model: "anthropic/claude-opus-4-7",
+    destinationFunnelId: "vendas-enterprise",
+    destinationFunnelLabel: "Vendas Enterprise",
+    active: true,
+    instructions:
+      "- Use linguagem corporativa, evite informalidade\n- Investigue múltiplos decisores\n- Capture objeções estratégicas, não só operacionais\n- Sempre confirme nome e cargo do interlocutor",
+    icon: Trophy,
+    accent:
+      "from-violet-500/15 to-violet-500/5 text-violet-700 dark:text-violet-400 border-violet-500/20",
+    metrics: {
+      leadsProcessed: 184,
+      handoffRate: 52,
+      activeNow: 18,
+      avgScore: 81,
+    },
+  },
+  {
+    id: "ag4",
+    name: "Bruno Carrinho",
+    objective:
+      "Recuperar leads de carrinho abandonado de e-commerce em até 30 minutos. Identificar objeção de compra e oferecer suporte ou condição especial autorizada.",
+    tone: "direto",
+    model: "openai/gpt-4o",
+    destinationFunnelId: "ecommerce",
+    destinationFunnelLabel: "E-commerce / Carrinho",
+    active: false,
+    instructions:
+      "- Velocidade > educação na primeira mensagem\n- Pergunte sobre dúvida ou hesitação direto\n- Pode oferecer cupom autorizado se lead mencionar preço",
+    icon: ShoppingCart,
+    accent:
+      "from-amber-500/15 to-amber-500/5 text-amber-700 dark:text-amber-400 border-amber-500/20",
+    metrics: {
+      leadsProcessed: 0,
+      handoffRate: 0,
+      activeNow: 0,
+      avgScore: 0,
+    },
+  },
+]
 
-  const [escalateOnPrice, setEscalateOnPrice] = useState(true)
-  const [escalateOnComplaint, setEscalateOnComplaint] = useState(true)
-  const [escalateAfterFailedAttempts, setEscalateAfterFailedAttempts] = useState(false)
-  const [maxAutonomousMessages, setMaxAutonomousMessages] = useState(8)
+export function AgenteIaSection() {
+  const [agents, setAgents] = useState(initialAgents)
+  const [editingId, setEditingId] = useState<string | null>(null)
+  const [search, setSearch] = useState("")
+
+  function toggleActive(id: string) {
+    setAgents((prev) =>
+      prev.map((a) => (a.id === id ? { ...a, active: !a.active } : a))
+    )
+  }
+
+  function deleteAgent(id: string) {
+    setAgents((prev) => prev.filter((a) => a.id !== id))
+    setEditingId(null)
+  }
+
+  const editingAgent = editingId
+    ? agents.find((a) => a.id === editingId)
+    : null
+
+  if (editingAgent) {
+    return (
+      <AgenteIaEditor
+        agent={editingAgent}
+        onBack={() => setEditingId(null)}
+        onDelete={deleteAgent}
+      />
+    )
+  }
+
+  const filtered = search
+    ? agents.filter(
+        (a) =>
+          a.name.toLowerCase().includes(search.toLowerCase()) ||
+          a.objective.toLowerCase().includes(search.toLowerCase())
+      )
+    : agents
+
+  const activeCount = agents.filter((a) => a.active).length
+  const totalActiveLeads = agents.reduce(
+    (acc, a) => acc + a.metrics.activeNow,
+    0
+  )
+  const avgHandoff = Math.round(
+    agents
+      .filter((a) => a.metrics.leadsProcessed > 0)
+      .reduce((acc, a, _, arr) => acc + a.metrics.handoffRate / arr.length, 0)
+  )
 
   return (
-    <div className="space-y-6">
-      {/* Section header */}
-      <header className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+    <div className="space-y-5">
+      <header className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div className="space-y-1">
           <h3 className="font-display text-lg font-bold tracking-tight">
-            Agente IA SDR
+            Agentes IA SDR
           </h3>
           <p className="text-sm text-muted-foreground">
-            Agente autônomo que conduz o primeiro contato e qualificação via WhatsApp.
+            Cada agente atua sobre um funil específico — prospecção, reativação,
+            enterprise, recuperação de carrinho.
           </p>
         </div>
-        <div className="flex items-center gap-3">
-          <div className="flex items-center gap-2 rounded-xl border border-border/60 bg-card/50 px-3 py-2 backdrop-blur-sm">
-            <span
-              className={cn(
-                "size-2 rounded-full",
-                enabled
-                  ? "bg-emerald-500 pulse-online"
-                  : "bg-muted-foreground/40"
-              )}
-              aria-hidden
-            />
-            <Label
-              htmlFor="agent-enabled"
-              className="text-xs font-medium cursor-pointer"
-            >
-              {enabled ? "Agente ativo" : "Agente pausado"}
-            </Label>
-            <Switch
-              id="agent-enabled"
-              checked={enabled}
-              onCheckedChange={setEnabled}
-            />
-          </div>
-          <Button className="btn-lift bg-gradient-to-r from-primary to-orange-600 text-primary-foreground shadow-md shadow-primary/10">
-            Salvar configuração
-          </Button>
-        </div>
+        <Button className="btn-lift bg-gradient-to-r from-primary to-orange-600 text-primary-foreground shadow-md shadow-primary/10">
+          <Plus className="mr-1.5 size-4" />
+          Novo agente
+        </Button>
       </header>
 
-      <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_380px]">
-        {/* Left: Forms */}
-        <div className="space-y-5">
-          {/* Identity card */}
-          <Card className="animate-card-in">
-            <CardContent className="p-5 space-y-4">
-              <SectionTitle
-                icon={User}
-                label="Identidade"
-                hint="Como o agente se apresenta ao lead"
-              />
+      {/* Summary tiles */}
+      <div className="grid gap-3 sm:grid-cols-3">
+        <SummaryTile
+          icon={Bot}
+          label="Agentes ativos"
+          value={`${activeCount}/${agents.length}`}
+        />
+        <SummaryTile
+          icon={Users}
+          label="Leads em atendimento"
+          value={totalActiveLeads.toString()}
+          hint="agora mesmo"
+        />
+        <SummaryTile
+          icon={TrendingUp}
+          label="Handoff médio"
+          value={`${avgHandoff}%`}
+          hint="entre agentes ativos"
+        />
+      </div>
 
-              <div className="grid gap-4 sm:grid-cols-[120px_minmax(0,1fr)]">
-                <div className="flex flex-col items-center gap-2">
-                  <div className="relative flex size-20 items-center justify-center rounded-2xl bg-gradient-to-br from-primary to-orange-600 shadow-lg shadow-primary/20">
-                    <Flame className="size-9 text-white" />
-                    <div
-                      className="absolute inset-0 rounded-2xl bg-gradient-to-br from-white/15 to-transparent"
-                      aria-hidden
+      {/* Search */}
+      <div className="relative">
+        <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground/50" />
+        <Input
+          placeholder="Buscar por nome ou objetivo…"
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          className="pl-9"
+          aria-label="Buscar agente"
+        />
+      </div>
+
+      {/* Agent grid */}
+      <div className="grid gap-3 lg:grid-cols-2">
+        {filtered.map((agent, i) => (
+          <Card
+            key={agent.id}
+            className={cn(
+              "animate-card-in card-hover overflow-hidden",
+              `stagger-${Math.min(i + 1, 6)}`,
+              !agent.active && "opacity-75"
+            )}
+          >
+            <CardContent className="p-0">
+              {/* Top accent strip */}
+              <div
+                className={cn(
+                  "flex items-center justify-between bg-gradient-to-r px-5 py-3 border-b",
+                  agent.accent
+                )}
+              >
+                <div className="flex items-center gap-2.5 min-w-0">
+                  <div
+                    className={cn(
+                      "flex size-9 shrink-0 items-center justify-center rounded-lg bg-card/60 backdrop-blur-sm"
+                    )}
+                  >
+                    <agent.icon className="size-4" />
+                  </div>
+                  <div className="min-w-0">
+                    <div className="flex items-center gap-2">
+                      <h4 className="truncate font-display text-[14px] font-semibold tracking-tight">
+                        {agent.name}
+                      </h4>
+                      {agent.active ? (
+                        <span
+                          className="size-1.5 rounded-full bg-emerald-500 pulse-online"
+                          aria-label="Ativo"
+                        />
+                      ) : (
+                        <Pause
+                          className="size-3 text-muted-foreground"
+                          aria-label="Pausado"
+                        />
+                      )}
+                    </div>
+                    <div className="mt-0.5 flex items-center gap-1.5">
+                      <GitBranch className="size-2.5 opacity-60" />
+                      <span className="text-[10px] font-medium opacity-80">
+                        → {agent.destinationFunnelLabel}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+                <div onClick={(e) => e.stopPropagation()} role="presentation">
+                  <Switch
+                    checked={agent.active}
+                    onCheckedChange={() => toggleActive(agent.id)}
+                    aria-label={
+                      agent.active
+                        ? `Pausar ${agent.name}`
+                        : `Ativar ${agent.name}`
+                    }
+                  />
+                </div>
+              </div>
+
+              {/* Body */}
+              <div className="space-y-4 p-5">
+                <p className="line-clamp-2 text-[12px] leading-relaxed text-muted-foreground">
+                  {agent.objective}
+                </p>
+
+                {/* Metrics */}
+                {agent.metrics.leadsProcessed > 0 ? (
+                  <div className="grid grid-cols-4 gap-3 rounded-xl bg-muted/30 p-3">
+                    <Metric
+                      label="Processados"
+                      value={agent.metrics.leadsProcessed.toLocaleString(
+                        "pt-BR"
+                      )}
+                    />
+                    <Metric
+                      label="Atendendo"
+                      value={agent.metrics.activeNow.toString()}
+                      tone={agent.metrics.activeNow > 0 ? "good" : undefined}
+                    />
+                    <Metric
+                      label="Handoff"
+                      value={`${agent.metrics.handoffRate}%`}
+                      tone={
+                        agent.metrics.handoffRate >= 30 ? "good" : "warn"
+                      }
+                    />
+                    <Metric
+                      label="Score médio"
+                      value={agent.metrics.avgScore.toString()}
                     />
                   </div>
-                  <Button variant="outline" size="sm" className="w-full">
-                    Alterar avatar
+                ) : (
+                  <div className="flex items-center justify-center rounded-xl border border-dashed border-border/60 bg-muted/20 px-3 py-4">
+                    <span className="text-[11px] text-muted-foreground italic">
+                      Agente nunca executado em produção
+                    </span>
+                  </div>
+                )}
+
+                {/* Tech badges */}
+                <div className="flex flex-wrap items-center gap-1.5">
+                  <Badge variant="secondary" className="text-[10px]">
+                    <Sparkles className="mr-1 size-2.5" />
+                    {agent.model.split("/")[1]}
+                  </Badge>
+                  <Badge variant="secondary" className="text-[10px]">
+                    {toneLabel(agent.tone)}
+                  </Badge>
+                </div>
+
+                <Separator />
+
+                {/* Actions */}
+                <div className="flex items-center gap-2">
+                  <Button
+                    onClick={() => setEditingId(agent.id)}
+                    size="sm"
+                    className="flex-1 bg-gradient-to-r from-primary to-orange-600 text-primary-foreground"
+                  >
+                    <Edit3 className="mr-1.5 size-3.5" />
+                    Editar
+                  </Button>
+                  <Button
+                    onClick={() => setEditingId(agent.id)}
+                    size="sm"
+                    variant="outline"
+                  >
+                    <TestTube2 className="mr-1.5 size-3.5" />
+                    Sandbox
+                  </Button>
+                  <Button
+                    size="icon"
+                    variant="ghost"
+                    aria-label="Duplicar"
+                    className="size-9"
+                  >
+                    <Copy className="size-3.5" />
+                  </Button>
+                  <Button
+                    size="icon"
+                    variant="ghost"
+                    aria-label="Mais ações"
+                    className="size-9"
+                  >
+                    <MoreVertical className="size-3.5" />
                   </Button>
                 </div>
-
-                <div className="space-y-3">
-                  <div className="space-y-1.5">
-                    <Label htmlFor="agent-name">Nome do agente</Label>
-                    <Input
-                      id="agent-name"
-                      value={name}
-                      onChange={(e) => setName(e.target.value)}
-                    />
-                  </div>
-                  <div className="space-y-1.5">
-                    <Label htmlFor="agent-objective">Objetivo</Label>
-                    <textarea
-                      id="agent-objective"
-                      value={objective}
-                      onChange={(e) => setObjective(e.target.value)}
-                      rows={3}
-                      className="flex w-full rounded-lg border border-input bg-background px-3 py-2 text-sm shadow-xs transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:border-primary resize-none"
-                    />
-                    <p className="text-[11px] text-muted-foreground/70">
-                      Descreva o job-to-be-done do agente em 2–3 frases.
-                    </p>
-                  </div>
-                </div>
               </div>
             </CardContent>
           </Card>
+        ))}
 
-          {/* Tone card */}
-          <Card className="animate-card-in stagger-1">
-            <CardContent className="p-5 space-y-4">
-              <SectionTitle
-                icon={Volume2}
-                label="Tom de voz"
-                hint="Define a personalidade nas mensagens"
-              />
-              <div
-                className="grid gap-2 sm:grid-cols-2 lg:grid-cols-4"
-                role="radiogroup"
-                aria-label="Selecionar tom"
-              >
-                {toneOptions.map((t) => {
-                  const active = tone === t.id
-                  return (
-                    <button
-                      key={t.id}
-                      type="button"
-                      role="radio"
-                      aria-checked={active}
-                      onClick={() => setTone(t.id)}
-                      className={cn(
-                        "group rounded-xl border px-3 py-2.5 text-left transition-all",
-                        active
-                          ? "border-primary/40 bg-primary/[0.04] shadow-sm shadow-primary/10"
-                          : "border-border/60 bg-card/50 hover:border-primary/20"
-                      )}
-                    >
-                      <div className="flex items-center justify-between">
-                        <span
-                          className={cn(
-                            "text-sm font-medium",
-                            active && "text-primary"
-                          )}
-                        >
-                          {t.label}
-                        </span>
-                        {active && (
-                          <Check className="size-3.5 text-primary" />
-                        )}
-                      </div>
-                      <span className="text-[11px] text-muted-foreground">
-                        {t.hint}
-                      </span>
-                    </button>
-                  )
-                })}
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Model card */}
-          <Card className="animate-card-in stagger-2">
-            <CardContent className="p-5 space-y-4">
-              <SectionTitle
-                icon={Cpu}
-                label="Modelo de linguagem"
-                hint="Provider e modelo que alimentam o agente"
-              />
-
-              <div className="grid gap-2">
-                {models.map((m) => {
-                  const active = model === m.id
-                  return (
-                    <button
-                      key={m.id}
-                      type="button"
-                      onClick={() => setModel(m.id)}
-                      aria-pressed={active}
-                      className={cn(
-                        "group flex items-center gap-3 rounded-xl border px-4 py-3 text-left transition-all",
-                        active
-                          ? "border-primary/40 bg-primary/[0.04] shadow-sm shadow-primary/10"
-                          : "border-border/60 bg-card/50 hover:border-primary/20"
-                      )}
-                    >
-                      <div
-                        className={cn(
-                          "flex size-9 items-center justify-center rounded-lg",
-                          active
-                            ? "bg-gradient-to-br from-primary to-orange-600 text-primary-foreground"
-                            : "bg-muted text-muted-foreground"
-                        )}
-                        aria-hidden
-                      >
-                        <Sparkles className="size-4" />
-                      </div>
-                      <div className="min-w-0 flex-1">
-                        <div className="flex items-center gap-2">
-                          <span className="text-[13px] font-medium">
-                            {m.name}
-                          </span>
-                          {m.badge && (
-                            <Badge
-                              variant="secondary"
-                              className="bg-primary/10 text-primary border-primary/20 text-[10px]"
-                            >
-                              {m.badge}
-                            </Badge>
-                          )}
-                        </div>
-                        <p className="text-[11px] text-muted-foreground">
-                          {m.provider} · {m.note}
-                        </p>
-                      </div>
-                      <div
-                        className={cn(
-                          "flex size-5 items-center justify-center rounded-full border",
-                          active
-                            ? "border-primary bg-primary text-primary-foreground"
-                            : "border-border"
-                        )}
-                        aria-hidden
-                      >
-                        {active && <Check className="size-3" />}
-                      </div>
-                    </button>
-                  )
-                })}
-              </div>
-
-              <Separator />
-
-              <div className="space-y-2">
-                <div className="flex items-center justify-between">
-                  <Label htmlFor="temperature" className="flex items-center gap-2">
-                    Temperatura
-                    <span className="text-xs text-muted-foreground">
-                      criatividade vs. consistência
-                    </span>
-                  </Label>
-                  <Badge
-                    variant="secondary"
-                    className="font-display font-bold"
-                  >
-                    {temperature.toFixed(1)}
-                  </Badge>
-                </div>
-                <input
-                  id="temperature"
-                  type="range"
-                  min={0}
-                  max={1}
-                  step={0.1}
-                  value={temperature}
-                  onChange={(e) => setTemperature(Number(e.target.value))}
-                  className="h-2 w-full cursor-pointer appearance-none rounded-full bg-gradient-to-r from-sky-500/40 via-primary/40 to-rose-500/40 accent-primary"
-                  aria-label="Temperatura"
-                />
-                <div className="flex justify-between text-[10px] uppercase tracking-wider text-muted-foreground/70">
-                  <span>Previsível</span>
-                  <span>Balanceado</span>
-                  <span>Criativo</span>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Instructions */}
-          <Card className="animate-card-in stagger-3">
-            <CardContent className="p-5 space-y-4">
-              <SectionTitle
-                icon={Target}
-                label="Instruções customizadas"
-                hint="Regras específicas que o agente deve respeitar"
-              />
-              <textarea
-                value={instructions}
-                onChange={(e) => setInstructions(e.target.value)}
-                rows={6}
-                className="flex w-full rounded-lg border border-input bg-background px-3 py-2.5 font-mono text-[12px] leading-relaxed shadow-xs transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:border-primary resize-y"
-                aria-label="Instruções customizadas"
-              />
-              <p className="text-[11px] text-muted-foreground/70">
-                Use listas (-) ou frases curtas. Quanto mais específico, melhor.
-              </p>
-            </CardContent>
-          </Card>
-
-          {/* Escalation */}
-          <Card className="animate-card-in stagger-4">
-            <CardContent className="p-5 space-y-4">
-              <SectionTitle
-                icon={Shield}
-                label="Regras de escalonamento"
-                hint="Quando transferir para SDR humano"
-              />
-
-              <div className="space-y-1">
-                <EscalationRow
-                  icon={AlertTriangle}
-                  title="Pedido de desconto ou proposta comercial"
-                  description="Transfere automaticamente quando lead pergunta sobre preço, desconto ou proposta formal."
-                  checked={escalateOnPrice}
-                  onChange={setEscalateOnPrice}
-                />
-                <Separator className="my-1" />
-                <EscalationRow
-                  icon={MessageCircle}
-                  title="Reclamação ou sentimento negativo"
-                  description="Detecta hostilidade e transfere para um humano."
-                  checked={escalateOnComplaint}
-                  onChange={setEscalateOnComplaint}
-                />
-                <Separator className="my-1" />
-                <EscalationRow
-                  icon={Zap}
-                  title="Após N tentativas sem qualificar"
-                  description={`Entrega o lead ao SDR humano após ${maxAutonomousMessages} mensagens sem avanço.`}
-                  checked={escalateAfterFailedAttempts}
-                  onChange={setEscalateAfterFailedAttempts}
-                />
-              </div>
-
-              <div className="rounded-xl bg-muted/30 p-3.5">
-                <Label
-                  htmlFor="max-attempts"
-                  className="flex items-center justify-between"
-                >
-                  <span className="text-[13px]">
-                    Máximo de mensagens autônomas por lead
-                  </span>
-                  <Badge
-                    variant="secondary"
-                    className="font-display font-bold"
-                  >
-                    {maxAutonomousMessages}
-                  </Badge>
-                </Label>
-                <input
-                  id="max-attempts"
-                  type="range"
-                  min={3}
-                  max={15}
-                  step={1}
-                  value={maxAutonomousMessages}
-                  onChange={(e) =>
-                    setMaxAutonomousMessages(Number(e.target.value))
-                  }
-                  className="mt-2 h-1.5 w-full cursor-pointer appearance-none rounded-full bg-muted accent-primary"
-                />
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-
-        {/* Right: Sticky preview */}
-        <aside className="space-y-3 lg:sticky lg:top-6 lg:self-start">
-          <div className="flex items-center gap-2">
-            <Sparkles className="size-4 text-primary" />
-            <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground/80">
-              Preview do agente
+        {/* Empty / new agent card */}
+        <button
+          onClick={() => {
+            // Placeholder: in real flow would create a draft agent
+          }}
+          className="group flex min-h-[260px] flex-col items-center justify-center gap-3 rounded-2xl border-2 border-dashed border-border/60 bg-card/30 p-6 text-center transition-all hover:border-primary/40 hover:bg-primary/[0.02]"
+        >
+          <div className="flex size-12 items-center justify-center rounded-xl bg-gradient-to-br from-primary/10 to-orange-500/10 text-primary transition-transform group-hover:scale-110">
+            <Plus className="size-6" />
+          </div>
+          <div>
+            <p className="font-display text-sm font-semibold">
+              Criar novo agente
+            </p>
+            <p className="text-[11px] text-muted-foreground">
+              Para um novo funil ou caso de uso
             </p>
           </div>
+        </button>
+      </div>
 
-          <Card className="animate-card-in">
-            <CardContent className="space-y-4 p-4">
-              {/* Agent identity preview */}
-              <div className="flex items-center gap-3 rounded-xl bg-gradient-to-br from-primary/5 to-orange-500/5 p-3">
-                <div className="relative flex size-10 items-center justify-center rounded-xl bg-gradient-to-br from-primary to-orange-600 shadow-sm shadow-primary/15">
-                  <Flame className="size-5 text-white" />
-                </div>
-                <div className="min-w-0">
-                  <p className="truncate text-[13px] font-semibold">
-                    {name}
-                  </p>
-                  <div className="flex items-center gap-1.5">
-                    <Badge
-                      variant="secondary"
-                      className="bg-primary/10 text-primary border-primary/20 text-[9px]"
-                    >
-                      <Bot className="mr-0.5 size-2.5" />
-                      IA
-                    </Badge>
-                    <span className="text-[10px] text-muted-foreground">
-                      {toneOptions.find((t) => t.id === tone)?.label}
-                    </span>
-                  </div>
-                </div>
-              </div>
+      {filtered.length === 0 && search && (
+        <Card>
+          <CardContent className="py-12 text-center">
+            <div className="mx-auto mb-2 flex size-12 items-center justify-center rounded-full bg-muted/50">
+              <Search className="size-5 text-muted-foreground/60" />
+            </div>
+            <p className="text-sm font-medium">Nenhum agente encontrado</p>
+            <p className="text-xs text-muted-foreground">
+              Tente outro termo de busca.
+            </p>
+          </CardContent>
+        </Card>
+      )}
 
-              <div>
-                <p className="mb-2 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground/80">
-                  Exemplo de primeira abordagem
-                </p>
-                <div className="chat-bubble-in px-3 py-2.5 text-[12px] leading-relaxed text-foreground/90">
-                  {tonePreview[tone]}
-                </div>
-              </div>
-
-              <Separator />
-
-              <div className="space-y-1.5">
-                <p className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground/80">
-                  Configuração atual
-                </p>
-                <PreviewRow
-                  label="Modelo"
-                  value={models.find((m) => m.id === model)?.name ?? model}
-                />
-                <PreviewRow
-                  label="Temperatura"
-                  value={temperature.toFixed(1)}
-                />
-                <PreviewRow
-                  label="Máx mensagens"
-                  value={String(maxAutonomousMessages)}
-                />
-                <PreviewRow
-                  label="Escalonamentos"
-                  value={`${
-                    [
-                      escalateOnPrice,
-                      escalateOnComplaint,
-                      escalateAfterFailedAttempts,
-                    ].filter(Boolean).length
-                  } ativos`}
-                />
-              </div>
-            </CardContent>
-          </Card>
-
-          <p className="text-[11px] leading-relaxed text-muted-foreground/70">
-            Mudanças aplicam imediatamente em novas conversas. Conversas em
-            andamento mantêm a configuração original.
-          </p>
-        </aside>
+      {/* Footer help */}
+      <div className="flex items-start gap-2 rounded-xl bg-primary/[0.04] border border-primary/10 px-3.5 py-2.5">
+        <Flame className="mt-0.5 size-4 shrink-0 text-primary" />
+        <p className="flex-1 text-[12px] leading-relaxed text-muted-foreground">
+          <span className="font-medium text-foreground/80">Boas práticas:</span>{" "}
+          mantenha agentes especializados por funil — um agente para
+          prospecção, outro para reativação, outro para enterprise. Isso
+          permite iterar prompts sem afetar todos os fluxos ao mesmo tempo.
+        </p>
       </div>
     </div>
   )
 }
 
-function SectionTitle({
+function toneLabel(tone: string) {
+  const map: Record<string, string> = {
+    formal: "Formal",
+    consultivo: "Consultivo",
+    casual: "Casual",
+    direto: "Direto",
+  }
+  return map[tone] ?? tone
+}
+
+function SummaryTile({
   icon: Icon,
   label,
+  value,
   hint,
 }: {
   icon: typeof Bot
   label: string
-  hint: string
+  value: string
+  hint?: string
 }) {
   return (
-    <div className="flex items-center gap-2.5">
-      <div className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary">
-        <Icon className="size-4" />
+    <div className="flex items-center gap-3 rounded-xl border border-border/60 bg-card/50 px-4 py-3 backdrop-blur-sm">
+      <div className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-gradient-to-br from-primary/10 to-orange-500/10">
+        <Icon className="size-4 text-primary" />
       </div>
       <div>
-        <p className="font-display text-sm font-semibold tracking-tight">
+        <p className="text-[10px] font-medium uppercase tracking-wider text-muted-foreground/70">
           {label}
         </p>
-        <p className="text-[11px] text-muted-foreground">{hint}</p>
-      </div>
-    </div>
-  )
-}
-
-function EscalationRow({
-  icon: Icon,
-  title,
-  description,
-  checked,
-  onChange,
-}: {
-  icon: typeof AlertTriangle
-  title: string
-  description: string
-  checked: boolean
-  onChange: (v: boolean) => void
-}) {
-  return (
-    <div className="flex items-start gap-3 py-2">
-      <div
-        className={cn(
-          "flex size-8 shrink-0 items-center justify-center rounded-lg",
-          checked
-            ? "bg-amber-500/10 text-amber-600 dark:text-amber-400"
-            : "bg-muted text-muted-foreground/50"
+        <p className="font-display text-lg font-bold tracking-tight tabular-nums">
+          {value}
+        </p>
+        {hint && (
+          <p className="text-[10px] text-muted-foreground/60">{hint}</p>
         )}
-        aria-hidden
-      >
-        <Icon className="size-4" />
       </div>
-      <div className="min-w-0 flex-1">
-        <p className="text-[13px] font-medium">{title}</p>
-        <p className="text-[11px] text-muted-foreground">{description}</p>
-      </div>
-      <Switch
-        checked={checked}
-        onCheckedChange={onChange}
-        aria-label={title}
-      />
     </div>
   )
 }
 
-function PreviewRow({ label, value }: { label: string; value: string }) {
+function Metric({
+  label,
+  value,
+  tone,
+}: {
+  label: string
+  value: string
+  tone?: "good" | "warn"
+}) {
+  const toneCls =
+    tone === "good"
+      ? "text-emerald-600 dark:text-emerald-400"
+      : tone === "warn"
+        ? "text-amber-600 dark:text-amber-400"
+        : ""
   return (
-    <div className="flex items-center justify-between text-[12px]">
-      <span className="text-muted-foreground">{label}</span>
-      <span className="font-medium">{value}</span>
+    <div className="text-center">
+      <p className="text-[9px] font-medium uppercase tracking-wider text-muted-foreground/70">
+        {label}
+      </p>
+      <p
+        className={cn(
+          "font-display text-[13px] font-bold tracking-tight tabular-nums",
+          toneCls
+        )}
+      >
+        {value}
+      </p>
     </div>
   )
 }
+
+// Re-export Play icon to avoid unused import lint when toggling
+export { Play }

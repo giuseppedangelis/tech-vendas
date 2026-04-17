@@ -70,7 +70,7 @@ const allMenuGroups: MenuGroup[] = [
     label: "SDR",
     items: [
       { title: "Visão Geral", icon: Gauge, path: "/sdr" },
-      { title: "Operação", icon: Activity, path: "/sdr/operacao" },
+      { title: "Monitoramento", icon: Activity, path: "/sdr/monitoramento" },
       { title: "Configuração", icon: SlidersHorizontal, path: "/sdr/configuracao" },
     ],
   },

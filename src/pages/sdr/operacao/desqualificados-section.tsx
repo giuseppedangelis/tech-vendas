@@ -42,8 +42,8 @@ interface Disqualified {
   initials: string
   reason: Reason
   note: string
-  sdr: string
-  sdrInitials: string
+  agent: string
+  agentInitials: string
   disqualifiedAt: string
   scoreAtDisqualify: number
   reactivatable: boolean
@@ -109,8 +109,8 @@ const records: Disqualified[] = [
     initials: "AR",
     reason: "budget",
     note: "Disse que só recompõe orçamento em Q3.",
-    sdr: "Pedro Henrique",
-    sdrInitials: "PH",
+    agent: "Ana Prospectora",
+    agentInitials: "AP",
     disqualifiedAt: "há 2 dias",
     scoreAtDisqualify: 34,
     reactivatable: true,
@@ -122,8 +122,8 @@ const records: Disqualified[] = [
     initials: "EL",
     reason: "competitor",
     note: "Acabou de assinar 12 meses com concorrente (Pipedrive).",
-    sdr: "Larissa Moura",
-    sdrInitials: "LM",
+    agent: "Sofia Pré-Vendas",
+    agentInitials: "SP",
     disqualifiedAt: "há 3 dias",
     scoreAtDisqualify: 22,
     reactivatable: false,
@@ -135,8 +135,8 @@ const records: Disqualified[] = [
     initials: "IF",
     reason: "authority",
     note: "Não é decisora. Indicou o CEO, mas ele não respondeu.",
-    sdr: "João Batista",
-    sdrInitials: "JB",
+    agent: "Ana Prospectora",
+    agentInitials: "AP",
     disqualifiedAt: "há 4 dias",
     scoreAtDisqualify: 18,
     reactivatable: true,
@@ -148,8 +148,8 @@ const records: Disqualified[] = [
     initials: "GS",
     reason: "out_of_scope",
     note: "ICP fora do target (empresa com 3 funcionários).",
-    sdr: "Tatiana Vieira",
-    sdrInitials: "TV",
+    agent: "Ana Prospectora",
+    agentInitials: "AP",
     disqualifiedAt: "há 5 dias",
     scoreAtDisqualify: 12,
     reactivatable: false,
@@ -161,8 +161,8 @@ const records: Disqualified[] = [
     initials: "MP",
     reason: "need",
     note: "Não percebe problema atual, disse que tá tudo ok.",
-    sdr: "Pedro Henrique",
-    sdrInitials: "PH",
+    agent: "Roberto Recuperador",
+    agentInitials: "RR",
     disqualifiedAt: "há 6 dias",
     scoreAtDisqualify: 28,
     reactivatable: true,
@@ -174,8 +174,8 @@ const records: Disqualified[] = [
     initials: "SG",
     reason: "timeline",
     note: "Só pretende avaliar solução em 2027.",
-    sdr: "Larissa Moura",
-    sdrInitials: "LM",
+    agent: "Roberto Recuperador",
+    agentInitials: "RR",
     disqualifiedAt: "há 7 dias",
     scoreAtDisqualify: 42,
     reactivatable: true,
@@ -187,8 +187,8 @@ const records: Disqualified[] = [
     initials: "NC",
     reason: "budget",
     note: "Considera o valor alto, quer entender ROI melhor.",
-    sdr: "João Batista",
-    sdrInitials: "JB",
+    agent: "Ana Prospectora",
+    agentInitials: "AP",
     disqualifiedAt: "há 8 dias",
     scoreAtDisqualify: 38,
     reactivatable: true,
@@ -352,8 +352,8 @@ export function DesqualificadosSection() {
                 <TableRow>
                   <TableHead>Lead</TableHead>
                   <TableHead>Motivo</TableHead>
-                  <TableHead className="w-[30%]">Nota do SDR</TableHead>
-                  <TableHead>SDR</TableHead>
+                  <TableHead className="w-[30%]">Nota do agente</TableHead>
+                  <TableHead>Agente</TableHead>
                   <TableHead>Quando</TableHead>
                   <TableHead>Score final</TableHead>
                   <TableHead>Potencial</TableHead>
@@ -397,13 +397,14 @@ export function DesqualificadosSection() {
                       </TableCell>
                       <TableCell>
                         <div className="flex items-center gap-2">
-                          <Avatar className="size-6">
-                            <AvatarFallback className="bg-muted text-[9px] font-bold">
-                              {r.sdrInitials}
-                            </AvatarFallback>
-                          </Avatar>
+                          <div
+                            className="flex size-6 items-center justify-center rounded-full bg-gradient-to-br from-primary/20 to-orange-500/20 text-[9px] font-bold text-primary ring-1 ring-primary/20"
+                            aria-label={`Agente IA: ${r.agent}`}
+                          >
+                            {r.agentInitials}
+                          </div>
                           <span className="text-[12px] text-muted-foreground">
-                            {r.sdr.split(" ")[0]}
+                            {r.agent.split(" ")[0]}
                           </span>
                         </div>
                       </TableCell>

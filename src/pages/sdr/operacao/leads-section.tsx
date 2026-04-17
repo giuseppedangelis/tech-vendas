@@ -47,7 +47,7 @@ interface Lead {
   score: number
   scoreDelta: number
   stage: Stage
-  sdr: { name: string; initials: string }
+  agent: { name: string; initials: string }
   cadence: string
   stepOf: string
   daysInStage: number
@@ -92,7 +92,7 @@ const leads: Lead[] = [
     score: 92,
     scoreDelta: 6,
     stage: "ready",
-    sdr: { name: "Pedro Henrique", initials: "PH" },
+    agent: { name: "Ana Prospectora", initials: "AP" },
     cadence: "Prospecção B2B Inicial",
     stepOf: "4/4",
     daysInStage: 0,
@@ -107,7 +107,7 @@ const leads: Lead[] = [
     score: 88,
     scoreDelta: 4,
     stage: "ready",
-    sdr: { name: "Pedro Henrique", initials: "PH" },
+    agent: { name: "Ana Prospectora", initials: "AP" },
     cadence: "Prospecção B2B Inicial",
     stepOf: "3/4",
     daysInStage: 1,
@@ -122,7 +122,7 @@ const leads: Lead[] = [
     score: 84,
     scoreDelta: 2,
     stage: "qualifying",
-    sdr: { name: "Larissa Moura", initials: "LM" },
+    agent: { name: "Ana Prospectora", initials: "AP" },
     cadence: "Prospecção B2B Inicial",
     stepOf: "3/4",
     daysInStage: 2,
@@ -137,8 +137,8 @@ const leads: Lead[] = [
     score: 72,
     scoreDelta: -3,
     stage: "qualifying",
-    sdr: { name: "Larissa Moura", initials: "LM" },
-    cadence: "Prospecção B2B Inicial",
+    agent: { name: "Sofia Pré-Vendas", initials: "SP" },
+    cadence: "Qualificação Enterprise",
     stepOf: "2/4",
     daysInStage: 3,
     lastInteraction: "há 4h",
@@ -152,7 +152,7 @@ const leads: Lead[] = [
     score: 66,
     scoreDelta: 0,
     stage: "contacting",
-    sdr: { name: "João Batista", initials: "JB" },
+    agent: { name: "Ana Prospectora", initials: "AP" },
     cadence: "Prospecção B2B Inicial",
     stepOf: "2/4",
     daysInStage: 1,
@@ -167,8 +167,8 @@ const leads: Lead[] = [
     score: 58,
     scoreDelta: -5,
     stage: "contacting",
-    sdr: { name: "João Batista", initials: "JB" },
-    cadence: "Outbound LinkedIn → WhatsApp",
+    agent: { name: "Roberto Recuperador", initials: "RR" },
+    cadence: "Reativação 30 dias",
     stepOf: "1/5",
     daysInStage: 2,
     lastInteraction: "há 1d",
@@ -182,8 +182,8 @@ const leads: Lead[] = [
     score: 48,
     scoreDelta: -2,
     stage: "contacting",
-    sdr: { name: "Tatiana Vieira", initials: "TV" },
-    cadence: "Outbound LinkedIn → WhatsApp",
+    agent: { name: "Sofia Pré-Vendas", initials: "SP" },
+    cadence: "Qualificação Enterprise",
     stepOf: "1/5",
     daysInStage: 3,
     lastInteraction: "há 2d",
@@ -197,7 +197,7 @@ const leads: Lead[] = [
     score: 45,
     scoreDelta: 8,
     stage: "new",
-    sdr: { name: "Pedro Henrique", initials: "PH" },
+    agent: { name: "Ana Prospectora", initials: "AP" },
     cadence: "Prospecção B2B Inicial",
     stepOf: "0/4",
     daysInStage: 0,
@@ -212,8 +212,8 @@ const leads: Lead[] = [
     score: 32,
     scoreDelta: -8,
     stage: "qualifying",
-    sdr: { name: "Tatiana Vieira", initials: "TV" },
-    cadence: "Prospecção B2B Inicial",
+    agent: { name: "Roberto Recuperador", initials: "RR" },
+    cadence: "Reativação 30 dias",
     stepOf: "3/4",
     daysInStage: 5,
     lastInteraction: "há 3d",
@@ -239,11 +239,11 @@ function scoreTone(score: number) {
 export function LeadsSection() {
   const [stageFilter, setStageFilter] = useState<"all" | Stage>("all")
   const [search, setSearch] = useState("")
-  const [sdrFilter, setSdrFilter] = useState<string>("all")
+  const [agentFilter, setAgentFilter] = useState<string>("all")
 
-  const sdrs = useMemo(() => {
+  const agents = useMemo(() => {
     const map = new Map<string, string>()
-    leads.forEach((l) => map.set(l.sdr.name, l.sdr.initials))
+    leads.forEach((l) => map.set(l.agent.name, l.agent.initials))
     return Array.from(map.entries()).map(([name, initials]) => ({
       name,
       initials,
@@ -253,7 +253,7 @@ export function LeadsSection() {
   const filtered = useMemo(() => {
     return leads.filter((l) => {
       if (stageFilter !== "all" && l.stage !== stageFilter) return false
-      if (sdrFilter !== "all" && l.sdr.name !== sdrFilter) return false
+      if (agentFilter !== "all" && l.agent.name !== agentFilter) return false
       if (
         search &&
         !l.name.toLowerCase().includes(search.toLowerCase()) &&
@@ -262,7 +262,7 @@ export function LeadsSection() {
         return false
       return true
     })
-  }, [stageFilter, sdrFilter, search])
+  }, [stageFilter, agentFilter, search])
 
   const counts = useMemo(() => {
     const c: Record<"all" | Stage, number> = {
@@ -336,7 +336,7 @@ export function LeadsSection() {
         })}
       </div>
 
-      {/* Search + SDR filter */}
+      {/* Search + Agent filter */}
       <div className="flex flex-col gap-2 sm:flex-row">
         <div className="relative flex-1">
           <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground/50" />
@@ -348,16 +348,16 @@ export function LeadsSection() {
             aria-label="Buscar leads"
           />
         </div>
-        <Select value={sdrFilter} onValueChange={setSdrFilter}>
+        <Select value={agentFilter} onValueChange={setAgentFilter}>
           <SelectTrigger className="sm:w-[220px]">
             <Users className="mr-1 size-3.5 text-muted-foreground" />
-            <SelectValue placeholder="Todos os SDRs" />
+            <SelectValue placeholder="Todos os agentes" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="all">Todos os SDRs</SelectItem>
-            {sdrs.map((s) => (
-              <SelectItem key={s.name} value={s.name}>
-                {s.name}
+            <SelectItem value="all">Todos os agentes</SelectItem>
+            {agents.map((a) => (
+              <SelectItem key={a.name} value={a.name}>
+                {a.name}
               </SelectItem>
             ))}
           </SelectContent>
@@ -375,7 +375,7 @@ export function LeadsSection() {
                   <TableHead>Score</TableHead>
                   <TableHead>Estágio</TableHead>
                   <TableHead>BANT</TableHead>
-                  <TableHead>SDR</TableHead>
+                  <TableHead>Agente</TableHead>
                   <TableHead>Cadência · Step</TableHead>
                   <TableHead>Última interação</TableHead>
                   <TableHead className="w-10" aria-label="Ações" />
@@ -460,13 +460,14 @@ export function LeadsSection() {
                       </TableCell>
                       <TableCell>
                         <div className="flex items-center gap-2">
-                          <Avatar className="size-6">
-                            <AvatarFallback className="bg-muted text-[9px] font-bold">
-                              {l.sdr.initials}
-                            </AvatarFallback>
-                          </Avatar>
+                          <div
+                            className="flex size-6 items-center justify-center rounded-full bg-gradient-to-br from-primary/20 to-orange-500/20 text-[9px] font-bold text-primary ring-1 ring-primary/20"
+                            aria-label={`Agente IA: ${l.agent.name}`}
+                          >
+                            {l.agent.initials}
+                          </div>
                           <span className="text-[12px] text-muted-foreground">
-                            {l.sdr.name.split(" ")[0]}
+                            {l.agent.name.split(" ")[0]}
                           </span>
                         </div>
                       </TableCell>
@@ -535,8 +536,9 @@ export function LeadsSection() {
           <span className="font-medium text-foreground/80">
             Dica da IA Gestora:
           </span>{" "}
-          Thiago Ferraz (score 32, caindo) está há 5 dias em Qualificando sem
-          avanço. Considere desqualificar ou mover para cadência de reativação.
+          Thiago Ferraz (score 32, caindo) está há 5 dias com o agente Roberto
+          Recuperador sem avanço. Considere desqualificar ou trocar para uma
+          cadência mais direta.
         </div>
         <Button variant="ghost" size="sm" className="shrink-0">
           Ver lead

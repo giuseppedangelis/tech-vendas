@@ -6,7 +6,6 @@ import {
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Progress } from "@/components/ui/progress"
-import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import {
   Select,
   SelectContent,
@@ -15,115 +14,180 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import {
-  Trophy,
-  Users,
+  Bot,
   CheckCircle2,
   Timer,
   Percent,
   TrendingUp,
   TrendingDown,
   Minus,
-  Medal,
+  Sparkles,
+  Phone,
+  Heart,
+  Trophy,
+  ShoppingCart,
+  Pause,
+  DollarSign,
+  Activity,
 } from "lucide-react"
 import { cn } from "@/lib/utils"
 
-interface SdrStat {
+type Status = "top" | "stable" | "warning" | "paused"
+
+interface AgentStat {
   id: string
-  rank: number
   name: string
   initials: string
-  qualifiedDay: number
-  qualifiedMonth: number
-  goalMonth: number
+  icon: typeof Phone
+  accent: string
+  status: Status
+  model: string
+  leadsToday: number
+  leadsMonth: number
+  capacityMonth: number
   responseRate: number
   avgQualificationHours: number
   handoffRate: number
-  avgScoreDelta: number
+  scoreDelta: number
+  costMonth: number
   sparkline: number[]
 }
 
-const sdrs: SdrStat[] = [
+const agents: AgentStat[] = [
   {
-    id: "p1",
-    rank: 1,
-    name: "Pedro Henrique",
-    initials: "PH",
-    qualifiedDay: 8,
-    qualifiedMonth: 142,
-    goalMonth: 150,
+    id: "ag1",
+    name: "Ana Prospectora",
+    initials: "AP",
+    icon: Phone,
+    accent:
+      "from-primary/15 to-orange-500/10 text-primary border-primary/20",
+    status: "top",
+    model: "Claude Sonnet 4.6",
+    leadsToday: 38,
+    leadsMonth: 1842,
+    capacityMonth: 2400,
     responseRate: 42,
     avgQualificationHours: 6.2,
     handoffRate: 38,
-    avgScoreDelta: 12,
-    sparkline: [4, 6, 5, 7, 6, 8, 9, 8, 10, 12, 11, 14],
+    scoreDelta: 12,
+    costMonth: 41.2,
+    sparkline: [80, 110, 95, 120, 130, 142, 138, 150, 168, 175, 182, 195],
   },
   {
-    id: "p2",
-    rank: 2,
-    name: "Larissa Moura",
-    initials: "LM",
-    qualifiedDay: 6,
-    qualifiedMonth: 118,
-    goalMonth: 150,
-    responseRate: 38,
-    avgQualificationHours: 8.1,
-    handoffRate: 31,
-    avgScoreDelta: 7,
-    sparkline: [3, 4, 5, 6, 5, 6, 7, 6, 8, 7, 9, 10],
-  },
-  {
-    id: "p3",
-    rank: 3,
-    name: "João Batista",
-    initials: "JB",
-    qualifiedDay: 4,
-    qualifiedMonth: 82,
-    goalMonth: 120,
-    responseRate: 28,
-    avgQualificationHours: 11.4,
+    id: "ag2",
+    name: "Roberto Recuperador",
+    initials: "RR",
+    icon: Heart,
+    accent:
+      "from-sky-500/15 to-sky-500/5 text-sky-700 dark:text-sky-400 border-sky-500/20",
+    status: "stable",
+    model: "Claude Haiku 4.5",
+    leadsToday: 18,
+    leadsMonth: 612,
+    capacityMonth: 800,
+    responseRate: 26,
+    avgQualificationHours: 9.4,
     handoffRate: 22,
-    avgScoreDelta: -2,
-    sparkline: [2, 3, 3, 4, 3, 4, 5, 4, 3, 5, 4, 6],
+    scoreDelta: 4,
+    costMonth: 8.7,
+    sparkline: [40, 45, 50, 55, 48, 52, 58, 60, 62, 60, 65, 68],
   },
   {
-    id: "p4",
-    rank: 4,
-    name: "Tatiana Vieira",
-    initials: "TV",
-    qualifiedDay: 2,
-    qualifiedMonth: 48,
-    goalMonth: 120,
-    responseRate: 19,
-    avgQualificationHours: 14.8,
-    handoffRate: 14,
-    avgScoreDelta: -6,
-    sparkline: [2, 3, 2, 3, 2, 3, 3, 2, 3, 2, 3, 4],
+    id: "ag3",
+    name: "Sofia Pré-Vendas",
+    initials: "SP",
+    icon: Trophy,
+    accent:
+      "from-violet-500/15 to-violet-500/5 text-violet-700 dark:text-violet-400 border-violet-500/20",
+    status: "warning",
+    model: "Claude Opus 4.7",
+    leadsToday: 6,
+    leadsMonth: 184,
+    capacityMonth: 240,
+    responseRate: 56,
+    avgQualificationHours: 14.2,
+    handoffRate: 52,
+    scoreDelta: -3,
+    costMonth: 28.4,
+    sparkline: [22, 18, 24, 20, 16, 22, 18, 14, 20, 16, 18, 14],
+  },
+  {
+    id: "ag4",
+    name: "Bruno Carrinho",
+    initials: "BC",
+    icon: ShoppingCart,
+    accent:
+      "from-amber-500/15 to-amber-500/5 text-amber-700 dark:text-amber-400 border-amber-500/20",
+    status: "paused",
+    model: "GPT-4o",
+    leadsToday: 0,
+    leadsMonth: 0,
+    capacityMonth: 600,
+    responseRate: 0,
+    avgQualificationHours: 0,
+    handoffRate: 0,
+    scoreDelta: 0,
+    costMonth: 0,
+    sparkline: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
   },
 ]
 
 const teamTotals = {
-  qualifiedMonth: sdrs.reduce((a, s) => a + s.qualifiedMonth, 0),
-  goalMonth: sdrs.reduce((a, s) => a + s.goalMonth, 0),
+  leadsMonth: agents.reduce((a, s) => a + s.leadsMonth, 0),
+  capacityMonth: agents.reduce((a, s) => a + s.capacityMonth, 0),
   avgResponseRate: Math.round(
-    sdrs.reduce((a, s) => a + s.responseRate, 0) / sdrs.length
+    agents.filter((a) => a.responseRate > 0).reduce(
+      (acc, a, _, arr) => acc + a.responseRate / arr.length,
+      0
+    )
   ),
   avgQualificationHours:
     Math.round(
-      (sdrs.reduce((a, s) => a + s.avgQualificationHours, 0) / sdrs.length) * 10
+      (agents
+        .filter((a) => a.avgQualificationHours > 0)
+        .reduce((acc, a, _, arr) => acc + a.avgQualificationHours / arr.length, 0)) *
+        10
     ) / 10,
+  costMonth: Number(
+    agents.reduce((acc, a) => acc + a.costMonth, 0).toFixed(2)
+  ),
 }
 
-function rankBadgeTone(rank: number) {
-  if (rank === 1)
-    return "bg-gradient-to-br from-amber-400 to-amber-600 text-white shadow-sm shadow-amber-500/30"
-  if (rank === 2)
-    return "bg-gradient-to-br from-slate-300 to-slate-500 text-white shadow-sm"
-  if (rank === 3)
-    return "bg-gradient-to-br from-orange-700 to-orange-900 text-white shadow-sm"
-  return "bg-muted text-muted-foreground"
+const statusMeta: Record<
+  Status,
+  { label: string; tone: string; icon: typeof Sparkles }
+> = {
+  top: {
+    label: "Top performer",
+    tone: "bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border-emerald-500/20",
+    icon: Sparkles,
+  },
+  stable: {
+    label: "Estável",
+    tone: "bg-sky-500/10 text-sky-700 dark:text-sky-400 border-sky-500/20",
+    icon: Activity,
+  },
+  warning: {
+    label: "Requer atenção",
+    tone: "bg-amber-500/10 text-amber-700 dark:text-amber-400 border-amber-500/20",
+    icon: TrendingDown,
+  },
+  paused: {
+    label: "Pausado",
+    tone: "bg-muted text-muted-foreground border-border",
+    icon: Pause,
+  },
 }
 
 function Sparkline({ data }: { data: number[] }) {
+  const allZero = data.every((v) => v === 0)
+  if (allZero) {
+    return (
+      <div className="flex h-7 items-center justify-center text-[10px] text-muted-foreground/40">
+        sem atividade
+      </div>
+    )
+  }
   const max = Math.max(...data)
   const min = Math.min(...data)
   const range = max - min || 1
@@ -177,10 +241,10 @@ export function PerformanceSection() {
       <header className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div className="space-y-1">
           <h3 className="font-display text-lg font-bold tracking-tight">
-            Performance por SDR
+            Performance por Agente
           </h3>
           <p className="text-sm text-muted-foreground">
-            KPIs individuais, tendência e progresso contra a meta mensal.
+            Volume processado, qualidade e custo de cada agente IA SDR.
           </p>
         </div>
         <div className="flex gap-2">
@@ -206,16 +270,16 @@ export function PerformanceSection() {
       {/* Team summary */}
       <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
         <SummaryCard
-          label="Qualificados no mês"
-          value={`${teamTotals.qualifiedMonth}`}
-          hint={`de ${teamTotals.goalMonth} · meta da equipe`}
+          label="Leads processados"
+          value={teamTotals.leadsMonth.toLocaleString("pt-BR")}
+          hint={`de ${teamTotals.capacityMonth.toLocaleString("pt-BR")} de capacidade`}
           icon={CheckCircle2}
-          progress={(teamTotals.qualifiedMonth / teamTotals.goalMonth) * 100}
+          progress={(teamTotals.leadsMonth / teamTotals.capacityMonth) * 100}
         />
         <SummaryCard
           label="Taxa média de resposta"
           value={`${teamTotals.avgResponseRate}%`}
-          hint="média entre SDRs"
+          hint="entre agentes ativos"
           icon={Percent}
         />
         <SummaryCard
@@ -225,109 +289,147 @@ export function PerformanceSection() {
           icon={Timer}
         />
         <SummaryCard
-          label="SDRs ativos"
-          value={`${sdrs.length}`}
-          hint="distribuição equilibrada"
-          icon={Users}
+          label="Custo total LLM"
+          value={`$ ${teamTotals.costMonth.toFixed(2)}`}
+          hint="últimos 30 dias"
+          icon={DollarSign}
         />
       </div>
 
-      {/* Ranking list */}
+      {/* Agent cards */}
       <div className="space-y-3">
-        {sdrs.map((s, i) => {
-          const goalPct = Math.round((s.qualifiedMonth / s.goalMonth) * 100)
-          const onTrack = goalPct >= 80
+        {agents.map((a, i) => {
+          const usagePct = Math.round((a.leadsMonth / a.capacityMonth) * 100)
           const TrendIcon =
-            s.avgScoreDelta > 0
+            a.scoreDelta > 0
               ? TrendingUp
-              : s.avgScoreDelta < 0
+              : a.scoreDelta < 0
                 ? TrendingDown
                 : Minus
           const trendColor =
-            s.avgScoreDelta > 0
+            a.scoreDelta > 0
               ? "text-emerald-600 dark:text-emerald-400"
-              : s.avgScoreDelta < 0
+              : a.scoreDelta < 0
                 ? "text-rose-600 dark:text-rose-400"
                 : "text-muted-foreground"
+          const status = statusMeta[a.status]
+          const isPaused = a.status === "paused"
           return (
             <Card
-              key={s.id}
+              key={a.id}
               className={cn(
                 "animate-card-in card-hover",
-                `stagger-${Math.min(i + 1, 6)}`
+                `stagger-${Math.min(i + 1, 6)}`,
+                isPaused && "opacity-70"
               )}
             >
               <CardContent className="p-5">
                 <div className="grid grid-cols-1 items-center gap-4 lg:grid-cols-[auto_minmax(0,1fr)_minmax(0,2fr)_minmax(0,1.2fr)]">
-                  {/* Rank + Identity */}
+                  {/* Identity */}
                   <div className="flex items-center gap-3">
                     <div
                       className={cn(
-                        "flex size-10 shrink-0 items-center justify-center rounded-xl font-display text-sm font-bold",
-                        rankBadgeTone(s.rank)
+                        "flex size-12 shrink-0 items-center justify-center rounded-xl border-2 bg-gradient-to-br",
+                        a.accent
                       )}
+                      aria-hidden
                     >
-                      {s.rank <= 3 ? <Medal className="size-4" /> : s.rank}
+                      <a.icon className="size-5" />
                     </div>
-                    <Avatar className="size-11 ring-2 ring-border/60">
-                      <AvatarFallback className="bg-gradient-to-br from-primary/20 to-orange-500/20 text-sm font-bold text-primary">
-                        {s.initials}
-                      </AvatarFallback>
-                    </Avatar>
                     <div>
-                      <p className="font-display text-[15px] font-semibold tracking-tight">
-                        {s.name}
-                      </p>
-                      <Badge
-                        variant="secondary"
-                        className={cn(
-                          "text-[10px]",
-                          onTrack
-                            ? "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20"
-                            : "bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/20"
-                        )}
-                      >
-                        {onTrack ? "No ritmo" : "Abaixo da meta"}
-                      </Badge>
+                      <div className="flex items-center gap-1.5">
+                        <p className="font-display text-[15px] font-semibold tracking-tight">
+                          {a.name}
+                        </p>
+                        <Badge
+                          variant="secondary"
+                          className="bg-primary/10 text-primary border-primary/20 text-[9px]"
+                        >
+                          <Bot className="mr-0.5 size-2.5" />
+                          IA
+                        </Badge>
+                      </div>
+                      <div className="mt-1 flex flex-wrap items-center gap-1.5">
+                        <Badge
+                          variant="secondary"
+                          className={cn("gap-1 text-[10px]", status.tone)}
+                        >
+                          <status.icon className="size-2.5" />
+                          {status.label}
+                        </Badge>
+                        <span className="text-[10px] font-mono text-muted-foreground/70">
+                          {a.model}
+                        </span>
+                      </div>
                     </div>
                   </div>
 
-                  {/* Goal progress */}
+                  {/* Capacity progress */}
                   <div className="space-y-1.5">
                     <div className="flex items-baseline justify-between">
                       <span className="text-[11px] font-medium uppercase tracking-wider text-muted-foreground/80">
-                        Meta do mês
+                        Capacidade utilizada
                       </span>
                       <span className="font-display text-sm font-bold tabular-nums">
-                        {s.qualifiedMonth}
+                        {a.leadsMonth.toLocaleString("pt-BR")}
                         <span className="text-xs font-normal text-muted-foreground">
-                          /{s.goalMonth}
+                          /{a.capacityMonth.toLocaleString("pt-BR")}
                         </span>
                       </span>
                     </div>
-                    <Progress value={goalPct} className="h-1.5" />
+                    <Progress value={usagePct} className="h-1.5" />
                     <p className="text-[11px] text-muted-foreground">
-                      {goalPct}% atingido · faltam {s.goalMonth - s.qualifiedMonth}
+                      {isPaused
+                        ? "Agente sem execução no período"
+                        : `${usagePct}% da capacidade · ${a.leadsToday} hoje`}
                     </p>
                   </div>
 
                   {/* KPI grid */}
                   <div className="grid grid-cols-4 gap-3">
-                    <Kpi label="Hoje" value={s.qualifiedDay} unit="qual." />
                     <Kpi
                       label="Resposta"
-                      value={`${s.responseRate}%`}
-                      tone={s.responseRate >= 35 ? "good" : "warn"}
+                      value={isPaused ? "—" : `${a.responseRate}%`}
+                      tone={
+                        isPaused
+                          ? undefined
+                          : a.responseRate >= 35
+                            ? "good"
+                            : "warn"
+                      }
                     />
                     <Kpi
                       label="Tempo qual."
-                      value={`${s.avgQualificationHours}h`}
-                      tone={s.avgQualificationHours <= 8 ? "good" : "warn"}
+                      value={isPaused ? "—" : `${a.avgQualificationHours}h`}
+                      tone={
+                        isPaused
+                          ? undefined
+                          : a.avgQualificationHours <= 8
+                            ? "good"
+                            : "warn"
+                      }
                     />
                     <Kpi
                       label="Handoff"
-                      value={`${s.handoffRate}%`}
-                      tone={s.handoffRate >= 30 ? "good" : "warn"}
+                      value={isPaused ? "—" : `${a.handoffRate}%`}
+                      tone={
+                        isPaused
+                          ? undefined
+                          : a.handoffRate >= 30
+                            ? "good"
+                            : "warn"
+                      }
+                    />
+                    <Kpi
+                      label="Custo"
+                      value={isPaused ? "—" : `$${a.costMonth.toFixed(2)}`}
+                      tone={
+                        isPaused
+                          ? undefined
+                          : a.costMonth / Math.max(a.leadsMonth, 1) <= 0.05
+                            ? "good"
+                            : "warn"
+                      }
                     />
                   </div>
 
@@ -337,18 +439,20 @@ export function PerformanceSection() {
                       <span className="text-[11px] font-medium uppercase tracking-wider text-muted-foreground/80">
                         Tendência (12 sem)
                       </span>
-                      <span
-                        className={cn(
-                          "flex items-center gap-0.5 text-[11px] font-bold",
-                          trendColor
-                        )}
-                      >
-                        <TrendIcon className="size-3" />
-                        {s.avgScoreDelta > 0 ? "+" : ""}
-                        {s.avgScoreDelta} pts
-                      </span>
+                      {!isPaused && (
+                        <span
+                          className={cn(
+                            "flex items-center gap-0.5 text-[11px] font-bold",
+                            trendColor
+                          )}
+                        >
+                          <TrendIcon className="size-3" />
+                          {a.scoreDelta > 0 ? "+" : ""}
+                          {a.scoreDelta} pts
+                        </span>
+                      )}
                     </div>
-                    <Sparkline data={s.sparkline} />
+                    <Sparkline data={a.sparkline} />
                   </div>
                 </div>
               </CardContent>
@@ -358,13 +462,16 @@ export function PerformanceSection() {
       </div>
 
       <div className="flex items-start gap-2 rounded-xl bg-primary/[0.04] border border-primary/10 px-3.5 py-2.5">
-        <Trophy className="mt-0.5 size-4 shrink-0 text-primary" />
+        <Sparkles className="mt-0.5 size-4 shrink-0 text-primary" />
         <p className="flex-1 text-[12px] leading-relaxed text-muted-foreground">
           <span className="font-medium text-foreground/80">
-            Pedro Henrique
+            Insight da IA Gestora:
           </span>{" "}
-          é o destaque do período com +12 pts de melhora no score médio de lead.
-          Clique no nome para ver o detalhamento.
+          o agente <span className="font-semibold">Sofia Pré-Vendas</span>{" "}
+          mostra queda de score (-3 pts) nas últimas semanas — vale revisar o
+          prompt ou trocar o modelo (Opus tem custo $28/mês para 184 leads).
+          <span className="font-semibold"> Bruno Carrinho</span> está pausado e
+          pode ser ativado para absorver demanda do e-commerce.
         </p>
       </div>
     </div>
@@ -381,7 +488,7 @@ function SummaryCard({
   label: string
   value: string
   hint: string
-  icon: typeof Users
+  icon: typeof Bot
   progress?: number
 }) {
   return (
@@ -412,12 +519,10 @@ function SummaryCard({
 function Kpi({
   label,
   value,
-  unit,
   tone,
 }: {
   label: string
   value: string | number
-  unit?: string
   tone?: "good" | "warn"
 }) {
   const toneCls =
@@ -438,11 +543,6 @@ function Kpi({
         )}
       >
         {value}
-        {unit && (
-          <span className="ml-0.5 text-[10px] font-normal text-muted-foreground">
-            {unit}
-          </span>
-        )}
       </p>
     </div>
   )

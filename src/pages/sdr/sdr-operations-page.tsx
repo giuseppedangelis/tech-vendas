@@ -26,7 +26,7 @@ interface OpTab {
 
 const operationTabs: OpTab[] = [
   { id: "leads", label: "Leads em Qualificação", icon: ListChecks, count: 9, tone: "live" },
-  { id: "performance", label: "Performance por SDR", icon: TrendingUp },
+  { id: "performance", label: "Performance por Agente", icon: TrendingUp },
   { id: "cadencias", label: "Análise por Cadência", icon: Repeat },
   { id: "desqualificados", label: "Desqualificados", icon: XCircle, count: 7 },
   { id: "reativacao", label: "Reativação", icon: History, count: 129, tone: "warn" },
@@ -63,7 +63,7 @@ export function SdrOperationsPage() {
             className="gap-1 bg-primary/10 text-primary border-primary/20"
           >
             <ActivityIcon className="size-3" />
-            Operação SDR
+            Monitoramento SDR
           </Badge>
           <Badge variant="secondary" className="gap-1 text-[10px]">
             <span className="size-1.5 rounded-full bg-emerald-500 pulse-online" />
@@ -71,10 +71,10 @@ export function SdrOperationsPage() {
           </Badge>
         </div>
         <h2 className="text-gradient mt-2 text-2xl font-bold tracking-tight">
-          Operação SDR
+          Monitoramento SDR
         </h2>
         <p className="text-muted-foreground">
-          Acompanhe qualificação, performance e recuperação de leads.
+          Acompanhe a execução do motor SDR — qualificação, performance e recuperação.
         </p>
       </header>
 
@@ -82,7 +82,7 @@ export function SdrOperationsPage() {
         {/* Left nav */}
         <nav
           className="w-full shrink-0 lg:w-64"
-          aria-label="Seções de operação SDR"
+          aria-label="Seções de monitoramento SDR"
         >
           <div className="space-y-0.5">
             {operationTabs.map((t) => {
@@ -90,7 +90,7 @@ export function SdrOperationsPage() {
               return (
                 <button
                   key={t.id}
-                  onClick={() => navigate(`/sdr/operacao/${t.id}`)}
+                  onClick={() => navigate(`/sdr/monitoramento/${t.id}`)}
                   aria-current={active ? "page" : undefined}
                   className={cn(
                     "group flex w-full items-center gap-2.5 rounded-lg px-3 py-2.5 text-sm transition-colors border-l-[3px]",

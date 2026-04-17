@@ -68,7 +68,7 @@ const handoffQueue = [
     lead: "Marcos Andrade",
     company: "Logibras Transportes",
     score: 92,
-    sdr: "Pedro Henrique",
+    agent: "Ana Prospectora",
     readyIn: "pronto",
     framework: "BANT completo",
   },
@@ -77,7 +77,7 @@ const handoffQueue = [
     lead: "Fernanda Castro",
     company: "Nexa Digital",
     score: 88,
-    sdr: "Pedro Henrique",
+    agent: "Ana Prospectora",
     readyIn: "pronto",
     framework: "BANT completo",
   },
@@ -86,7 +86,7 @@ const handoffQueue = [
     lead: "Renato Oliveira",
     company: "Hub Varejo",
     score: 84,
-    sdr: "Larissa Moura",
+    agent: "Sofia Pré-Vendas",
     readyIn: "agendado",
     framework: "BANT 75%",
   },
@@ -95,7 +95,7 @@ const handoffQueue = [
     lead: "Camila Dias",
     company: "Prático Contábil",
     score: 81,
-    sdr: "Larissa Moura",
+    agent: "Sofia Pré-Vendas",
     readyIn: "agendado",
     framework: "BANT 75%",
   },
@@ -113,7 +113,7 @@ const alerts = [
     id: "a2",
     severity: "critical" as const,
     title: "3 leads sem interação há +48h",
-    description: "SDR Larissa Moura pode estar com sobrecarga.",
+    description: "Agente Roberto Recuperador atingiu fila de processamento.",
     time: "há 1h",
   },
   {
@@ -125,11 +125,11 @@ const alerts = [
   },
 ]
 
-const sdrLoad = [
-  { name: "Pedro Henrique", active: 42, capacity: 50 },
-  { name: "Larissa Moura", active: 38, capacity: 40 },
-  { name: "João Batista", active: 22, capacity: 40 },
-  { name: "Tatiana Vieira", active: 15, capacity: 40 },
+const agentLoad = [
+  { name: "Ana Prospectora", active: 64, capacity: 80, model: "Claude Sonnet 4.6" },
+  { name: "Roberto Recuperador", active: 41, capacity: 60, model: "Claude Haiku 4.5" },
+  { name: "Sofia Pré-Vendas", active: 18, capacity: 30, model: "Claude Opus 4.7" },
+  { name: "Bruno Carrinho", active: 0, capacity: 50, model: "GPT-4o" },
 ]
 
 const severityStyles = {
@@ -164,9 +164,9 @@ export function SdrOverviewPage() {
         </div>
         <div className="flex gap-2">
           <Button asChild variant="outline" size="sm">
-            <Link to="/sdr/operacao">
+            <Link to="/sdr/monitoramento">
               <ActivityIcon className="mr-1.5 size-4" />
-              Operação
+              Monitoramento
             </Link>
           </Button>
           <Button asChild size="sm" className="btn-lift bg-gradient-to-r from-primary to-orange-600 text-primary-foreground shadow-md shadow-primary/10">
@@ -218,7 +218,7 @@ export function SdrOverviewPage() {
               <CardDescription>Leads prontos para repasse ao time de fechamento</CardDescription>
             </div>
             <Button variant="ghost" size="sm" asChild>
-              <Link to="/sdr/operacao">
+              <Link to="/sdr/monitoramento">
                 Ver todos
                 <ArrowRight className="ml-1 size-3.5" />
               </Link>
@@ -236,7 +236,7 @@ export function SdrOverviewPage() {
                 <div className="min-w-0 flex-1">
                   <p className="truncate text-sm font-medium">{h.lead}</p>
                   <p className="truncate text-xs text-muted-foreground">
-                    {h.company} · SDR: {h.sdr}
+                    {h.company} · Agente: {h.agent}
                   </p>
                 </div>
                 <div className="hidden flex-col items-end sm:flex">
@@ -281,27 +281,38 @@ export function SdrOverviewPage() {
         </Card>
       </div>
 
-      {/* SDR capacity */}
+      {/* Agents capacity */}
       <Card className="animate-card-in">
         <CardHeader>
-          <CardTitle className="text-base">Carga da equipe SDR</CardTitle>
-          <CardDescription>Ocupação atual vs. capacidade configurada por SDR</CardDescription>
+          <CardTitle className="text-base">Carga dos agentes IA</CardTitle>
+          <CardDescription>Leads em atendimento simultâneo vs. capacidade configurada por agente</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
-          {sdrLoad.map((s, i) => {
-            const pct = Math.round((s.active / s.capacity) * 100)
+          {agentLoad.map((a, i) => {
+            const pct = a.capacity > 0 ? Math.round((a.active / a.capacity) * 100) : 0
             const tone =
-              pct >= 95 ? "text-rose-600" : pct >= 80 ? "text-amber-600" : "text-emerald-600"
+              a.active === 0
+                ? "text-muted-foreground"
+                : pct >= 95
+                  ? "text-rose-600"
+                  : pct >= 80
+                    ? "text-amber-600"
+                    : "text-emerald-600"
             return (
-              <div key={s.name} className="space-y-1.5">
-                <div className="flex items-center justify-between">
-                  <span className="text-sm font-medium">{s.name}</span>
-                  <span className={`text-xs font-semibold ${tone}`}>
-                    {s.active}/{s.capacity} · {pct}%
+              <div key={a.name} className="space-y-1.5">
+                <div className="flex items-center justify-between gap-2">
+                  <div className="flex items-center gap-2 min-w-0">
+                    <span className="text-sm font-medium truncate">{a.name}</span>
+                    <span className="hidden sm:inline text-[10px] text-muted-foreground/70 font-mono">
+                      {a.model}
+                    </span>
+                  </div>
+                  <span className={`text-xs font-semibold tabular-nums shrink-0 ${tone}`}>
+                    {a.active === 0 ? "pausado" : `${a.active}/${a.capacity} · ${pct}%`}
                   </span>
                 </div>
                 <Progress value={pct} className="h-1.5" />
-                {i < sdrLoad.length - 1 && <Separator className="opacity-0" />}
+                {i < agentLoad.length - 1 && <Separator className="opacity-0" />}
               </div>
             )
           })}

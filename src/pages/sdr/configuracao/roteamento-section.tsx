@@ -8,7 +8,6 @@ import { Button } from "@/components/ui/button"
 import { Switch } from "@/components/ui/switch"
 import { Separator } from "@/components/ui/separator"
 import { Label } from "@/components/ui/label"
-import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import {
   Select,
   SelectContent,
@@ -31,6 +30,7 @@ import {
   Users,
   Zap,
   UserX,
+  Bot,
 } from "lucide-react"
 import { cn } from "@/lib/utils"
 
@@ -46,19 +46,19 @@ const strategyOptions: {
     id: "round_robin",
     label: "Round-robin",
     icon: Shuffle,
-    description: "Distribuição sequencial e equilibrada entre SDRs ativos.",
+    description: "Distribuição sequencial e equilibrada entre agentes ativos.",
   },
   {
     id: "by_load",
     label: "Por carga",
     icon: BarChart2,
-    description: "Novo lead vai sempre para o SDR com menor carga no momento.",
+    description: "Novo lead vai sempre para o agente com menor carga no momento.",
   },
   {
     id: "by_product",
     label: "Por produto",
     icon: Package,
-    description: "SDRs especializados em produtos específicos recebem leads compatíveis.",
+    description: "Agentes especializados em produtos específicos recebem leads compatíveis.",
   },
   {
     id: "by_territory",
@@ -73,7 +73,7 @@ interface Rule {
   order: number
   name: string
   condition: string
-  targetType: "sdr_group" | "single_sdr" | "fallback_queue"
+  targetType: "agent_group" | "single_agent" | "fallback_queue"
   targetLabel: string
   assignees: Array<{ name: string; initials: string }>
   active: boolean
@@ -85,47 +85,39 @@ const initialRules: Rule[] = [
     order: 1,
     name: "Leads enterprise",
     condition: "Empresa com 500+ funcionários",
-    targetType: "single_sdr",
-    targetLabel: "Pedro Henrique",
-    assignees: [{ name: "Pedro Henrique", initials: "PH" }],
+    targetType: "single_agent",
+    targetLabel: "Sofia Pré-Vendas",
+    assignees: [{ name: "Sofia Pré-Vendas", initials: "SP" }],
     active: true,
   },
   {
     id: "r2",
     order: 2,
-    name: "Segmento SaaS",
-    condition: "Indústria = Software / Tech",
-    targetType: "sdr_group",
-    targetLabel: "Time SaaS",
-    assignees: [
-      { name: "Larissa", initials: "LM" },
-      { name: "João", initials: "JB" },
-    ],
+    name: "Reativações",
+    condition: "Lead originado de cadência de reativação",
+    targetType: "single_agent",
+    targetLabel: "Roberto Recuperador",
+    assignees: [{ name: "Roberto Recuperador", initials: "RR" }],
     active: true,
   },
   {
     id: "r3",
     order: 3,
-    name: "Reativações",
-    condition: "Lead originado de cadência de reativação",
-    targetType: "single_sdr",
-    targetLabel: "Tatiana Vieira",
-    assignees: [{ name: "Tatiana", initials: "TV" }],
-    active: true,
+    name: "Carrinho abandonado",
+    condition: "Webhook de carrinho/checkout não-finalizado",
+    targetType: "single_agent",
+    targetLabel: "Bruno Carrinho",
+    assignees: [{ name: "Bruno Carrinho", initials: "BC" }],
+    active: false,
   },
   {
     id: "r4",
     order: 4,
     name: "Padrão",
     condition: "Qualquer outro lead que chegar",
-    targetType: "sdr_group",
-    targetLabel: "Todos os SDRs disponíveis",
-    assignees: [
-      { name: "Pedro", initials: "PH" },
-      { name: "Larissa", initials: "LM" },
-      { name: "João", initials: "JB" },
-      { name: "Tatiana", initials: "TV" },
-    ],
+    targetType: "single_agent",
+    targetLabel: "Ana Prospectora",
+    assignees: [{ name: "Ana Prospectora", initials: "AP" }],
     active: true,
   },
 ]
@@ -134,12 +126,12 @@ const targetTypeMeta: Record<
   Rule["targetType"],
   { label: string; tone: string }
 > = {
-  single_sdr: {
-    label: "SDR específico",
+  single_agent: {
+    label: "Agente específico",
     tone: "bg-violet-500/10 text-violet-700 dark:text-violet-400 border-violet-500/20",
   },
-  sdr_group: {
-    label: "Grupo de SDRs",
+  agent_group: {
+    label: "Grupo de agentes",
     tone: "bg-primary/10 text-primary border-primary/20",
   },
   fallback_queue: {
@@ -169,7 +161,7 @@ export function RoteamentoSection() {
             Roteamento de Leads
           </h3>
           <p className="text-sm text-muted-foreground">
-            Defina como novos leads são distribuídos entre os SDRs.
+            Defina como novos leads são distribuídos entre os agentes IA SDR.
           </p>
         </div>
         <Button className="btn-lift bg-gradient-to-r from-primary to-orange-600 text-primary-foreground shadow-md shadow-primary/10">
@@ -310,19 +302,17 @@ export function RoteamentoSection() {
                       {rule.targetLabel}
                     </p>
 
-                    <div className="flex items-center gap-2">
-                      <div className="flex -space-x-1.5">
-                        {rule.assignees.slice(0, 4).map((a, i) => (
-                          <Avatar
-                            key={i}
-                            className="size-6 ring-2 ring-card"
-                          >
-                            <AvatarFallback className="bg-gradient-to-br from-primary/20 to-orange-500/20 text-[9px] font-bold text-primary">
-                              {a.initials}
-                            </AvatarFallback>
-                          </Avatar>
-                        ))}
-                      </div>
+                    <div className="flex flex-wrap items-center gap-1.5">
+                      {rule.assignees.slice(0, 4).map((a, i) => (
+                        <span
+                          key={i}
+                          className="inline-flex items-center gap-1 rounded-md border border-primary/20 bg-primary/[0.06] px-1.5 py-0.5 text-[10px] font-medium text-primary"
+                          title={`Agente IA: ${a.name}`}
+                        >
+                          <Bot className="size-2.5" />
+                          {a.name}
+                        </span>
+                      ))}
                       {rule.assignees.length > 4 && (
                         <span className="text-[11px] text-muted-foreground">
                           +{rule.assignees.length - 4}
@@ -379,10 +369,10 @@ export function RoteamentoSection() {
               </div>
               <div>
                 <p className="font-display text-sm font-semibold tracking-tight">
-                  Overflow — todos os SDRs na capacidade
+                  Overflow — todos os agentes na capacidade
                 </p>
                 <p className="text-[11px] text-muted-foreground">
-                  O que fazer quando ninguém tem espaço.
+                  O que fazer quando nenhum agente tem espaço disponível.
                 </p>
               </div>
             </div>
@@ -400,15 +390,15 @@ export function RoteamentoSection() {
                   icon: AlertTriangle,
                 },
                 {
-                  id: "ai_only",
-                  label: "Agente IA responde primeiro",
-                  hint: "Agente inicia qualificação até SDR ficar livre.",
+                  id: "queue_only",
+                  label: "Apenas enfileirar e esperar",
+                  hint: "Lead aguarda em fila até abrir capacidade num agente.",
                   icon: Zap,
                 },
                 {
                   id: "assign_anyway",
                   label: "Atribuir mesmo assim (ignorar capacidade)",
-                  hint: "SDR com menor carga recebe acima do limite.",
+                  hint: "Agente com menor carga recebe acima do limite configurado.",
                   icon: Shuffle,
                 },
               ].map((opt) => {
@@ -464,7 +454,7 @@ export function RoteamentoSection() {
                     Failover automático
                   </p>
                   <p className="text-[11px] text-muted-foreground">
-                    Reatribui leads quando SDR fica indisponível.
+                    Reatribui leads quando agente fica indisponível ou em erro.
                   </p>
                 </div>
               </div>
@@ -516,10 +506,10 @@ export function RoteamentoSection() {
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="least_load">
-                      SDR com menor carga
+                      Agente com menor carga
                     </SelectItem>
                     <SelectItem value="same_group">
-                      Outro SDR do mesmo grupo
+                      Outro agente compatível com o funil
                     </SelectItem>
                     <SelectItem value="manager_queue">
                       Fila do gestor para revisão

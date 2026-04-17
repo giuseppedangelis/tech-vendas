@@ -10,11 +10,15 @@ import {
   MessageSquare,
   Clock,
   SlidersHorizontal,
+  GitBranch,
+  KeyRound,
 } from "lucide-react"
 import { cn } from "@/lib/utils"
+import { WorkflowSection } from "./configuracao/workflow-section"
 import { CadenciasSection } from "./configuracao/cadencias-section"
 import { ScriptsSection } from "./configuracao/scripts-section"
 import { AgenteIaSection } from "./configuracao/agente-ia-section"
+import { ProvedoresSection } from "./configuracao/provedores-section"
 import { ScoringSection } from "./configuracao/scoring-section"
 import { RoteamentoSection } from "./configuracao/roteamento-section"
 import { TemplatesSection } from "./configuracao/templates-section"
@@ -24,26 +28,39 @@ interface ConfigTab {
   id: string
   label: string
   icon: typeof Repeat
+  group?: "motor" | "ai" | "operacao"
 }
 
 const configTabs: ConfigTab[] = [
-  { id: "cadencias", label: "Cadências", icon: Repeat },
-  { id: "scripts", label: "Scripts de Qualificação", icon: ClipboardList },
-  { id: "agente-ia", label: "Agente IA SDR", icon: Bot },
-  { id: "scoring", label: "Lead Scoring", icon: Target },
-  { id: "roteamento", label: "Roteamento", icon: Route },
-  { id: "templates", label: "Templates WhatsApp", icon: MessageSquare },
-  { id: "horarios", label: "Horários & SLA", icon: Clock },
+  { id: "workflow", label: "Workflow de Entrada", icon: GitBranch, group: "motor" },
+  { id: "cadencias", label: "Cadências", icon: Repeat, group: "motor" },
+  { id: "scripts", label: "Scripts de Qualificação", icon: ClipboardList, group: "motor" },
+  { id: "scoring", label: "Lead Scoring", icon: Target, group: "motor" },
+  { id: "roteamento", label: "Roteamento", icon: Route, group: "motor" },
+  { id: "agente-ia", label: "Agentes IA SDR", icon: Bot, group: "ai" },
+  { id: "provedores", label: "Chaves & Modelos LLM", icon: KeyRound, group: "ai" },
+  { id: "templates", label: "Templates WhatsApp", icon: MessageSquare, group: "operacao" },
+  { id: "horarios", label: "Horários & SLA", icon: Clock, group: "operacao" },
 ]
+
+const groupLabels: Record<NonNullable<ConfigTab["group"]>, string> = {
+  motor: "Motor SDR",
+  ai: "Inteligência Artificial",
+  operacao: "Operação",
+}
 
 function SectionContent({ tab }: { tab: string }) {
   switch (tab) {
+    case "workflow":
+      return <WorkflowSection />
     case "cadencias":
       return <CadenciasSection />
     case "scripts":
       return <ScriptsSection />
     case "agente-ia":
       return <AgenteIaSection />
+    case "provedores":
+      return <ProvedoresSection />
     case "scoring":
       return <ScoringSection />
     case "roteamento":
@@ -53,13 +70,25 @@ function SectionContent({ tab }: { tab: string }) {
     case "horarios":
       return <HorariosSection />
     default:
-      return <CadenciasSection />
+      return <WorkflowSection />
   }
 }
 
 export function SdrConfigurationPage() {
-  const { tab = "cadencias" } = useParams<{ tab?: string }>()
+  const { tab = "workflow" } = useParams<{ tab?: string }>()
   const navigate = useNavigate()
+
+  const groups: Array<{
+    id: NonNullable<ConfigTab["group"]>
+    label: string
+    items: ConfigTab[]
+  }> = (
+    ["motor", "ai", "operacao"] as const
+  ).map((g) => ({
+    id: g,
+    label: groupLabels[g],
+    items: configTabs.filter((t) => t.group === g),
+  }))
 
   return (
     <div className="animate-page-in space-y-6">
@@ -85,7 +114,7 @@ export function SdrConfigurationPage() {
           Configuração SDR
         </h2>
         <p className="text-muted-foreground">
-          Defina cadências, scripts, agente IA, scoring e regras do módulo.
+          Parametrize o motor SDR — workflow de entrada, cadências, agentes IA, scoring e regras operacionais.
         </p>
       </header>
 
@@ -95,31 +124,38 @@ export function SdrConfigurationPage() {
           className="w-full shrink-0 lg:w-64"
           aria-label="Seções de configuração SDR"
         >
-          <div className="space-y-0.5">
-            {configTabs.map((t) => {
-              const active = tab === t.id
-              return (
-                <button
-                  key={t.id}
-                  onClick={() => navigate(`/sdr/configuracao/${t.id}`)}
-                  aria-current={active ? "page" : undefined}
-                  className={cn(
-                    "group flex w-full items-center gap-2.5 rounded-lg px-3 py-2.5 text-sm transition-colors border-l-[3px]",
-                    active
-                      ? "bg-primary/[0.06] text-primary border-l-primary font-medium"
-                      : "text-muted-foreground border-l-transparent hover:bg-primary/[0.03] hover:border-l-primary/30 hover:text-foreground/80"
-                  )}
-                >
-                  <t.icon
-                    className={cn(
-                      "size-4 shrink-0",
-                      active ? "text-primary" : "text-muted-foreground/70"
-                    )}
-                  />
-                  <span className="flex-1 text-left">{t.label}</span>
-                </button>
-              )
-            })}
+          <div className="space-y-4">
+            {groups.map((g) => (
+              <div key={g.id} className="space-y-0.5">
+                <p className="px-3 mb-1 text-[10px] font-bold uppercase tracking-[0.18em] text-muted-foreground/50">
+                  {g.label}
+                </p>
+                {g.items.map((t) => {
+                  const active = tab === t.id
+                  return (
+                    <button
+                      key={t.id}
+                      onClick={() => navigate(`/sdr/configuracao/${t.id}`)}
+                      aria-current={active ? "page" : undefined}
+                      className={cn(
+                        "group flex w-full items-center gap-2.5 rounded-lg px-3 py-2.5 text-sm transition-colors border-l-[3px]",
+                        active
+                          ? "bg-primary/[0.06] text-primary border-l-primary font-medium"
+                          : "text-muted-foreground border-l-transparent hover:bg-primary/[0.03] hover:border-l-primary/30 hover:text-foreground/80"
+                      )}
+                    >
+                      <t.icon
+                        className={cn(
+                          "size-4 shrink-0",
+                          active ? "text-primary" : "text-muted-foreground/70"
+                        )}
+                      />
+                      <span className="flex-1 text-left">{t.label}</span>
+                    </button>
+                  )
+                })}
+              </div>
+            ))}
           </div>
         </nav>
 
