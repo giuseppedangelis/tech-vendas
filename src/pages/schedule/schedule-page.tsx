@@ -1,7 +1,7 @@
 import { useState } from "react"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { Card, CardContent } from "@/components/ui/card"
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import {
@@ -18,7 +18,15 @@ import {
   Eye,
   User,
   Sparkles,
+  Link as LinkIcon,
+  Copy,
+  ChevronLeft,
+  ChevronRight,
+  Plus,
+  Edit3,
+  TrendingUp,
 } from "lucide-react"
+import { useAuth } from "@/hooks/use-auth"
 
 type AppointmentType = "Reunião" | "Ligação" | "Demo" | "Follow-up"
 type AppointmentStatus = "Agendado" | "Confirmado" | "Concluído" | "No-show"
@@ -323,7 +331,7 @@ function AppointmentCard({ appointment }: { appointment: Appointment }) {
   )
 }
 
-export function SchedulePage() {
+function GestorSchedulePage() {
   const [viewTab, setViewTab] = useState("today")
 
   const todayAppointments = appointments.filter((a) => a.date === today)
@@ -513,4 +521,435 @@ export function SchedulePage() {
       </div>
     </div>
   )
+}
+
+// ===========================================================================
+// CLOSER SCHEDULE PAGE (Reference-style: weekly grid + link público + action inbox)
+// ===========================================================================
+
+interface CalEvent {
+  d: number
+  s: number
+  h: number
+  t: string
+  sub?: string
+  c?: "blue" | "green" | "amber"
+}
+
+const CLOSER_WEEK_DAYS = [
+  { day: "SEG", date: 13 },
+  { day: "TER", date: 14, today: true },
+  { day: "QUA", date: 15 },
+  { day: "QUI", date: 16 },
+  { day: "SEX", date: 17 },
+  { day: "SÁB", date: 18 },
+  { day: "DOM", date: 19 },
+]
+
+const CLOSER_CAL_HOURS = [8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19]
+
+const CLOSER_EVENTS: CalEvent[] = [
+  { d: 0, s: 9, h: 0.5, t: "Sync time comercial", sub: "Google Meet", c: "blue" },
+  { d: 0, s: 11, h: 1, t: "Pepsico · Descoberta", sub: "Mariana Teixeira" },
+  { d: 0, s: 14, h: 0.5, t: "Prep proposta Klabin" },
+  { d: 0, s: 16, h: 1, t: "Call Natura", sub: "Juliana Prates", c: "green" },
+  { d: 1, s: 9, h: 0.5, t: "Daily squad", c: "blue" },
+  { d: 1, s: 10, h: 1.25, t: "Klabin · Negociação", sub: "Ricardo A. · R$ 120k" },
+  { d: 1, s: 13, h: 0.75, t: "Almoço com Fábio", sub: "Raia Drogasil", c: "amber" },
+  { d: 1, s: 15, h: 1, t: "Pepsico · Fechamento", sub: "Mariana + Rodrigo (CTO)" },
+  { d: 1, s: 17, h: 0.5, t: "Retro semanal", c: "blue" },
+  { d: 2, s: 10, h: 1, t: "Nubank · Descoberta", sub: "Ana Beatriz · POC", c: "green" },
+  { d: 2, s: 14, h: 1.5, t: "Roadmap com produto", c: "amber" },
+  { d: 3, s: 9, h: 1, t: "iFood · Follow-up", sub: "Camila Herrera" },
+  { d: 3, s: 11, h: 0.5, t: "Prep Ambev" },
+  { d: 3, s: 14, h: 1.25, t: "Ambev · Revisão jurídica", sub: "Leonardo B. · R$ 210k" },
+  { d: 3, s: 16, h: 1, t: "Raia · Kickoff", sub: "Fábio Guedes", c: "green" },
+  { d: 4, s: 9, h: 0.5, t: "Standup", c: "blue" },
+  { d: 4, s: 10, h: 1, t: "Stone · Add-on", sub: "Bernardo Mello" },
+  { d: 4, s: 15, h: 2, t: "Workshop enterprise", sub: "Cliente potencial Magalu", c: "amber" },
+]
+
+interface MeetingAction {
+  id: string
+  company: string
+  when: string
+  intro: string
+  tasks: string[]
+}
+
+const CLOSER_MEETING_ACTIONS: MeetingAction[] = [
+  {
+    id: "pep",
+    company: "Pepsico",
+    when: "ontem · 38min",
+    intro: "Transcrevemos a reunião com a Pepsico. Aqui estão 3 tarefas que você prometeu lá:",
+    tasks: [
+      "Enviar contrato v3 com cláusula de SLA e homologação SAP (prazo: sexta)",
+      "Agendar call técnica com Rodrigo e time de TI para 22/04",
+      "Compartilhar case do cliente Movida como referência de integração",
+    ],
+  },
+  {
+    id: "klab",
+    company: "Klabin",
+    when: "2 dias atrás · 52min",
+    intro: "Identificamos 2 compromissos pendentes da call com Klabin:",
+    tasks: [
+      "Enviar comparativo de preços com volume (5 e 10 squads)",
+      "Conectar Ricardo com o André (customer success) para referência",
+    ],
+  },
+]
+
+const CLOSER_WEEK_MINI_STATS = [
+  { label: "Reuniões", value: "11", sub: "4 discovery" },
+  { label: "Tempo em call", value: "8h 42m", sub: "-1h vs média" },
+  { label: "Taxa comparecimento", value: "91%", sub: "+4pp" },
+  { label: "Follow-ups criados", value: "7", sub: "via Copiloto" },
+]
+
+function eventToneClasses(c?: CalEvent["c"]) {
+  if (c === "blue") return "bg-sky-500/15 border-l-sky-500 text-sky-700 dark:text-sky-300"
+  if (c === "green") return "bg-emerald-500/15 border-l-emerald-500 text-emerald-700 dark:text-emerald-300"
+  if (c === "amber") return "bg-amber-500/15 border-l-amber-500 text-amber-700 dark:text-amber-300"
+  return "bg-primary/10 border-l-primary text-foreground"
+}
+
+function CloserSchedulePage() {
+  const [copied, setCopied] = useState(false)
+  const [actionsState, setActionsState] = useState<Record<string, "created" | "ignored">>({})
+  const slotH = 48
+  const hourStart = CLOSER_CAL_HOURS[0]
+
+  const copy = () => {
+    setCopied(true)
+    setTimeout(() => setCopied(false), 1800)
+  }
+
+  const setAction = (id: string, val: "created" | "ignored") =>
+    setActionsState((prev) => ({ ...prev, [id]: val }))
+
+  const pendingCount = CLOSER_MEETING_ACTIONS.filter((m) => !actionsState[m.id]).length
+  const allHandled = CLOSER_MEETING_ACTIONS.every((m) => actionsState[m.id])
+
+  return (
+    <div className="animate-page-in grid gap-6 lg:grid-cols-[1fr_360px]">
+      {/* ── LEFT: Week calendar ── */}
+      <div className="space-y-4">
+        {/* Header */}
+        <div className="flex flex-wrap items-center gap-2">
+          <Button variant="ghost" size="sm" className="size-8 p-0">
+            <ChevronLeft className="size-4" />
+          </Button>
+          <Button variant="ghost" size="sm" className="size-8 p-0">
+            <ChevronRight className="size-4" />
+          </Button>
+          <Button variant="outline" size="sm" className="h-8">
+            Hoje
+          </Button>
+          <h2 className="font-display text-[15px] font-semibold tracking-tight ml-1">Abril 2026</h2>
+          <Badge variant="secondary" className="ml-1 text-[10px]">
+            Semana 15 · 13 – 19 abril
+          </Badge>
+          <div className="flex-1" />
+          <div className="inline-flex rounded-lg border border-border/60 p-0.5 text-xs">
+            <button className="rounded-md px-2.5 py-1 text-muted-foreground hover:text-foreground">Dia</button>
+            <button className="rounded-md bg-muted px-2.5 py-1 font-medium shadow-sm">Semana</button>
+            <button className="rounded-md px-2.5 py-1 text-muted-foreground hover:text-foreground">Mês</button>
+          </div>
+          <Button variant="outline" size="sm" className="h-8 text-xs">
+            <span className="size-2 rounded-sm bg-emerald-500" />
+            Google Calendar sincronizado
+          </Button>
+          <Button
+            variant="gradient"
+            size="sm"
+            className="btn-lift h-8"
+          >
+            <Plus className="size-3.5" />
+            Novo evento
+          </Button>
+        </div>
+
+        {/* Calendar grid */}
+        <Card className="overflow-hidden">
+          <div
+            className="grid border-b border-border/60 text-[11px] font-semibold uppercase tracking-wide bg-muted/30"
+            style={{ gridTemplateColumns: "54px repeat(7, 1fr)" }}
+          >
+            <div />
+            {CLOSER_WEEK_DAYS.map((d) => (
+              <div
+                key={d.day}
+                className={`flex items-center justify-center gap-1.5 py-2 border-l border-border/60 ${
+                  d.today ? "text-primary" : "text-muted-foreground/70"
+                }`}
+              >
+                <span>{d.day}</span>
+                <span
+                  className={`font-mono text-[13px] font-bold ${
+                    d.today
+                      ? "bg-primary text-primary-foreground rounded-md px-1.5"
+                      : "text-foreground"
+                  }`}
+                >
+                  {d.date}
+                </span>
+              </div>
+            ))}
+          </div>
+
+          <div
+            className="relative grid"
+            style={{ gridTemplateColumns: "54px repeat(7, 1fr)" }}
+          >
+            {CLOSER_CAL_HOURS.map((h) => (
+              <div
+                key={`row-${h}`}
+                className="contents"
+              >
+                <div
+                  className="border-t border-border/50 py-1 pr-2 text-right text-[10px] font-mono text-muted-foreground/60"
+                  style={{ height: slotH }}
+                >
+                  {String(h).padStart(2, "0")}:00
+                </div>
+                {CLOSER_WEEK_DAYS.map((_, di) => (
+                  <div
+                    key={`slot-${h}-${di}`}
+                    className="border-t border-l border-border/50"
+                    style={{ height: slotH }}
+                  />
+                ))}
+              </div>
+            ))}
+
+            {/* Events overlay: use absolute positioning within day columns */}
+            {CLOSER_EVENTS.map((e, i) => {
+              const top = (e.s - hourStart) * slotH
+              const height = e.h * slotH - 4
+              const dayColStart = e.d + 2
+              return (
+                <div
+                  key={i}
+                  className={`absolute rounded-md border-l-[3px] px-2 py-1 shadow-sm overflow-hidden cursor-pointer transition-all hover:shadow-md ${eventToneClasses(e.c)}`}
+                  style={{
+                    gridColumn: dayColStart,
+                    left: `calc(54px + ((100% - 54px) / 7) * ${e.d} + 3px)`,
+                    width: `calc((100% - 54px) / 7 - 6px)`,
+                    top: top + 2,
+                    height,
+                  }}
+                >
+                  <div className="text-[11px] font-semibold leading-tight truncate">{e.t}</div>
+                  {e.sub && <div className="text-[10px] opacity-70 truncate">{e.sub}</div>}
+                </div>
+              )
+            })}
+
+            {/* Now line (Tuesday ~14:28) */}
+            <div
+              className="absolute h-px bg-red-500 z-10 pointer-events-none"
+              style={{
+                top: (14.5 - hourStart) * slotH,
+                left: `calc(54px + ((100% - 54px) / 7) * 1)`,
+                width: `calc((100% - 54px) / 7)`,
+              }}
+            >
+              <div className="absolute -left-1 -top-1 size-2 rounded-full bg-red-500" />
+            </div>
+          </div>
+        </Card>
+      </div>
+
+      {/* ── RIGHT: Scheduling link + AI actions + stats ── */}
+      <div className="space-y-4">
+        {/* Scheduling link card */}
+        <Card className="overflow-hidden relative">
+          <div className="pointer-events-none absolute inset-0 bg-gradient-to-br from-primary/[0.04] via-transparent to-transparent" />
+          <CardHeader className="relative pb-3">
+            <div className="flex items-center gap-2">
+              <LinkIcon className="size-4 text-primary" />
+              <CardTitle className="font-display text-[14px] font-semibold">
+                Seu link público de agendamento
+              </CardTitle>
+            </div>
+            <CardDescription className="text-[12px]">
+              Compartilhe com leads para que escolham um horário livre automaticamente.
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="relative space-y-3">
+            <div className="flex items-center gap-2 rounded-lg border border-border/60 bg-muted/40 px-2.5 py-2 font-mono text-[11.5px]">
+              <LinkIcon className="size-3 text-muted-foreground shrink-0" />
+              <span className="flex-1 truncate text-muted-foreground">
+                techvendaspro.com/agendar/rafael-silva
+              </span>
+              <Button
+                variant="ghost"
+                size="sm"
+                className="size-6 p-0 shrink-0"
+                onClick={copy}
+              >
+                {copied ? (
+                  <Check className="size-3 text-emerald-600 dark:text-emerald-400" />
+                ) : (
+                  <Copy className="size-3" />
+                )}
+              </Button>
+            </div>
+
+            <div className="space-y-1.5 rounded-lg bg-muted/30 p-3">
+              {[
+                ["Duração padrão", "30 min"],
+                ["Buffer entre reuniões", "10 min"],
+                ["Dias disponíveis", "Seg–Sex"],
+                ["Horário", "09h – 18h"],
+                ["Antecedência mínima", "2 h"],
+              ].map(([label, val]) => (
+                <div key={label} className="flex items-center justify-between text-[12px]">
+                  <span className="text-muted-foreground">{label}</span>
+                  <span className={label === "Horário" ? "font-mono" : ""}>{val}</span>
+                </div>
+              ))}
+            </div>
+
+            <Button variant="outline" size="sm" className="w-full">
+              <Edit3 className="size-3.5" />
+              Configurar slots
+            </Button>
+          </CardContent>
+        </Card>
+
+        {/* Meeting action inbox (AI) */}
+        <div>
+          <div className="flex items-center gap-2 mb-2 px-1">
+            <Sparkles className="size-3.5 text-primary" />
+            <span className="text-[10px] font-bold uppercase tracking-[0.06em] text-muted-foreground/80">
+              Ações de reunião · Copiloto
+            </span>
+            <div className="flex-1" />
+            {pendingCount > 0 && (
+              <span className="inline-flex items-center rounded-md bg-primary/10 text-primary px-1.5 py-0.5 text-[10px] font-bold">
+                {pendingCount}
+              </span>
+            )}
+          </div>
+
+          <div className="space-y-2.5">
+            {CLOSER_MEETING_ACTIONS.map((m) => {
+              const state = actionsState[m.id]
+              if (state === "ignored") return null
+              if (state === "created") {
+                return (
+                  <Card
+                    key={m.id}
+                    className="border-emerald-500/30 bg-emerald-500/[0.06] overflow-hidden"
+                  >
+                    <CardContent className="pt-4 flex flex-col gap-2">
+                      <div className="flex items-center gap-2 text-emerald-700 dark:text-emerald-400 text-[12.5px] font-medium">
+                        <Check className="size-3.5" />
+                        {m.company} · {m.tasks.length} tarefas criadas
+                      </div>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="h-7 px-2 self-start text-xs"
+                      >
+                        Ver no dashboard →
+                      </Button>
+                    </CardContent>
+                  </Card>
+                )
+              }
+              return (
+                <Card key={m.id} className="overflow-hidden">
+                  <CardContent className="pt-4 space-y-2.5">
+                    <div className="flex items-center gap-2 text-[12.5px] font-medium">
+                      <Video className="size-3.5 text-primary" />
+                      {m.company} · <span className="text-muted-foreground">{m.when}</span>
+                    </div>
+                    <p className="text-[12px] text-muted-foreground leading-snug">{m.intro}</p>
+                    <div className="space-y-1.5">
+                      {m.tasks.map((t, i) => (
+                        <label
+                          key={i}
+                          className="flex items-start gap-2 text-[12px] cursor-pointer"
+                        >
+                          <input
+                            type="checkbox"
+                            defaultChecked
+                            className="mt-0.5 size-3.5 accent-primary"
+                          />
+                          <span>{t}</span>
+                        </label>
+                      ))}
+                    </div>
+                    <div className="flex items-center gap-1.5 pt-1">
+                      <Button
+                        size="sm"
+                        className="h-7 px-3 text-xs btn-lift bg-gradient-to-r from-primary to-orange-600 text-white"
+                        onClick={() => setAction(m.id, "created")}
+                      >
+                        <Plus className="size-3" />
+                        Criar tarefas no CRM
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="h-7 px-3 text-xs"
+                        onClick={() => setAction(m.id, "ignored")}
+                      >
+                        Ignorar
+                      </Button>
+                    </div>
+                  </CardContent>
+                </Card>
+              )
+            })}
+
+            {allHandled && (
+              <div className="rounded-lg border border-dashed border-border/60 p-6 text-center text-[12.5px] text-muted-foreground">
+                Caixa vazia. Você está em dia! 🎉
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Week stats */}
+        <div>
+          <div className="flex items-center gap-2 mb-2 px-1">
+            <TrendingUp className="size-3.5 text-primary" />
+            <span className="text-[10px] font-bold uppercase tracking-[0.06em] text-muted-foreground/80">
+              Esta semana
+            </span>
+          </div>
+          <div className="grid grid-cols-2 gap-2">
+            {CLOSER_WEEK_MINI_STATS.map((s) => (
+              <Card key={s.label}>
+                <CardContent className="pt-3 pb-3">
+                  <div className="text-[10px] font-semibold uppercase tracking-wide text-muted-foreground/70">
+                    {s.label}
+                  </div>
+                  <div className="font-mono text-[15px] font-semibold tracking-tight mt-0.5">
+                    {s.value}
+                  </div>
+                  <div className="text-[10.5px] text-muted-foreground/60 mt-0.5">{s.sub}</div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+// ===========================================================================
+// Role dispatcher
+// ===========================================================================
+
+export function SchedulePage() {
+  const { user } = useAuth()
+  if (user?.role === "closer") return <CloserSchedulePage />
+  return <GestorSchedulePage />
 }

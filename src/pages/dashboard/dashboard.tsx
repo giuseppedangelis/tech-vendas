@@ -1,3 +1,4 @@
+import { useState } from "react"
 import {
   Card,
   CardContent,
@@ -45,16 +46,17 @@ import {
   Sparkles,
   ChevronRight,
   Clock,
-  Phone,
   Target,
   Zap,
   MessageCircle,
   ListChecks,
   UserCheck,
   Filter,
-  Send,
   Camera,
   Globe,
+  Flame,
+  Plus,
+  Mail,
 } from "lucide-react"
 import { useAuth, type AuthUser } from "@/hooks/use-auth"
 import { Link } from "react-router-dom"
@@ -256,130 +258,119 @@ const recentActivity = [
 ]
 
 // ---------------------------------------------------------------------------
-// Closer Data
+// Closer Data (Reference: April 2026, meta-driven)
 // ---------------------------------------------------------------------------
 
-const closerStats = [
+const closerTarget = {
+  monthTarget: 180000,
+  realized: 127450,
+  daysLeft: 8,
+  acceleratorTarget: 220000,
+}
+
+const closerHudStats = [
   {
-    title: "Meus Leads Ativos",
-    value: "18",
-    change: null,
-    icon: Users,
-    color: "text-sky-600 bg-sky-50 dark:text-sky-400 dark:bg-sky-950",
-    gradient: "from-sky-500 to-cyan-500",
+    label: "Ganho no mês",
+    value: "R$ 127,5k",
+    sub: "14 deals · +23% vs. mar",
+    tone: "success" as const,
   },
   {
-    title: "Deals em Negociação",
-    value: "5",
-    change: null,
-    icon: Handshake,
-    color: "text-primary bg-primary/10 dark:text-primary dark:bg-primary/15",
-    gradient: "from-primary to-orange-500",
+    label: "Pipe ativo",
+    value: "R$ 842k",
+    sub: "38 oportunidades",
+    tone: "neutral" as const,
   },
   {
-    title: "Minha Conversão",
-    value: "28,7%",
-    change: 3.2,
-    icon: TrendingUp,
-    color: "text-emerald-600 bg-emerald-50 dark:text-emerald-400 dark:bg-emerald-950",
-    gradient: "from-emerald-500 to-teal-500",
-  },
-  {
-    title: "Receita do Mês",
-    value: "R$ 42.800",
-    change: 12,
-    icon: DollarSign,
-    color: "text-amber-600 bg-amber-50 dark:text-amber-400 dark:bg-amber-950",
-    gradient: "from-amber-500 to-orange-500",
+    label: "Previsão fechada",
+    value: "R$ 186k",
+    sub: "Copiloto · confiança 82%",
+    tone: "primary" as const,
+    ai: true,
   },
 ]
 
-const closerTasks = [
-  {
-    id: 1,
-    description: "Retornar ligação - Fernanda Costa (InovaTech)",
-    deadline: "Vence em 2h",
-    deadlineClass: "text-amber-600 dark:text-amber-400",
-    badgeVariant: "secondary" as const,
-    badgeClass: "bg-amber-100 text-amber-700 dark:bg-amber-950 dark:text-amber-400",
-  },
-  {
-    id: 2,
-    description: "Enviar proposta - Patrícia Lima (CloudBase)",
-    deadline: "Vence hoje",
-    deadlineClass: "text-amber-600 dark:text-amber-400",
-    badgeVariant: "secondary" as const,
-    badgeClass: "bg-amber-100 text-amber-700 dark:bg-amber-950 dark:text-amber-400",
-  },
-  {
-    id: 3,
-    description: "Follow-up WhatsApp - Ricardo Santos (MegaSoft)",
-    deadline: "Vencida",
-    deadlineClass: "text-red-600 dark:text-red-400",
-    badgeVariant: "destructive" as const,
-    badgeClass: "",
-  },
-  {
-    id: 4,
-    description: "Agendar demo - André Moreira (NextGen)",
-    deadline: "Amanhã",
-    deadlineClass: "text-muted-foreground",
-    badgeVariant: "secondary" as const,
-    badgeClass: "",
-  },
+interface CloserHotLead {
+  id: number
+  name: string
+  company: string
+  score: number
+  stage: string
+  value: number
+  when: string
+  ch: "whatsapp" | "mail"
+  done: boolean
+}
+
+const closerHotLeads: CloserHotLead[] = [
+  { id: 1, name: "Mariana Teixeira", company: "Pepsico Brasil", score: 92, stage: "Proposta enviada", value: 48500, when: "respondeu há 12min", ch: "whatsapp", done: false },
+  { id: 2, name: "Ricardo Albuquerque", company: "Klabin S/A", score: 88, stage: "Negociação", value: 120000, when: "abriu proposta 3x hoje", ch: "mail", done: false },
+  { id: 3, name: "Juliana Prates", company: "Natura", score: 85, stage: "Qualificado", value: 32000, when: "novo lead de inbound", ch: "whatsapp", done: true },
+  { id: 4, name: "Fábio Guedes", company: "Raia Drogasil", score: 82, stage: "Proposta", value: 78000, when: "agendou reunião p/ amanhã", ch: "mail", done: false },
+  { id: 5, name: "Camila Herrera", company: "iFood", score: 79, stage: "Proposta", value: 56000, when: "mencionou orçamento 2026", ch: "whatsapp", done: false },
+  { id: 6, name: "Diego Rosso", company: "Localiza", score: 76, stage: "Qualificado", value: 22000, when: "evento Endeavor SP", ch: "mail", done: false },
+  { id: 7, name: "Ana Beatriz Freitas", company: "Nubank", score: 73, stage: "Qualificado", value: 95000, when: "indicação do Lucas", ch: "whatsapp", done: false },
+  { id: 8, name: "Otávio Menezes", company: "Movida", score: 71, stage: "Nutrição", value: 18000, when: "reabriu e-mail 2x", ch: "mail", done: false },
 ]
 
-const closerCopilotSuggestions = [
-  {
-    id: 1,
-    text: "Lead Maria Silva está com score alto (92) e respondeu rápido. Recomendo proposta agressiva.",
-    icon: Zap,
-    iconClass: "text-amber-600 dark:text-amber-400",
-    bgClass: "bg-amber-100 dark:bg-amber-950",
-  },
-  {
-    id: 2,
-    text: "Ricardo Santos não responde há 8h. Considere enviar áudio pelo WhatsApp.",
-    icon: MessageCircle,
-    iconClass: "text-blue-600 dark:text-blue-400",
-    bgClass: "bg-blue-100 dark:bg-blue-950",
-  },
+interface CloserTodayTask {
+  id: number
+  title: string
+  lead: string
+  time: string
+  overdue: boolean
+  done: boolean
+}
+
+const closerTodayTasks: CloserTodayTask[] = [
+  { id: 1, title: "Ligar para Ricardo (Klabin) — confirmar prazo de pagamento", lead: "Ricardo Albuquerque", time: "09:30", overdue: false, done: true },
+  { id: 2, title: "Enviar contrato revisado — Pepsico", lead: "Mariana Teixeira", time: "11:00", overdue: false, done: false },
+  { id: 3, title: "Follow-up pós reunião — Natura", lead: "Juliana Prates", time: "13:15", overdue: false, done: false },
+  { id: 4, title: "Preparar deck de proposta para Raia", lead: "Fábio Guedes", time: "14:00", overdue: false, done: false },
+  { id: 5, title: "Revisar objeções do Diego (Localiza)", lead: "Diego Rosso", time: "Atrasada", overdue: true, done: false },
+  { id: 6, title: "Call de descoberta — Ana Beatriz / Nubank", lead: "Ana Beatriz Freitas", time: "16:30", overdue: false, done: false },
 ]
 
-const closerRecentActivity = [
-  {
-    id: 1,
-    icon: Phone,
-    iconClass: "text-emerald-600 dark:text-emerald-400",
-    bgClass: "bg-emerald-100 dark:bg-emerald-950",
-    description: "Ligação de 12 min com Patrícia Lima (CloudBase)",
-    time: "30 min atrás",
-  },
-  {
-    id: 2,
-    icon: Send,
-    iconClass: "text-blue-600 dark:text-blue-400",
-    bgClass: "bg-blue-100 dark:bg-blue-950",
-    description: "Proposta enviada para Maria Fernanda (TechSol)",
-    time: "1h atrás",
-  },
-  {
-    id: 3,
-    icon: MessageCircle,
-    iconClass: "text-primary dark:text-primary",
-    bgClass: "bg-primary/10 dark:bg-primary/15",
-    description: "Mensagem WhatsApp para André Moreira (NextGen)",
-    time: "2h atrás",
-  },
-  {
-    id: 4,
-    icon: CalendarCheck,
-    iconClass: "text-amber-600 dark:text-amber-400",
-    bgClass: "bg-amber-100 dark:bg-amber-950",
-    description: "Demo agendada com Logística Express para quinta",
-    time: "3h atrás",
-  },
+interface CloserRescueCard {
+  id: number
+  kind: "hot" | "cooling" | "risk"
+  title: string
+  days?: number
+  value: number
+  msg: string
+  sug: string
+}
+
+const closerRescueCards: CloserRescueCard[] = [
+  { id: 1, kind: "cooling", title: "Klabin S/A", days: 3, value: 120000, msg: "Última interação há 3 dias. Ricardo abriu a proposta 3x hoje — momento ideal para acionar.", sug: "Enviar mensagem \"checking in\" no WhatsApp agora." },
+  { id: 2, kind: "hot", title: "Mariana respondeu há 12min", value: 48500, msg: "Mencionou \"fechar essa semana\" — janela de fechamento ativa.", sug: "Responder já com link de contrato." },
+  { id: 3, kind: "risk", title: "Localiza — 7 dias sem follow-up", days: 7, value: 22000, msg: "Diego (Localiza) pediu retorno na semana passada. Risco de perda para concorrente.", sug: "Ligar antes das 16h." },
 ]
+
+const closerWeekSnapshot = [
+  { label: "Ligações", value: "32", delta: "+8", positive: true },
+  { label: "Mensagens", value: "184", delta: "+21%", positive: true },
+  { label: "Reuniões", value: "11", delta: "+2", positive: true },
+  { label: "No-shows", value: "2", delta: "-1", positive: true },
+  { label: "Taxa resposta", value: "68%", delta: "+4pp", positive: true },
+  { label: "Tempo 1ª resp.", value: "6min", delta: "-2min", positive: true },
+]
+
+function fmtBRL(v: number) {
+  return "R$ " + v.toLocaleString("pt-BR", { minimumFractionDigits: 0, maximumFractionDigits: 0 })
+}
+function fmtBRLk(v: number) {
+  if (v >= 1000) {
+    const k = v / 1000
+    return "R$ " + k.toFixed(v >= 10000 ? 0 : 1).replace(".", ",") + "k"
+  }
+  return fmtBRL(v)
+}
+function scoreToneClass(score: number) {
+  if (score >= 75) return "bg-emerald-500"
+  if (score >= 50) return "bg-amber-500"
+  return "bg-sky-500"
+}
 
 // ---------------------------------------------------------------------------
 // SDR Data
@@ -999,209 +990,383 @@ function GestorDashboard({ user }: { user: AuthUser }) {
 }
 
 // ===========================================================================
-// CLOSER DASHBOARD
+// CLOSER DASHBOARD (Reference-style: meta HUD + leads quentes + rescue AI)
 // ===========================================================================
 
 function CloserDashboard({ user }: { user: AuthUser }) {
+  const [leads, setLeads] = useState(closerHotLeads)
+  const [tasks, setTasks] = useState(closerTodayTasks)
+
+  const { monthTarget, realized, daysLeft, acceleratorTarget } = closerTarget
+  const pct = Math.round((realized / monthTarget) * 100)
+  const remaining = monthTarget - realized
+  const accelerator = acceleratorTarget - realized
+  const acceleratorPct = Math.min((acceleratorTarget / monthTarget) * 100, 100)
+  const firstName = user.name.split(" ")[0]
+  const pendingTasks = tasks.filter((t) => !t.done).length
+  const overdueTasks = tasks.filter((t) => t.overdue && !t.done).length
+
+  const toggleLead = (id: number) =>
+    setLeads((prev) => prev.map((l) => (l.id === id ? { ...l, done: !l.done } : l)))
+  const toggleTask = (id: number) =>
+    setTasks((prev) => prev.map((t) => (t.id === id ? { ...t, done: !t.done } : t)))
+
   return (
     <div className="animate-page-in space-y-6">
-      {/* Header */}
-      <div className="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
-        <Greeting user={user} />
-        <Button variant="outline" size="sm" className="w-fit btn-lift">
-          <Clock className="size-4" />
-          Hoje
-        </Button>
+      {/* ── Greeting ─────────────────────── */}
+      <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+        <div className="space-y-1.5">
+          <div className="flex items-center gap-2.5">
+            <h2 className="font-display text-2xl font-bold tracking-tight">
+              <span className="text-gradient">Boa tarde</span>, {firstName}.
+            </h2>
+            <span className={`inline-flex items-center rounded-lg px-2 py-0.5 text-[10px] font-bold leading-none backdrop-blur-sm ${roleBadgeClass[user.role] ?? ""}`}>
+              {roleLabels[user.role] ?? user.role}
+            </span>
+          </div>
+          <p className="text-[13.5px] text-muted-foreground">
+            Você está a <strong className="text-foreground">{daysLeft} dias</strong> de bater a meta.
+          </p>
+        </div>
+        <div className="text-[12px] font-medium text-muted-foreground/70 font-mono">
+          Terça-feira, 14 de abril · 14:28
+        </div>
       </div>
 
       {/* Divider */}
       <div className="h-px bg-gradient-to-r from-transparent via-border/50 to-transparent" />
 
-      {/* AI Daily Briefing Hero */}
-      <AIBriefing role="closer" userName={user.name.split(" ")[0]} />
+      {/* ── HUD: Meta de abril + 3 stats ── */}
+      <div className="grid gap-4 lg:grid-cols-5">
+        {/* Meta hero card */}
+        <Card className="lg:col-span-2 accent-line-left overflow-hidden relative animate-card-in stagger-1">
+          <div className="pointer-events-none absolute inset-0 bg-gradient-to-br from-primary/[0.04] via-transparent to-orange-500/[0.02]" />
+          <CardContent className="relative space-y-4 pt-6">
+            <div className="flex items-center gap-2">
+              <Target className="size-3.5 text-primary" />
+              <span className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground/70">
+                Meta de abril
+              </span>
+            </div>
+            <div className="flex items-baseline gap-2">
+              <span className="font-display font-mono text-[2rem] font-bold leading-none tracking-tight">
+                {fmtBRL(realized)}
+              </span>
+              <span className="text-sm font-mono text-muted-foreground/60">/ {fmtBRL(monthTarget)}</span>
+            </div>
+            <p className="text-[12.5px] text-muted-foreground">
+              {pct}% realizado · faltam <strong className="text-foreground">{fmtBRL(remaining)}</strong> para bater a cota
+            </p>
+            <div className="relative h-2 w-full rounded-full bg-muted">
+              <div
+                className="h-full rounded-full bg-gradient-to-r from-primary to-orange-500 transition-all"
+                style={{ width: pct + "%" }}
+              />
+              <div
+                className="absolute -top-1 h-4 w-px bg-foreground/30"
+                style={{ left: "100%" }}
+                title="100% Meta"
+              />
+              <div
+                className="absolute -top-1 h-4 w-px bg-amber-500"
+                style={{ left: acceleratorPct + "%" }}
+                title="Acelerador ×1.5"
+              />
+            </div>
+            <div className="flex items-start gap-2 rounded-lg bg-amber-500/[0.07] border border-amber-500/15 px-3 py-2">
+              <Zap className="size-3.5 text-amber-600 dark:text-amber-400 shrink-0 mt-0.5" />
+              <p className="text-[12px] text-muted-foreground leading-snug">
+                Faltam <strong className="text-foreground">{fmtBRL(accelerator)}</strong> para entrar na faixa de acelerador <strong className="text-amber-600 dark:text-amber-400">×1.5</strong>
+              </p>
+            </div>
+          </CardContent>
+        </Card>
 
-      {/* Personal Stats */}
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        {closerStats.map((stat, idx) => (
-          <StatCard key={stat.title} stat={stat} index={idx} />
+        {/* 3 hud stats */}
+        {closerHudStats.map((s, idx) => (
+          <Card key={s.label} className={`animate-card-in stagger-${idx + 2} card-hover accent-top`}>
+            <CardContent className="pt-6 space-y-2">
+              <div className="text-[10px] font-semibold uppercase tracking-wide text-muted-foreground/70">
+                {s.label}
+              </div>
+              <div
+                className={`font-display font-mono text-[1.65rem] font-bold leading-none tracking-tight ${
+                  s.tone === "success"
+                    ? "text-emerald-600 dark:text-emerald-400"
+                    : s.tone === "primary"
+                      ? "text-primary"
+                      : "text-foreground"
+                }`}
+              >
+                {s.value}
+              </div>
+              <div className="text-[11px] text-muted-foreground flex items-center gap-1">
+                {s.ai && <Sparkles className="size-3 text-primary" />}
+                {s.sub}
+              </div>
+            </CardContent>
+          </Card>
         ))}
       </div>
 
       {/* Divider */}
       <div className="h-px bg-gradient-to-r from-transparent via-border/50 to-transparent" />
 
-      {/* Middle Row: Lead Lock + Tasks */}
+      {/* ── Main Grid ── */}
       <div className="grid gap-6 lg:grid-cols-5">
-        {/* Próximo Lead (Lead Lock) -- HERO element */}
-        <Card className="bg-gradient-to-br from-primary/[0.03] to-background dark:from-primary/[0.06] lg:col-span-2 animate-card-in stagger-5 overflow-hidden">
-          <CardHeader className="pb-3">
-            <div className="flex items-center gap-2">
-              <div className="rounded-md bg-gradient-to-br from-primary to-orange-600 p-1.5">
-                <Target className="size-4 text-white" />
-              </div>
-              <CardTitle className="font-display text-base font-semibold">Próximo Lead</CardTitle>
-            </div>
-            <CardDescription>
-              Foque neste lead antes de avançar
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4 px-6 pb-6">
-            <div className="flex items-start justify-between">
-              <div className="space-y-1">
-                <div className="flex items-center gap-2">
-                  <span className="text-xl font-bold">{/* larger name */}Maria Silva</span>
-                  <Badge
-                    variant="secondary"
-                    className="bg-emerald-100 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-400"
-                  >
-                    <MessageCircle className="mr-1 size-3" />
-                    WhatsApp
-                  </Badge>
+        {/* Left stack: Leads + Tasks */}
+        <div className="space-y-6 lg:col-span-3">
+          {/* Leads quentes hoje */}
+          <Card className="animate-card-in stagger-5 overflow-hidden">
+            <CardHeader>
+              <div className="flex items-start gap-2">
+                <Flame className="size-4 text-primary mt-0.5" />
+                <div className="flex-1 min-w-0">
+                  <CardTitle className="font-display text-base font-semibold">Leads quentes hoje</CardTitle>
+                  <CardDescription className="flex items-center gap-1.5 mt-1">
+                    <Sparkles className="size-3 text-primary shrink-0" />
+                    <span>Copiloto · priorizados por score, recência e momentum · Top 15 de 284</span>
+                  </CardDescription>
                 </div>
-                <p className="text-sm text-muted-foreground">TechCorp</p>
+                <Button variant="ghost" size="sm" className="shrink-0 h-7 px-2.5 text-xs">
+                  <Filter className="size-3.5" />
+                  Filtrar
+                </Button>
               </div>
-              <div className="flex flex-col items-center rounded-lg bg-primary/[0.06] px-4 py-2 dark:bg-primary/10">
-                <span className="text-[11px] text-muted-foreground">Score</span>
-                <span className="font-display text-2xl font-semibold text-primary">
-                  92
-                </span>
-              </div>
-            </div>
-
-            <div className="flex items-center gap-2 text-sm text-muted-foreground">
-              <Clock className="size-3.5" />
-              <span>Último contato: 30 min atrás</span>
-            </div>
-
-            <Button
-              className="w-full btn-lift bg-gradient-to-r from-primary to-orange-600 hover:from-primary/90 hover:to-orange-600/90 text-white shadow-sm"
-              asChild
-            >
-              <Link to="/inbox">
-                <MessageSquare className="size-4" />
-                Abrir Conversa
-              </Link>
-            </Button>
-          </CardContent>
-        </Card>
-
-        {/* Minhas Tarefas Pendentes */}
-        <Card className="lg:col-span-3 animate-card-in stagger-6 overflow-hidden">
-          <CardHeader>
-            <div className="flex items-center gap-2">
-              <ListChecks className="size-4 text-sky-500" />
-              <CardTitle className="font-display text-base font-semibold">Minhas Tarefas Pendentes</CardTitle>
-            </div>
-            <CardDescription>
-              {closerTasks.length} tarefas para hoje
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-3">
-            {closerTasks.map((task) => {
-              const isOverdue = task.deadline === "Vencida"
-              return (
-                <div
-                  key={task.id}
-                  className={`flex items-center justify-between rounded-lg border p-3 transition-all hover:bg-muted/50 hover:shadow-sm ${
-                    isOverdue ? "border-red-200 bg-red-50/30 dark:border-red-900 dark:bg-red-950/20 animate-pulse" : ""
-                  }`}
-                  style={isOverdue ? { animationDuration: "3s" } : undefined}
-                >
-                  <div className="flex items-center gap-3">
-                    <div
-                      className={`flex size-6 items-center justify-center rounded-full border-2 ${
-                        isOverdue
-                          ? "border-red-400 dark:border-red-500"
-                          : "border-muted-foreground/30"
+            </CardHeader>
+            <CardContent className="px-0 pb-0">
+              <div className="divide-y divide-border/60">
+                {leads.map((l) => {
+                  const ChannelIcon = l.ch === "whatsapp" ? MessageCircle : Mail
+                  return (
+                    <button
+                      key={l.id}
+                      onClick={() => toggleLead(l.id)}
+                      className={`w-full flex items-center gap-3 px-5 py-3 transition-colors hover:bg-muted/40 ${
+                        l.done ? "opacity-50" : ""
                       }`}
-                    />
-                    <span className={`text-sm ${isOverdue ? "font-medium" : ""}`}>
-                      {task.description}
+                    >
+                      <div
+                        className={`flex size-[18px] shrink-0 items-center justify-center rounded-[5px] border-2 transition-colors ${
+                          l.done
+                            ? "bg-primary border-primary text-white"
+                            : "border-muted-foreground/30"
+                        }`}
+                      >
+                        {l.done && <CheckCircle2 className="size-2.5" />}
+                      </div>
+                      <div className="flex-1 min-w-0 text-left">
+                        <div className={`text-[13px] font-medium truncate ${l.done ? "line-through" : ""}`}>
+                          {l.name}
+                          <span className="font-normal text-muted-foreground/70"> · {l.company}</span>
+                        </div>
+                        <div className="text-[11px] text-muted-foreground/70 flex items-center gap-1 mt-0.5 truncate">
+                          <ChannelIcon
+                            className={`size-[10px] shrink-0 ${
+                              l.ch === "whatsapp" ? "text-emerald-500" : "text-sky-500"
+                            }`}
+                          />
+                          <span className="truncate">{l.stage} · {l.when}</span>
+                        </div>
+                      </div>
+                      <div className="font-mono text-[12px] text-muted-foreground shrink-0 w-16 text-right">
+                        {fmtBRLk(l.value)}
+                      </div>
+                      <div className="flex items-center gap-1.5 shrink-0 w-10 justify-end">
+                        <span className={`size-2 rounded-full ${scoreToneClass(l.score)}`} />
+                        <span className="font-mono text-[12px] text-muted-foreground">{l.score}</span>
+                      </div>
+                      <ChevronRight className="size-3.5 text-muted-foreground/40 shrink-0" />
+                    </button>
+                  )
+                })}
+              </div>
+              <div className="border-t border-border/60 py-2.5 text-center">
+                <Link
+                  to="/pipeline"
+                  className="text-[12px] text-muted-foreground/70 hover:text-primary transition-colors"
+                >
+                  Ver os 15 leads do dia →
+                </Link>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Minhas tarefas de hoje */}
+          <Card className="animate-card-in stagger-6 overflow-hidden">
+            <CardHeader>
+              <div className="flex items-start gap-2">
+                <ListChecks className="size-4 text-sky-500 mt-0.5" />
+                <div className="flex-1">
+                  <CardTitle className="font-display text-base font-semibold">Minhas tarefas de hoje</CardTitle>
+                  <CardDescription className="mt-1">
+                    {pendingTasks} pendentes{overdueTasks > 0 && ` · ${overdueTasks} atrasada${overdueTasks > 1 ? "s" : ""}`}
+                  </CardDescription>
+                </div>
+                <Button variant="ghost" size="sm" className="shrink-0 h-7 px-2.5 text-xs">
+                  <Plus className="size-3.5" />
+                  Nova tarefa
+                </Button>
+              </div>
+            </CardHeader>
+            <CardContent className="px-0 pb-2">
+              <div className="divide-y divide-border/60">
+                {tasks.map((t) => (
+                  <div
+                    key={t.id}
+                    className={`flex items-center gap-3 px-5 py-3 ${t.done ? "opacity-50" : ""}`}
+                  >
+                    <button
+                      onClick={() => toggleTask(t.id)}
+                      className={`flex size-[18px] shrink-0 items-center justify-center rounded-[5px] border-2 transition-colors ${
+                        t.done
+                          ? "bg-primary border-primary text-white"
+                          : "border-muted-foreground/30 hover:border-primary/50"
+                      }`}
+                    >
+                      {t.done && <CheckCircle2 className="size-2.5" />}
+                    </button>
+                    <div className="flex-1 min-w-0">
+                      <div className={`text-[13px] leading-snug ${t.done ? "line-through text-muted-foreground/70" : ""}`}>
+                        {t.title}
+                      </div>
+                      <Link
+                        to="/contacts"
+                        className="text-[11px] text-muted-foreground/60 hover:text-primary transition-colors mt-0.5 inline-block"
+                      >
+                        → {t.lead}
+                      </Link>
+                    </div>
+                    <span
+                      className={`font-mono text-[11px] shrink-0 ${
+                        t.overdue
+                          ? "text-red-600 dark:text-red-400 font-semibold"
+                          : "text-muted-foreground"
+                      }`}
+                    >
+                      {t.time}
                     </span>
                   </div>
-                  <Badge
-                    variant={task.badgeVariant}
-                    className={`shrink-0 text-xs ${task.badgeClass}`}
-                  >
-                    {task.deadline}
-                  </Badge>
-                </div>
-              )
-            })}
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* Divider */}
-      <div className="h-px bg-gradient-to-r from-transparent via-border/50 to-transparent" />
-
-      {/* Bottom Row: IA Copilot + Activity */}
-      <div className="grid gap-6 lg:grid-cols-5">
-        {/* IA Copilot Próximos Passos */}
-        <Card className="lg:col-span-3 animate-card-in stagger-5 overflow-hidden">
-          <CardHeader>
-            <div className="flex items-center gap-2">
-              <Sparkles className="size-3.5 text-primary" />
-              <CardTitle className="font-display text-base font-semibold">IA Copilot — Próximos Passos</CardTitle>
-              <span className="relative flex size-1.5">
-                <span className="absolute inline-flex size-full animate-ping rounded-full bg-emerald-400 opacity-60" />
-                <span className="relative inline-flex size-1.5 rounded-full bg-emerald-500" />
-              </span>
-            </div>
-            <CardDescription>
-              Recomendações personalizadas para seus leads
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            {closerCopilotSuggestions.map((suggestion, idx) => (
-              <div
-                key={suggestion.id}
-                className={`flex gap-3 rounded-lg border border-l-[3px] p-3 transition-colors hover:bg-muted/50 ${
-                  idx === 0
-                    ? "border-l-amber-500"
-                    : "border-l-blue-500"
-                }`}
-              >
-                <div
-                  className={`mt-0.5 flex size-8 shrink-0 items-center justify-center rounded-lg ${suggestion.bgClass}`}
-                >
-                  <suggestion.icon
-                    className={`size-4 ${suggestion.iconClass}`}
-                  />
-                </div>
-                <p className="flex-1 text-sm leading-relaxed text-muted-foreground">
-                  {suggestion.text}
-                </p>
-                <div className="flex shrink-0 items-center gap-1.5 self-center">
-                  <Button
-                    size="sm"
-                    className="btn-lift bg-gradient-to-r from-primary to-orange-600 text-white text-xs h-7 px-3"
-                  >
-                    Aceitar
-                  </Button>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    className="text-xs h-7 px-3"
-                  >
-                    Ignorar
-                  </Button>
-                </div>
+                ))}
               </div>
-            ))}
-          </CardContent>
-        </Card>
+            </CardContent>
+          </Card>
+        </div>
 
-        {/* Minha Atividade Recente */}
-        <Card className="lg:col-span-2 animate-card-in stagger-6 overflow-hidden">
-          <CardHeader>
-            <CardTitle className="font-display text-base font-semibold">Minha Atividade Recente</CardTitle>
-            <CardDescription>Suas últimas interações</CardDescription>
-          </CardHeader>
-          <CardContent className="px-0">
-            <ActivityTimeline events={closerRecentActivity} />
-          </CardContent>
-        </Card>
+        {/* Right stack: Rescue + Snapshot */}
+        <div className="space-y-6 lg:col-span-2">
+          {/* Cards de resgate (AI) */}
+          <Card className="animate-card-in stagger-5 overflow-hidden relative">
+            <div className="pointer-events-none absolute inset-0 bg-gradient-to-br from-primary/[0.03] via-transparent to-amber-500/[0.02]" />
+            <CardHeader className="relative">
+              <div className="flex items-center gap-2">
+                <Sparkles className="size-4 text-primary" />
+                <CardTitle className="font-display text-base font-semibold">Cards de resgate</CardTitle>
+                <span className="inline-flex items-center rounded-lg ai-shimmer px-2 py-0.5 text-[9px] font-bold ai-text-shimmer">
+                  AI
+                </span>
+              </div>
+              <CardDescription className="mt-1">
+                Copiloto detectou 3 situações que pedem atenção
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="relative space-y-3">
+              {closerRescueCards.map((r) => {
+                const toneBadge =
+                  r.kind === "hot"
+                    ? "bg-emerald-100 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-400"
+                    : r.kind === "cooling"
+                      ? "bg-amber-100 text-amber-700 dark:bg-amber-950 dark:text-amber-400"
+                      : "bg-red-100 text-red-700 dark:bg-red-950 dark:text-red-400"
+                const toneBorder =
+                  r.kind === "hot"
+                    ? "border-l-emerald-500"
+                    : r.kind === "cooling"
+                      ? "border-l-amber-500"
+                      : "border-l-red-500"
+                const chipLabel =
+                  r.kind === "hot"
+                    ? "Oportunidade viva"
+                    : r.kind === "cooling"
+                      ? `Esfriando · ${r.days}d parada`
+                      : `Risco alto · ${r.days}d`
+                return (
+                  <div
+                    key={r.id}
+                    className={`rounded-lg border border-l-[3px] ${toneBorder} bg-card/80 p-3 space-y-2`}
+                  >
+                    <div className="flex items-center gap-2">
+                      <Badge variant="secondary" className={`text-[10px] ${toneBadge}`}>
+                        {chipLabel}
+                      </Badge>
+                      <div className="flex-1" />
+                      <span className="font-mono text-[11px] text-muted-foreground">
+                        {fmtBRLk(r.value)}
+                      </span>
+                    </div>
+                    <p className="text-[13px] leading-snug">
+                      <strong>{r.title}.</strong>{" "}
+                      <span className="text-muted-foreground">{r.msg}</span>
+                    </p>
+                    <p className="text-[12px] text-muted-foreground/80">
+                      <span className="text-primary">↳ Sugestão:</span> {r.sug}
+                    </p>
+                    <div className="flex items-center gap-1.5 pt-1">
+                      <Button
+                        size="sm"
+                        className="h-7 px-3 text-xs btn-lift bg-gradient-to-r from-primary to-orange-600 text-white"
+                        asChild
+                      >
+                        <Link to="/inbox">
+                          <Sparkles className="size-3" />
+                          Aplicar sugestão
+                        </Link>
+                      </Button>
+                      <Button variant="ghost" size="sm" className="h-7 px-3 text-xs">
+                        Depois
+                      </Button>
+                    </div>
+                  </div>
+                )
+              })}
+            </CardContent>
+          </Card>
+
+          {/* Snapshot da semana */}
+          <Card className="animate-card-in stagger-6 overflow-hidden">
+            <CardHeader>
+              <div className="flex items-center gap-2">
+                <TrendingUp className="size-4 text-primary" />
+                <CardTitle className="font-display text-base font-semibold">Snapshot da semana</CardTitle>
+              </div>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-2 gap-4">
+                {closerWeekSnapshot.map((s) => (
+                  <div key={s.label}>
+                    <div className="text-[10px] font-semibold uppercase tracking-wide text-muted-foreground/70">
+                      {s.label}
+                    </div>
+                    <div className="flex items-baseline gap-1.5 mt-1">
+                      <span className="font-display font-mono text-[18px] font-semibold leading-none tracking-tight">
+                        {s.value}
+                      </span>
+                      <span
+                        className={`font-mono text-[11px] ${
+                          s.positive
+                            ? "text-emerald-600 dark:text-emerald-400"
+                            : "text-red-600 dark:text-red-400"
+                        }`}
+                      >
+                        {s.delta}
+                      </span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+        </div>
       </div>
     </div>
   )

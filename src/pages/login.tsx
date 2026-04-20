@@ -261,7 +261,7 @@ export function LoginPage() {
             </div>
 
             <p className="text-center text-[10px] text-muted-foreground/40">
-              Apenas o perfil Gestor está liberado nesta fase do protótipo · Senha: <code className="rounded-md bg-muted/60 px-1.5 py-0.5 font-mono text-[10px] text-muted-foreground/60">123456</code>
+              Perfis Gestor e Closer liberados nesta fase do protótipo · Senha: <code className="rounded-md bg-muted/60 px-1.5 py-0.5 font-mono text-[10px] text-muted-foreground/60">123456</code>
             </p>
           </div>
         </div>

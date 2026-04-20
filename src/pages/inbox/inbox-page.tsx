@@ -29,6 +29,7 @@ import {
   Filter,
   ShieldCheck,
   ChevronRight,
+  User,
 } from "lucide-react"
 import { useAuth } from "@/hooks/use-auth"
 
@@ -901,7 +902,7 @@ function AICopilotPanel({ conversation }: { conversation: Conversation }) {
 // InboxPage
 // ---------------------------------------------------------------------------
 
-export function InboxPage() {
+function GestorInboxPage() {
   const { user } = useAuth()
   const [selectedId, setSelectedId] = useState<string | null>(null)
   const [searchQuery, setSearchQuery] = useState("")
@@ -1036,4 +1037,660 @@ export function InboxPage() {
       )}
     </div>
   )
+}
+
+// ===========================================================================
+// CLOSER INBOX (Reference: fila unificada + 360 context + AI suggestion + templates)
+// ===========================================================================
+
+type CloserConvStatus = "aberta" | "aguardando" | "resolvida"
+
+interface CloserConversation {
+  id: number
+  name: string
+  company: string
+  ch: "whatsapp" | "mail"
+  preview: string
+  time: string
+  unread: number
+  tags: string[]
+  status: CloserConvStatus
+  score: number
+  ltv: number
+  avatar: string
+}
+
+const CLOSER_CONVERSATIONS: CloserConversation[] = [
+  { id: 1, name: "Mariana Teixeira", company: "Pepsico Brasil", ch: "whatsapp", preview: "Perfeito, Carla. Consigo alinhar com o jurídico ainda hoje — manda o contrato que a gente fecha essa semana.", time: "14:16", unread: 2, tags: ["Proposta", "Hot"], status: "aberta", score: 92, ltv: 0, avatar: "MT" },
+  { id: 2, name: "Ricardo Albuquerque", company: "Klabin S/A", ch: "mail", preview: "Re: Proposta comercial — gostaria de entender melhor a estrutura de desconto por volume", time: "13:48", unread: 1, tags: ["Negociação"], status: "aberta", score: 88, ltv: 340000, avatar: "RA" },
+  { id: 3, name: "Juliana Prates", company: "Natura", ch: "whatsapp", preview: "Áudio · 0:42", time: "13:10", unread: 0, tags: ["Qualificado"], status: "aguardando", score: 85, ltv: 0, avatar: "JP" },
+  { id: 4, name: "Fábio Guedes", company: "Raia Drogasil", ch: "mail", preview: "Confirmado para amanhã 10h. Vou chamar o time de TI junto.", time: "12:55", unread: 0, tags: ["Reunião"], status: "aberta", score: 82, ltv: 180000, avatar: "FG" },
+  { id: 5, name: "Camila Herrera", company: "iFood", ch: "whatsapp", preview: "Consigo confirmar orçamento em 15 dias, pode ser?", time: "11:32", unread: 0, tags: ["Proposta"], status: "aguardando", score: 79, ltv: 0, avatar: "CH" },
+  { id: 6, name: "Diego Rosso", company: "Localiza", ch: "mail", preview: 'Sem resposta há 7 dias. Último e-mail enviado: "Seguindo sobre a proposta..."', time: "11/04", unread: 0, tags: ["Risco"], status: "aberta", score: 58, ltv: 45000, avatar: "DR" },
+  { id: 7, name: "Ana Beatriz Freitas", company: "Nubank", ch: "whatsapp", preview: "Opa, topei! pode marcar quinta 16h?", time: "10:44", unread: 0, tags: ["Qualificado"], status: "aberta", score: 73, ltv: 0, avatar: "AF" },
+  { id: 8, name: "Otávio Menezes", company: "Movida", ch: "mail", preview: "Re: Seu caso com a MyCloud — estamos avaliando internamente", time: "Ontem", unread: 0, tags: ["Nutrição"], status: "aguardando", score: 71, ltv: 22000, avatar: "OM" },
+  { id: 9, name: "Leonardo Baptista", company: "Ambev", ch: "whatsapp", preview: "Obrigado pela call! A gente te retorna na semana que vem.", time: "Ontem", unread: 0, tags: ["Proposta"], status: "aguardando", score: 65, ltv: 0, avatar: "LB" },
+  { id: 10, name: "Patricia Yamada", company: "B3", ch: "mail", preview: "Fechado — contrato assinado. Obrigada pela parceria, Carla!", time: "08/04", unread: 0, tags: ["Ganho"], status: "resolvida", score: 100, ltv: 92000, avatar: "PY" },
+]
+
+const CLOSER_TEMPLATES = [
+  { id: 1, name: "Primeiro contato — inbound", shortcut: "/boas", prev: "Oi {nome}, aqui é o Rafael da TechVendas. Vi que você baixou nosso material sobre..." },
+  { id: 2, name: "Follow-up pós reunião", shortcut: "/fuproposta", prev: "Obrigado pelo papo hoje, {nome}. Conforme combinamos, segue a proposta formal..." },
+  { id: 3, name: "Envio de contrato", shortcut: "/contrato", prev: "Show, {nome}! Segue o contrato revisado em anexo. Qualquer dúvida me chama." },
+  { id: 4, name: "Reativar lead frio", shortcut: "/reativar", prev: "Oi {nome}, faz um tempo que não falamos. Novidade: lançamos o módulo de..." },
+  { id: 5, name: "Agendamento reunião", shortcut: "/agendar", prev: "Vamos marcar? Segue meu link: techvendaspro.com/agendar/rafael · {nome}" },
+]
+
+function fmtBRLInbox(v: number) {
+  return "R$ " + v.toLocaleString("pt-BR", { minimumFractionDigits: 0, maximumFractionDigits: 0 })
+}
+
+function scoreDotInbox(score: number) {
+  if (score >= 75) return "bg-emerald-500"
+  if (score >= 50) return "bg-amber-500"
+  return "bg-sky-500"
+}
+
+function CloserInboxPage() {
+  const [activeId, setActiveId] = useState(1)
+  const [filterStatus, setFilterStatus] = useState<"todas" | CloserConvStatus>("todas")
+  const [msgText, setMsgText] = useState("")
+  const [showTemplates, setShowTemplates] = useState(false)
+  const [showAssign, setShowAssign] = useState(false)
+
+  const active = CLOSER_CONVERSATIONS.find((c) => c.id === activeId) ?? CLOSER_CONVERSATIONS[0]
+
+  const onInput = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    const v = e.target.value
+    setMsgText(v)
+    setShowTemplates(v.startsWith("/"))
+  }
+
+  const pickTemplate = (t: (typeof CLOSER_TEMPLATES)[number]) => {
+    setMsgText(t.prev.replace("{nome}", active.name.split(" ")[0]))
+    setShowTemplates(false)
+  }
+
+  const filtered = CLOSER_CONVERSATIONS.filter(
+    (c) => filterStatus === "todas" || c.status === filterStatus
+  )
+  const byStatus = (s: CloserConvStatus) =>
+    CLOSER_CONVERSATIONS.filter((c) => c.status === s).length
+
+  return (
+    <div className="animate-page-in flex h-[calc(100vh-120px)] gap-0 rounded-xl overflow-hidden border border-border/60 bg-card/30">
+      {/* ── LEFT: Queue ── */}
+      <div className="w-[300px] shrink-0 border-r border-border/60 bg-card/60 flex flex-col">
+        <div className="p-3 border-b border-border/60 space-y-3">
+          <div className="flex items-center gap-2">
+            <span className="text-[13px] font-semibold">Fila unificada</span>
+            <Badge variant="secondary" className="font-mono text-[10px]">
+              {CLOSER_CONVERSATIONS.length}
+            </Badge>
+            <div className="flex-1" />
+            <Button variant="ghost" size="sm" className="h-6 w-6 p-0">
+              <Send className="size-3" />
+            </Button>
+          </div>
+          <div className="flex gap-1 text-[10.5px]">
+            {(["todas", "aberta", "aguardando", "resolvida"] as const).map((s) => {
+              const label =
+                s === "todas"
+                  ? "Todas"
+                  : s === "aberta"
+                    ? "Abertas"
+                    : s === "aguardando"
+                      ? "Aguardando"
+                      : "Resolvidas"
+              const count = s === "todas" ? CLOSER_CONVERSATIONS.length : byStatus(s)
+              return (
+                <button
+                  key={s}
+                  onClick={() => setFilterStatus(s)}
+                  className={`flex-1 flex items-center justify-center gap-1 rounded-md px-2 py-1.5 transition-all ${
+                    filterStatus === s
+                      ? "bg-primary/10 text-primary font-semibold"
+                      : "text-muted-foreground hover:bg-muted/50"
+                  }`}
+                >
+                  {label}
+                  <span className="font-mono opacity-60">{count}</span>
+                </button>
+              )
+            })}
+          </div>
+        </div>
+        <div className="px-3 py-2 border-b border-border/60 flex items-center gap-1 flex-wrap">
+          <span className="inline-flex items-center gap-1 rounded-md ai-shimmer px-1.5 py-0.5 text-[9.5px] font-semibold">
+            <Sparkles className="size-2.5 text-primary" />
+            Ordenar por AI Score
+          </span>
+          <span className="inline-flex items-center gap-1 rounded-md bg-muted text-muted-foreground px-1.5 py-0.5 text-[9.5px]">
+            <MessageSquare className="size-2.5" />
+            WhatsApp
+          </span>
+          <span className="inline-flex items-center gap-1 rounded-md bg-muted text-muted-foreground px-1.5 py-0.5 text-[9.5px]">
+            E-mail
+          </span>
+          <span className="inline-flex items-center gap-1 rounded-md bg-muted text-muted-foreground px-1.5 py-0.5 text-[9.5px]">
+            Tags
+          </span>
+        </div>
+        <ScrollArea className="flex-1">
+          <div className="divide-y divide-border/50">
+            {filtered.map((c) => {
+              const isActive = activeId === c.id
+              return (
+                <button
+                  key={c.id}
+                  onClick={() => setActiveId(c.id)}
+                  className={`w-full text-left px-3 py-2.5 transition-colors relative ${
+                    isActive ? "bg-primary/[0.06]" : "hover:bg-muted/40"
+                  }`}
+                >
+                  {isActive && <div className="absolute left-0 top-0 bottom-0 w-[3px] bg-primary" />}
+                  <div className="flex items-start gap-2">
+                    <div className="relative shrink-0">
+                      <Avatar className="size-8">
+                        <AvatarFallback
+                          className={`text-[10px] font-bold ${
+                            c.ch === "whatsapp"
+                              ? "bg-gradient-to-br from-emerald-500/20 to-teal-600/20 text-emerald-700 dark:text-emerald-300"
+                              : "bg-gradient-to-br from-sky-500/20 to-blue-600/20 text-sky-700 dark:text-sky-300"
+                          }`}
+                        >
+                          {c.avatar}
+                        </AvatarFallback>
+                      </Avatar>
+                      <div
+                        className={`absolute -bottom-0.5 -right-0.5 size-3.5 rounded-full flex items-center justify-center ${
+                          c.ch === "whatsapp" ? "bg-emerald-500" : "bg-sky-500"
+                        }`}
+                      >
+                        {c.ch === "whatsapp" ? (
+                          <MessageSquare className="size-2 text-white" />
+                        ) : (
+                          <Send className="size-2 text-white" />
+                        )}
+                      </div>
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2">
+                        <span className="text-[12.5px] font-medium truncate flex-1">{c.name}</span>
+                        <span className="text-[10px] text-muted-foreground shrink-0">{c.time}</span>
+                      </div>
+                      <div className="text-[10.5px] text-muted-foreground/70 truncate">
+                        {c.company}
+                      </div>
+                      <div className="text-[11.5px] text-muted-foreground/90 line-clamp-1 mt-0.5">
+                        {c.preview}
+                      </div>
+                      <div className="flex items-center gap-1.5 mt-1">
+                        <span className={`size-1.5 rounded-full ${scoreDotInbox(c.score)}`} />
+                        <span className="font-mono text-[10px] text-muted-foreground">
+                          {c.score}
+                        </span>
+                        {c.tags.slice(0, 2).map((t) => (
+                          <span
+                            key={t}
+                            className="inline-flex items-center rounded-md bg-muted px-1 py-0.5 text-[9px] font-medium"
+                          >
+                            {t}
+                          </span>
+                        ))}
+                        {c.unread > 0 && (
+                          <span className="ml-auto size-1.5 rounded-full bg-primary" />
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                </button>
+              )
+            })}
+          </div>
+        </ScrollArea>
+      </div>
+
+      {/* ── CENTER: Conversation ── */}
+      <div className="flex-1 flex flex-col min-w-0 bg-background/50 relative">
+        {/* Header */}
+        <div className="flex items-center gap-2.5 px-4 py-3 border-b border-border/60">
+          <Avatar className="size-8">
+            <AvatarFallback className="text-[11px] font-bold bg-gradient-to-br from-pink-500/20 to-purple-500/20 text-pink-600 dark:text-pink-400">
+              {active.avatar}
+            </AvatarFallback>
+          </Avatar>
+          <div className="flex-1 min-w-0">
+            <div className="text-[13px] font-medium truncate">
+              {active.name}
+              <span className="font-normal text-muted-foreground"> · {active.company}</span>
+            </div>
+            <div className="text-[10.5px] text-muted-foreground/80 flex items-center gap-1 truncate">
+              {active.ch === "whatsapp" ? (
+                <MessageSquare className="size-2.5 text-emerald-500" />
+              ) : (
+                <Send className="size-2.5 text-sky-500" />
+              )}
+              <span className="truncate">
+                {active.ch === "whatsapp" ? "+55 11 98823-4401" : "mariana.teixeira@pepsico.com"}{" "}
+                · online agora
+              </span>
+            </div>
+          </div>
+          <div className="flex items-center gap-1">
+            <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+              <Phone className="size-3.5" />
+            </Button>
+            <Button variant="ghost" size="sm" className="h-8 text-xs">
+              <Camera className="size-3.5" />
+              Call
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              className="h-8 text-xs"
+              onClick={() => setShowAssign((v) => !v)}
+            >
+              <Filter className="size-3.5" />
+              Atribuir
+            </Button>
+            <Button variant="outline" size="sm" className="h-8 text-xs">
+              <Check className="size-3.5" />
+              Resolver
+            </Button>
+            <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+              <MoreVertical className="size-3.5" />
+            </Button>
+          </div>
+          {showAssign && (
+            <div className="absolute right-[160px] top-[52px] z-30 w-[240px] rounded-lg border border-border bg-card shadow-xl p-1.5">
+              <div className="px-2 py-1.5 text-[10px] font-semibold uppercase tracking-[0.06em] text-muted-foreground/70">
+                Atribuir conversa
+              </div>
+              {["Lucas Vilanova (Closer)", "Squad Enterprise", "Rafael Monteiro (SDR)", "Bia Castelo (CS)"].map((n) => (
+                <button
+                  key={n}
+                  className="w-full flex items-center gap-2 rounded-md px-2 py-1.5 text-[12px] hover:bg-muted transition-colors text-left"
+                  onClick={() => setShowAssign(false)}
+                >
+                  <Avatar className="size-5">
+                    <AvatarFallback className="text-[8px]">
+                      {n.split(" ").map((s) => s[0]).slice(0, 2).join("")}
+                    </AvatarFallback>
+                  </Avatar>
+                  {n}
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
+
+        {/* Messages */}
+        <ScrollArea className="flex-1 p-4">
+          <div className="flex flex-col gap-2.5 max-w-[640px] mx-auto">
+            <div className="self-center text-[10px] font-semibold uppercase tracking-wide text-muted-foreground/50 my-2">
+              Hoje, 14 de abril
+            </div>
+
+            <MsgBubble dir="in">
+              Oi Rafael, tudo bem? vi que vocês mandaram o deck. queria alinhar uns pontos sobre o módulo de analytics
+              <MsgMeta time="10:12" />
+            </MsgBubble>
+
+            <MsgBubble dir="out">
+              Opa Mariana! 👋 Tudo ótimo. Claro, posso te ligar rapidinho agora ou prefere áudio?
+              <MsgMeta time="10:14" read />
+            </MsgBubble>
+
+            <MsgBubble dir="in">
+              <div className="flex items-center gap-2">
+                <div className="size-7 rounded-full bg-muted flex items-center justify-center">
+                  <div className="size-0 border-y-[4px] border-y-transparent border-l-[6px] border-l-foreground ml-0.5" />
+                </div>
+                <div className="flex items-center gap-0.5 h-5">
+                  {Array.from({ length: 26 }, (_, i) => (
+                    <span
+                      key={i}
+                      className="w-0.5 rounded-full bg-current opacity-50"
+                      style={{ height: `${20 + Math.sin(i * 0.9) * 40 + Math.random() * 30}%` }}
+                    />
+                  ))}
+                </div>
+                <span className="font-mono text-[10px] text-muted-foreground">0:42</span>
+              </div>
+              <MsgMeta time="10:15" />
+            </MsgBubble>
+
+            <MsgBubble dir="out">
+              Anotado! Vou te enviar o contrato ajustado com a cláusula de SLA que você mencionou, dá pra fechar essa semana se fizer sentido no seu lado ✅
+              <MsgMeta time="10:22" read />
+            </MsgBubble>
+
+            <MsgBubble dir="in">
+              Bom, bati com o Rodrigo aqui. Ele levantou algumas dúvidas na parte de integração com SAP — o time dele precisa de um período de homologação antes de assinar
+              <MsgMeta time="13:58" />
+            </MsgBubble>
+
+            <MsgBubble dir="in">
+              Perfeito, Rafael. Consigo alinhar com o jurídico ainda hoje — manda o contrato que a gente fecha essa semana.
+              <MsgMeta time="14:16" />
+            </MsgBubble>
+
+            {/* AI suggestion */}
+            <div className="self-start max-w-[85%] rounded-xl border border-primary/30 bg-gradient-to-br from-primary/[0.06] to-transparent p-3 mt-2 space-y-2 relative overflow-hidden">
+              <div className="flex items-center gap-1.5 text-[11px] font-semibold text-primary">
+                <Sparkles className="size-3" />
+                Copiloto sugere uma resposta
+              </div>
+              <p className="text-[13px] leading-relaxed">
+                "Show, Mariana! Já estou preparando a versão final do contrato com a cláusula de
+                homologação SAP que o Rodrigo mencionou. Envio até 17h hoje pra você e jurídico
+                revisarem juntos. Confirma o e-mail do Rodrigo pra eu colocar em cópia?"
+              </p>
+              <div className="text-[10.5px] text-muted-foreground/70">
+                Baseado em 3 templates de "envio de contrato" + menção a Rodrigo nesta thread
+              </div>
+              <div className="flex items-center gap-1.5">
+                <Button
+                  size="sm"
+                  className="h-7 px-3 text-xs btn-lift bg-gradient-to-r from-primary to-orange-600 text-white"
+                >
+                  Usar resposta
+                </Button>
+                <Button variant="outline" size="sm" className="h-7 px-3 text-xs">
+                  Editar
+                </Button>
+                <Button variant="ghost" size="sm" className="h-7 px-3 text-xs">
+                  Ignorar
+                </Button>
+              </div>
+            </div>
+          </div>
+        </ScrollArea>
+
+        {/* Composer */}
+        <div className="border-t border-border/60 p-3 relative">
+          {showTemplates && (
+            <div className="absolute bottom-[calc(100%+4px)] left-3 right-3 rounded-xl border border-border bg-card shadow-xl overflow-hidden z-20">
+              <div className="px-3 py-1.5 text-[10px] font-semibold uppercase tracking-[0.06em] text-muted-foreground/70 border-b border-border/60">
+                Templates · variáveis auto-preenchidas
+              </div>
+              {CLOSER_TEMPLATES.filter((t) =>
+                t.shortcut.toLowerCase().startsWith(msgText.toLowerCase())
+              ).map((t) => (
+                <button
+                  key={t.id}
+                  onClick={() => pickTemplate(t)}
+                  className="w-full text-left px-3 py-2 hover:bg-muted/60 transition-colors border-b border-border/40 last:border-0"
+                >
+                  <div className="flex items-center justify-between text-[12.5px] font-medium">
+                    <span>{t.name}</span>
+                    <span className="font-mono text-[10px] bg-muted text-muted-foreground rounded px-1.5 py-0.5">
+                      {t.shortcut}
+                    </span>
+                  </div>
+                  <div className="text-[11px] text-muted-foreground/70 truncate mt-0.5">
+                    {t.prev}
+                  </div>
+                </button>
+              ))}
+            </div>
+          )}
+          <div className="flex items-center gap-1 pb-2">
+            <Button variant="ghost" size="sm" className="h-7 w-7 p-0">
+              <Paperclip className="size-3.5" />
+            </Button>
+            <Button variant="ghost" size="sm" className="h-7 w-7 p-0">
+              <Camera className="size-3.5" />
+            </Button>
+            <Button variant="ghost" size="sm" className="h-7 w-7 p-0">
+              <Smile className="size-3.5" />
+            </Button>
+            <div className="h-4 w-px bg-border mx-1" />
+            <Button
+              variant="ghost"
+              size="sm"
+              className="h-7 px-2 text-[11px]"
+              onClick={() => {
+                setMsgText("/")
+                setShowTemplates(true)
+              }}
+            >
+              <span className="font-mono">/</span> Templates
+            </Button>
+            <Button
+              variant="ghost"
+              size="sm"
+              className="h-7 px-2 text-[11px] text-primary"
+            >
+              <Sparkles className="size-3" />
+              Gerar com Copiloto
+            </Button>
+            <div className="flex-1" />
+            <span className="text-[10px] text-muted-foreground/60">
+              Anexo até <span className="font-mono">64MB</span>
+            </span>
+          </div>
+          <div className="flex items-end gap-2">
+            <textarea
+              value={msgText}
+              onChange={onInput}
+              placeholder="Escreva uma mensagem… (digite / para templates)"
+              rows={2}
+              className="flex-1 resize-none rounded-lg border border-border/60 bg-background px-3 py-2 text-[13px] outline-none focus:border-primary/50 transition-colors"
+            />
+            <Button variant="ghost" size="sm" className="h-10 w-10 p-0 shrink-0">
+              <Paperclip className="size-4 rotate-45" />
+            </Button>
+            <Button
+              size="sm"
+              className="h-10 px-4 text-xs btn-lift bg-gradient-to-r from-primary to-orange-600 text-white shrink-0"
+            >
+              <Send className="size-3.5" />
+              Enviar
+            </Button>
+          </div>
+          <div className="flex items-center gap-4 text-[10px] text-muted-foreground/60 mt-2 px-1">
+            <span>
+              <kbd className="font-mono bg-muted rounded px-1 py-0.5">↵</kbd> enviar
+            </span>
+            <span>
+              <kbd className="font-mono bg-muted rounded px-1 py-0.5">⇧↵</kbd> quebra de linha
+            </span>
+            <span>
+              <kbd className="font-mono bg-muted rounded px-1 py-0.5">/</kbd> templates
+            </span>
+            <span>
+              <kbd className="font-mono bg-muted rounded px-1 py-0.5">⌘J</kbd> Copiloto
+            </span>
+          </div>
+        </div>
+      </div>
+
+      {/* ── RIGHT: 360 Context ── */}
+      <ScrollArea className="w-[300px] shrink-0 border-l border-border/60 bg-card/60">
+        <div className="p-4 space-y-5">
+          {/* Contact hero */}
+          <div>
+            <div className="flex items-start gap-3">
+              <Avatar className="size-12">
+                <AvatarFallback className="text-[14px] font-bold bg-gradient-to-br from-pink-500/20 to-purple-500/20 text-pink-600 dark:text-pink-400">
+                  {active.avatar}
+                </AvatarFallback>
+              </Avatar>
+              <div className="min-w-0 flex-1">
+                <div className="font-semibold text-[14px] truncate">{active.name}</div>
+                <div className="text-[11.5px] text-muted-foreground truncate">{active.company}</div>
+                <div className="flex gap-1 mt-1.5 flex-wrap">
+                  {active.tags.map((t) => (
+                    <span
+                      key={t}
+                      className="inline-flex items-center rounded-md bg-primary/10 text-primary px-1.5 py-0.5 text-[9.5px] font-semibold"
+                    >
+                      {t}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            </div>
+            <div className="flex items-center gap-1 mt-3">
+              <Button variant="outline" size="sm" className="h-7 flex-1 text-[11px]">
+                <User className="size-3" />
+                Perfil 360
+              </Button>
+              <Button variant="ghost" size="sm" className="h-7 w-7 p-0">
+                <Phone className="size-3.5" />
+              </Button>
+              <Button variant="ghost" size="sm" className="h-7 w-7 p-0">
+                <Camera className="size-3.5" />
+              </Button>
+            </div>
+          </div>
+
+          {/* Dados cadastrais */}
+          <div>
+            <div className="flex items-center gap-2 mb-2">
+              <span className="text-[10px] font-bold uppercase tracking-[0.08em] text-muted-foreground/70">
+                Dados cadastrais
+              </span>
+              <div className="flex-1" />
+              <span className="text-[9.5px] text-muted-foreground/60">clique p/ editar</span>
+            </div>
+            <div className="space-y-1.5 text-[11.5px]">
+              {[
+                ["Telefone", "+55 11 98823-4401", true],
+                ["E-mail", "mariana.teixeira@pepsico.com", false],
+                ["Cargo", "Gerente de TI", false],
+                ["Origem", "Inbound · Webinar", false],
+                ["Dono", "Você", false],
+                ["Custom · ICP", "Enterprise · Industry", false],
+                ["Custom · Stack", "SAP + Salesforce", false],
+              ].map(([label, val, mono]) => (
+                <div
+                  key={label as string}
+                  className="flex items-center justify-between gap-2 border-b border-border/40 pb-1.5 last:border-0"
+                >
+                  <span className="text-muted-foreground/80 shrink-0">{label}</span>
+                  <span className={`text-right truncate ${mono ? "font-mono" : ""}`}>
+                    {val as string}
+                  </span>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Indicadores-chave */}
+          <div>
+            <div className="flex items-center gap-2 mb-2">
+              <span className="text-[10px] font-bold uppercase tracking-[0.08em] text-muted-foreground/70">
+                Indicadores-chave
+              </span>
+              <Sparkles className="size-2.5 text-primary" />
+            </div>
+            <div className="flex items-start gap-3 rounded-lg border border-primary/20 bg-primary/[0.04] p-3">
+              <div className="font-display font-mono text-[2rem] font-bold text-primary leading-none">
+                {active.score}
+              </div>
+              <div className="text-[11px] flex-1 pt-1">
+                <strong>Score de fechamento muito alto.</strong>
+                <div className="text-muted-foreground mt-1">
+                  Engajamento +83%, menção a "fechar essa semana", proposta aberta 3x hoje.
+                </div>
+              </div>
+            </div>
+            <div className="flex items-center gap-2 mt-2.5 rounded-lg bg-muted/40 p-2.5">
+              <div className="flex-1">
+                <div className="text-[9.5px] font-bold uppercase tracking-[0.06em] text-muted-foreground/60">
+                  LTV histórico
+                </div>
+                <div className="font-mono font-semibold text-[13px] leading-tight">
+                  {active.ltv > 0 ? fmtBRLInbox(active.ltv) : "—"}
+                </div>
+              </div>
+              <span className="text-[10px] text-muted-foreground">
+                {active.ltv > 0 ? "Hotmart · 3 compras" : "sem compras ainda"}
+              </span>
+            </div>
+          </div>
+
+          {/* Oportunidades */}
+          <div>
+            <div className="flex items-center gap-2 mb-2">
+              <span className="text-[10px] font-bold uppercase tracking-[0.08em] text-muted-foreground/70">
+                Oportunidades
+              </span>
+              <div className="flex-1" />
+              <Button variant="ghost" size="sm" className="h-6 text-[10.5px] px-2">
+                <Paperclip className="size-2.5 rotate-45" />
+                Nova
+              </Button>
+            </div>
+            <div className="space-y-2">
+              {[
+                { name: "Contrato Enterprise — 3 squads", stage: "Proposta enviada · há 4 dias", value: 48500, score: 92 },
+                { name: "Add-on Analytics Pro", stage: "Qualificado · há 12 dias", value: 12000, score: 68 },
+              ].map((d) => (
+                <div
+                  key={d.name}
+                  className="rounded-lg border border-border/60 bg-card/50 p-2.5 cursor-pointer hover:border-primary/30 transition-colors"
+                >
+                  <div className="text-[12px] font-medium truncate">{d.name}</div>
+                  <div className="text-[10px] text-muted-foreground mt-0.5">{d.stage}</div>
+                  <div className="flex items-center justify-between mt-1.5">
+                    <span className="font-mono text-[11.5px] font-semibold">
+                      {fmtBRLInbox(d.value)}
+                    </span>
+                    <span className={`size-2 rounded-full ${scoreDotInbox(d.score)}`} />
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </ScrollArea>
+    </div>
+  )
+}
+
+function MsgBubble({
+  dir,
+  children,
+}: {
+  dir: "in" | "out"
+  children: React.ReactNode
+}) {
+  return (
+    <div
+      className={`max-w-[75%] rounded-2xl px-3 py-2 text-[13px] leading-relaxed ${
+        dir === "in"
+          ? "self-start bg-muted rounded-bl-sm"
+          : "self-end bg-gradient-to-br from-primary to-orange-600 text-white rounded-br-sm"
+      }`}
+    >
+      {children}
+    </div>
+  )
+}
+
+function MsgMeta({ time, read }: { time: string; read?: boolean }) {
+  return (
+    <div className="flex items-center justify-end gap-1 mt-1 text-[10px] opacity-70">
+      <span>{time}</span>
+      {read && (
+        <span className="flex">
+          <CheckCheck className="size-3" />
+        </span>
+      )}
+    </div>
+  )
+}
+
+// ===========================================================================
+// Role dispatcher
+// ===========================================================================
+
+export function InboxPage() {
+  const { user } = useAuth()
+  if (user?.role === "closer") return <CloserInboxPage />
+  return <GestorInboxPage />
 }

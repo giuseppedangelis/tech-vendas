@@ -10,27 +10,8 @@ import {
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
 import { Bell, Settings, LogOut, User, Sparkles, Command } from "lucide-react"
-import { useLocation, useNavigate } from "react-router-dom"
+import { useNavigate } from "react-router-dom"
 import { useAuth } from "@/hooks/use-auth"
-
-const routeNames: Record<string, string> = {
-  "/dashboard": "Dashboard",
-  "/inbox": "Inbox",
-  "/pipeline": "Pipeline",
-  "/contacts": "Contatos",
-  "/schedule": "Agenda",
-  "/team": "Equipe",
-  "/reports": "Relatórios",
-  "/settings": "Configurações",
-}
-
-function getPageName(pathname: string): string {
-  if (routeNames[pathname]) return routeNames[pathname]
-  for (const [route, name] of Object.entries(routeNames)) {
-    if (pathname.startsWith(route + "/")) return name
-  }
-  return "Dashboard"
-}
 
 const roleLabels: Record<string, string> = {
   admin: "Admin",
@@ -47,10 +28,8 @@ const roleColors: Record<string, string> = {
 }
 
 export function AppHeader() {
-  const location = useLocation()
   const navigate = useNavigate()
   const { user, logout } = useAuth()
-  const pageName = getPageName(location.pathname)
 
   function handleLogout() {
     logout()
@@ -60,12 +39,6 @@ export function AppHeader() {
   return (
     <header className="sticky top-0 z-30 flex h-14 items-center gap-3 border-b border-border/50 bg-background/70 px-5 backdrop-blur-xl">
       <SidebarTrigger className="text-muted-foreground/50 hover:text-foreground transition-colors" />
-
-      <div className="h-4 w-px bg-border/60" />
-
-      <h1 className="font-display text-sm font-semibold tracking-tight text-foreground">
-        {pageName}
-      </h1>
 
       <div className="flex-1" />
 

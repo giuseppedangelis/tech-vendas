@@ -487,7 +487,7 @@ function PipelineSelector({
 // PipelinePage
 // ---------------------------------------------------------------------------
 
-export function PipelinePage() {
+function GestorPipelinePage() {
   const { user } = useAuth()
   const userRole = user?.role ?? "closer"
   const userFirstName = user?.name?.split(" ")[0] ?? ""
@@ -774,4 +774,488 @@ export function PipelinePage() {
       />
     </div>
   )
+}
+
+// ===========================================================================
+// CLOSER PIPELINE (Reference: AI flags, deal modal, Won/Lost drop zones)
+// ===========================================================================
+
+type CloserStageId = "prospect" | "qualificado" | "proposta" | "negociacao" | "fechamento"
+
+interface CloserStage {
+  id: CloserStageId
+  name: string
+  color: string
+}
+
+const CLOSER_STAGES: CloserStage[] = [
+  { id: "prospect", name: "Prospect", color: "bg-slate-400" },
+  { id: "qualificado", name: "Qualificado", color: "bg-sky-500" },
+  { id: "proposta", name: "Proposta", color: "bg-purple-500" },
+  { id: "negociacao", name: "Negociação", color: "bg-amber-500" },
+  { id: "fechamento", name: "Fechamento", color: "bg-emerald-500" },
+]
+
+type TagColor = "p" | "b" | "g" | "r"
+
+interface CloserDeal {
+  id: number
+  title: string
+  company: string
+  contact: string
+  avatar: string
+  value: number
+  stage: CloserStageId
+  score: number
+  tags: [string, TagColor][]
+  age: number
+  ai?: string
+  aiKind?: "hot" | "cold" | "info"
+}
+
+const CLOSER_INITIAL_DEALS: CloserDeal[] = [
+  { id: 1, title: "Pepsico — Contrato Enterprise", company: "Pepsico Brasil", contact: "Mariana Teixeira", avatar: "MT", value: 48500, stage: "proposta", score: 92, tags: [["Enterprise", "p"], ["SAP", "b"]], age: 4, ai: 'Pronta pra fechar: cliente mencionou "fechar essa semana" 2x hoje.', aiKind: "hot" },
+  { id: 2, title: "Klabin — Upgrade + 2 squads", company: "Klabin S/A", contact: "Ricardo Albuquerque", avatar: "RA", value: 120000, stage: "negociacao", score: 88, tags: [["Upsell", "g"]], age: 11, ai: "Ricardo abriu proposta 3x hoje — follow-up agora converte.", aiKind: "hot" },
+  { id: 3, title: "Natura — Piloto Analytics", company: "Natura", contact: "Juliana Prates", avatar: "JP", value: 32000, stage: "qualificado", score: 85, tags: [["Piloto", "b"]], age: 3 },
+  { id: 4, title: "Raia Drogasil — Rollout nacional", company: "Raia Drogasil", contact: "Fábio Guedes", avatar: "FG", value: 78000, stage: "proposta", score: 82, tags: [["Varejo", "b"]], age: 6 },
+  { id: 5, title: "iFood — Módulo premium", company: "iFood", contact: "Camila Herrera", avatar: "CH", value: 56000, stage: "proposta", score: 79, tags: [["Expansion", "g"]], age: 7 },
+  { id: 6, title: "Localiza — Contrato anual", company: "Localiza", contact: "Diego Rosso", avatar: "DR", value: 22000, stage: "negociacao", score: 58, tags: [["Risco", "r"]], age: 14, ai: "Esfriando — 7 dias sem resposta. Sugiro reativar com case Movida.", aiKind: "cold" },
+  { id: 7, title: "Nubank — POC 60 dias", company: "Nubank", contact: "Ana Beatriz Freitas", avatar: "AF", value: 95000, stage: "qualificado", score: 73, tags: [["Fintech", "b"], ["POC", "p"]], age: 2 },
+  { id: 8, title: "Movida — Renovação", company: "Movida", contact: "Otávio Menezes", avatar: "OM", value: 18000, stage: "prospect", score: 71, tags: [["Renovação", "g"]], age: 1 },
+  { id: 9, title: "Ambev — Expansão LATAM", company: "Ambev", contact: "Leonardo Baptista", avatar: "LB", value: 210000, stage: "fechamento", score: 91, tags: [["LATAM", "p"]], age: 21, ai: "Contrato em revisão jurídica — sem ação necessária.", aiKind: "info" },
+  { id: 10, title: "Magalu — Upgrade squads", company: "Magazine Luiza", contact: "Renata Dalla", avatar: "RD", value: 64000, stage: "qualificado", score: 76, tags: [["Varejo", "b"]], age: 5 },
+  { id: 11, title: "BRF — Piloto", company: "BRF", contact: "Henrique Pó", avatar: "HP", value: 28000, stage: "prospect", score: 62, tags: [], age: 1 },
+  { id: 12, title: "Vivo — Contrato Enterprise", company: "Vivo", contact: "Sofia Lemos", avatar: "SL", value: 140000, stage: "fechamento", score: 87, tags: [["Enterprise", "p"]], age: 18 },
+  { id: 13, title: "Stone — Add-on", company: "Stone", contact: "Bernardo Mello", avatar: "BM", value: 34000, stage: "negociacao", score: 70, tags: [["Fintech", "b"]], age: 9 },
+  { id: 14, title: "Hotmart — Expansion", company: "Hotmart", contact: "Lívia Caetano", avatar: "LC", value: 42000, stage: "proposta", score: 74, tags: [["Expansion", "g"]], age: 8 },
+  { id: 15, title: "Riachuelo — POC", company: "Riachuelo", contact: "Tiago Veríssimo", avatar: "TV", value: 19000, stage: "prospect", score: 55, tags: [], age: 2 },
+]
+
+function fmtBRLPipeline(v: number) {
+  return "R$ " + v.toLocaleString("pt-BR", { minimumFractionDigits: 0, maximumFractionDigits: 0 })
+}
+function fmtBRLkPipeline(v: number) {
+  if (v >= 1000) {
+    const k = v / 1000
+    return "R$ " + k.toFixed(v >= 10000 ? 0 : 1).replace(".", ",") + "k"
+  }
+  return fmtBRLPipeline(v)
+}
+function scoreDotClosePipe(score: number) {
+  if (score >= 75) return "bg-emerald-500"
+  if (score >= 50) return "bg-amber-500"
+  return "bg-sky-500"
+}
+function tagColorClass(c: TagColor) {
+  if (c === "p") return "bg-purple-500/15 text-purple-600 dark:text-purple-400"
+  if (c === "b") return "bg-sky-500/15 text-sky-600 dark:text-sky-400"
+  if (c === "g") return "bg-emerald-500/15 text-emerald-600 dark:text-emerald-400"
+  return "bg-red-500/15 text-red-600 dark:text-red-400"
+}
+
+function CloserPipelinePage() {
+  const [deals, setDeals] = useState<CloserDeal[]>(CLOSER_INITIAL_DEALS)
+  const [dragId, setDragId] = useState<number | null>(null)
+  const [overStage, setOverStage] = useState<CloserStageId | null>(null)
+  const [overDrop, setOverDrop] = useState<"won" | "lost" | null>(null)
+  const [modalDeal, setModalDeal] = useState<CloserDeal | null>(null)
+
+  const onDragStart = (e: React.DragEvent, id: number) => {
+    setDragId(id)
+    e.dataTransfer.effectAllowed = "move"
+  }
+  const onDragEnd = () => {
+    setDragId(null)
+    setOverStage(null)
+    setOverDrop(null)
+  }
+  const onDragOverStage = (e: React.DragEvent, sid: CloserStageId) => {
+    e.preventDefault()
+    setOverStage(sid)
+  }
+  const onDropStage = (e: React.DragEvent, sid: CloserStageId) => {
+    e.preventDefault()
+    if (dragId != null) {
+      setDeals(deals.map((d) => (d.id === dragId ? { ...d, stage: sid } : d)))
+      toast.success(`Movido para ${CLOSER_STAGES.find((s) => s.id === sid)?.name}`)
+    }
+    onDragEnd()
+  }
+  const onDropZone = (kind: "won" | "lost") => {
+    if (dragId != null) {
+      setDeals(deals.filter((d) => d.id !== dragId))
+      toast.success(kind === "won" ? "Deal ganho! 🏆" : "Deal marcado como perdido")
+    }
+    onDragEnd()
+  }
+
+  const stageDeals = (sid: CloserStageId) => deals.filter((d) => d.stage === sid)
+  const stageSum = (sid: CloserStageId) =>
+    stageDeals(sid).reduce((s, d) => s + d.value, 0)
+  const totalPipe = deals.reduce((s, d) => s + d.value, 0)
+  const avgScore =
+    deals.length > 0
+      ? Math.round(deals.reduce((s, d) => s + d.score, 0) / deals.length)
+      : 0
+
+  return (
+    <div className="animate-page-in flex h-full flex-col gap-4">
+      {/* ── Header ── */}
+      <div className="flex flex-wrap items-center gap-2">
+        <h2 className="font-display text-xl font-bold tracking-tight">
+          <span className="text-gradient">Pipeline</span>{" "}
+          <span className="text-muted-foreground">· Q2 2026</span>
+        </h2>
+        <Badge variant="secondary" className="text-[10px] bg-primary/10 text-primary">
+          {deals.length} deals ativos
+        </Badge>
+        <Button variant="ghost" size="sm" className="h-7 px-2.5 text-xs">
+          <Search className="size-3" />
+          Filtrar
+        </Button>
+        <Button variant="ghost" size="sm" className="h-7 px-2.5 text-xs">
+          Agrupar
+        </Button>
+        <div className="flex-1" />
+        <div className="hidden md:flex items-center gap-4 mr-2 px-3 py-1.5 rounded-lg border border-border/60 bg-card/50">
+          <div className="text-[11px]">
+            <span className="text-muted-foreground">Pipe total</span>{" "}
+            <span className="font-mono font-semibold">{fmtBRLkPipeline(totalPipe)}</span>
+          </div>
+          <div className="text-[11px] flex items-center gap-1.5">
+            <span className="text-muted-foreground">Score médio</span>{" "}
+            <span className={`size-2 rounded-full ${scoreDotClosePipe(avgScore)}`} />
+            <span className="font-mono font-semibold">{avgScore}</span>
+          </div>
+          <div className="text-[11px]">
+            <span className="text-muted-foreground">Forecast</span>{" "}
+            <span className="font-mono font-semibold text-primary">
+              {fmtBRLkPipeline(480000)}
+            </span>
+          </div>
+        </div>
+        <Button variant="gradient" size="sm" className="btn-lift h-8">
+          <Plus className="size-3.5" />
+          Nova oportunidade
+        </Button>
+      </div>
+
+      {/* ── Kanban board ── */}
+      <ScrollArea className="flex-1 pb-2">
+        <div className="flex gap-3 h-full min-h-[calc(100vh-280px)]">
+          {CLOSER_STAGES.map((stage) => {
+            const sd = stageDeals(stage.id)
+            const isOver = overStage === stage.id && dragId != null
+            return (
+              <div
+                key={stage.id}
+                className={`flex flex-col gap-2 min-w-[260px] w-[260px] rounded-lg p-2 transition-all ${
+                  isOver ? "bg-primary/[0.06] outline-2 outline-dashed outline-primary/40" : ""
+                }`}
+                onDragOver={(e) => onDragOverStage(e, stage.id)}
+                onDrop={(e) => onDropStage(e, stage.id)}
+              >
+                <div className="flex items-center gap-2 px-1 pb-1">
+                  <span className={`size-2 rounded-full ${stage.color}`} />
+                  <span className="text-[12px] font-semibold">{stage.name}</span>
+                  <span className="inline-flex items-center rounded-md bg-muted text-muted-foreground px-1.5 py-0.5 text-[10px] font-bold font-mono">
+                    {sd.length}
+                  </span>
+                  <div className="flex-1" />
+                  <span className="font-mono text-[10.5px] text-muted-foreground">
+                    {fmtBRLkPipeline(stageSum(stage.id))}
+                  </span>
+                </div>
+                <div className="flex flex-col gap-2">
+                  {sd.map((d) => (
+                    <div
+                      key={d.id}
+                      draggable
+                      onDragStart={(e) => onDragStart(e, d.id)}
+                      onDragEnd={onDragEnd}
+                      onClick={() => setModalDeal(d)}
+                      className={`group rounded-lg border bg-card p-2.5 cursor-grab active:cursor-grabbing transition-all hover:shadow-md hover:border-primary/30 ${
+                        d.ai ? "border-l-[3px] border-l-primary" : ""
+                      } ${dragId === d.id ? "opacity-40" : ""}`}
+                    >
+                      <div className="flex items-start gap-2">
+                        <span className={`size-2 rounded-full mt-1 shrink-0 ${scoreDotClosePipe(d.score)}`} />
+                        <div className="flex-1 min-w-0">
+                          <div className="text-[12.5px] font-semibold leading-snug truncate">
+                            {d.title}
+                          </div>
+                          <div className="text-[10.5px] text-muted-foreground truncate">
+                            {d.contact}
+                          </div>
+                        </div>
+                        {d.ai && <Sparkles className="size-3.5 text-primary shrink-0 mt-0.5" />}
+                      </div>
+                      <div className="flex items-center justify-between mt-2">
+                        <span className="font-mono text-[12px] font-semibold">
+                          {fmtBRLPipeline(d.value)}
+                        </span>
+                        <span className="font-mono text-[10.5px] text-muted-foreground">
+                          {d.age}d
+                        </span>
+                      </div>
+                      {d.tags.length > 0 && (
+                        <div className="flex flex-wrap gap-1 mt-2">
+                          {d.tags.map(([t, c]) => (
+                            <span
+                              key={t}
+                              className={`inline-flex items-center rounded-md px-1.5 py-0.5 text-[9.5px] font-semibold ${tagColorClass(c)}`}
+                            >
+                              {t}
+                            </span>
+                          ))}
+                        </div>
+                      )}
+                      {d.ai && (
+                        <div className="mt-2 pt-2 border-t border-border/50 flex items-start gap-1.5 text-[10.5px] text-primary leading-snug">
+                          <Sparkles className="size-3 shrink-0 mt-0.5" />
+                          <span>{d.ai}</span>
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="justify-start h-8 text-[11.5px] text-muted-foreground"
+                  >
+                    <Plus className="size-3" />
+                    Adicionar deal
+                  </Button>
+                </div>
+              </div>
+            )
+          })}
+        </div>
+        <ScrollBar orientation="horizontal" />
+      </ScrollArea>
+
+      {/* ── Drop zones (Won / Lost) ── */}
+      {dragId != null && (
+        <div className="fixed bottom-4 left-1/2 -translate-x-1/2 flex gap-3 z-50 animate-card-in">
+          <div
+            onDragOver={(e) => {
+              e.preventDefault()
+              setOverDrop("won")
+            }}
+            onDragLeave={() => setOverDrop(null)}
+            onDrop={() => onDropZone("won")}
+            className={`flex items-center gap-2 rounded-xl px-5 py-3 text-sm font-semibold shadow-lg border-2 transition-all ${
+              overDrop === "won"
+                ? "bg-emerald-500 text-white border-emerald-500 scale-110"
+                : "bg-emerald-500/15 text-emerald-700 dark:text-emerald-400 border-emerald-500/40"
+            }`}
+          >
+            <Zap className="size-4" />
+            Ganhar (Won)
+          </div>
+          <div
+            onDragOver={(e) => {
+              e.preventDefault()
+              setOverDrop("lost")
+            }}
+            onDragLeave={() => setOverDrop(null)}
+            onDrop={() => onDropZone("lost")}
+            className={`flex items-center gap-2 rounded-xl px-5 py-3 text-sm font-semibold shadow-lg border-2 transition-all ${
+              overDrop === "lost"
+                ? "bg-red-500 text-white border-red-500 scale-110"
+                : "bg-red-500/15 text-red-700 dark:text-red-400 border-red-500/40"
+            }`}
+          >
+            <DollarSign className="size-4 rotate-45" />
+            Perder (Lost)
+          </div>
+        </div>
+      )}
+
+      {/* ── Deal modal ── */}
+      {modalDeal && <CloserDealModal deal={modalDeal} onClose={() => setModalDeal(null)} />}
+    </div>
+  )
+}
+
+function CloserDealModal({
+  deal,
+  onClose,
+}: {
+  deal: CloserDeal
+  onClose: () => void
+}) {
+  const [stage, setStage] = useState<CloserStageId>(deal.stage)
+
+  return (
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center bg-background/80 backdrop-blur-sm p-4 animate-card-in"
+      onClick={onClose}
+    >
+      <div
+        className="relative w-full max-w-2xl max-h-[90vh] overflow-hidden rounded-2xl border border-border bg-card shadow-2xl flex flex-col"
+        onClick={(e) => e.stopPropagation()}
+      >
+        {/* Header */}
+        <div className="flex items-start gap-3 p-5 border-b border-border/60">
+          <span className={`size-2.5 rounded-full mt-2 shrink-0 ${scoreDotClosePipe(deal.score)}`} />
+          <div className="flex-1 min-w-0">
+            <div className="font-display text-lg font-bold leading-tight">{deal.title}</div>
+            <div className="text-[12.5px] text-muted-foreground">
+              {deal.company} · {deal.contact} · aberto há {deal.age} dias
+            </div>
+          </div>
+          <div className="text-right shrink-0">
+            <div className="font-display font-mono text-xl font-bold tracking-tight">
+              {fmtBRLPipeline(deal.value)}
+            </div>
+            <div className="text-[10.5px] text-muted-foreground">Valor do contrato</div>
+          </div>
+          <Button variant="ghost" size="sm" className="h-8 w-8 p-0" onClick={onClose}>
+            <Plus className="size-4 rotate-45" />
+          </Button>
+        </div>
+
+        {/* Body */}
+        <div className="flex-1 overflow-y-auto p-5 space-y-5">
+          {deal.ai && (
+            <div className="rounded-lg border border-l-[3px] border-l-primary bg-primary/[0.04] p-3 space-y-2">
+              <div className="flex items-center gap-2">
+                <Sparkles className="size-3.5 text-primary" />
+                <span className="text-[11px] font-bold uppercase tracking-wide text-primary">
+                  Copiloto
+                </span>
+              </div>
+              <p className="text-[13px]">{deal.ai}</p>
+              <div className="flex items-center gap-1.5">
+                <Button
+                  size="sm"
+                  className="h-7 px-3 text-xs btn-lift bg-gradient-to-r from-primary to-orange-600 text-white"
+                >
+                  Abrir conversa
+                </Button>
+                <Button variant="ghost" size="sm" className="h-7 px-3 text-xs">
+                  Aplicar sugestão
+                </Button>
+              </div>
+            </div>
+          )}
+
+          {/* Stage selector */}
+          <div>
+            <div className="text-[10px] font-bold uppercase tracking-[0.06em] text-muted-foreground/70 mb-2">
+              Estágio do pipeline
+            </div>
+            <div className="flex gap-1 rounded-lg overflow-hidden border border-border/60">
+              {CLOSER_STAGES.map((s) => (
+                <button
+                  key={s.id}
+                  onClick={() => setStage(s.id)}
+                  className={`flex-1 px-2 py-2 text-[11.5px] font-medium transition-all ${
+                    s.id === stage
+                      ? s.id === "fechamento"
+                        ? "bg-emerald-500 text-white"
+                        : s.id === "negociacao"
+                          ? "bg-amber-500 text-white"
+                          : s.id === "proposta"
+                            ? "bg-purple-500 text-white"
+                            : s.id === "qualificado"
+                              ? "bg-sky-500 text-white"
+                              : "bg-slate-500 text-white"
+                      : "bg-muted/40 text-muted-foreground hover:bg-muted/60"
+                  }`}
+                >
+                  {s.name}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <div className="grid gap-5 md:grid-cols-2">
+            <div>
+              <div className="text-[10px] font-bold uppercase tracking-[0.06em] text-muted-foreground/70 mb-2">
+                Campos do deal
+              </div>
+              <div className="space-y-1.5 text-[12.5px]">
+                {[
+                  ["Fonte", "Inbound · webinar", false],
+                  ["Probabilidade", `${deal.score}%`, true],
+                  ["Prev. fechamento", "30 abril 2026", true],
+                  ["Produto", "Plataforma Enterprise + Analytics", false],
+                  ["Concorrente", "Zendesk", false],
+                  ["Decisor", "Rodrigo (CTO)", false],
+                ].map(([label, val, mono]) => (
+                  <div
+                    key={label as string}
+                    className="flex items-center justify-between gap-3 py-1 border-b border-border/40 last:border-0"
+                  >
+                    <span className="text-muted-foreground/80 text-[11.5px]">{label}</span>
+                    <span className={mono ? "font-mono" : ""}>{val as string}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+            <div>
+              <div className="text-[10px] font-bold uppercase tracking-[0.06em] text-muted-foreground/70 mb-2">
+                Histórico do negócio
+              </div>
+              <div className="space-y-2 text-[12.5px]">
+                {[
+                  ["hoje 14:16", "Conversa WhatsApp (6 mensagens)"],
+                  ["ontem 10:22", "Proposta enviada · versão 3"],
+                  ["14/abr", "Estágio alterado → Proposta"],
+                  ["10/abr", "Call de descoberta · 38min"],
+                  ["08/abr", "Deal criado a partir de Natura"],
+                ].map(([when, what]) => (
+                  <div key={when} className="flex items-baseline gap-2.5">
+                    <div className="font-mono text-[10.5px] text-muted-foreground w-[68px] shrink-0">
+                      {when}
+                    </div>
+                    <div>{what}</div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Footer */}
+        <div className="flex flex-wrap items-center gap-1.5 p-4 border-t border-border/60 bg-muted/30">
+          <Button variant="outline" size="sm" className="h-8 text-xs">
+            <Clock className="size-3.5" />
+            Agendar reunião
+          </Button>
+          <Button variant="outline" size="sm" className="h-8 text-xs">
+            <MessageSquare className="size-3.5" />
+            Ir para conversa
+          </Button>
+          <Button variant="outline" size="sm" className="h-8 text-xs">
+            <User className="size-3.5" />
+            Perfil 360
+          </Button>
+          <div className="flex-1" />
+          <Button variant="ghost" size="sm" className="h-8 text-xs">
+            Perder
+          </Button>
+          <Button
+            size="sm"
+            className="h-8 text-xs btn-lift bg-gradient-to-r from-emerald-500 to-emerald-600 text-white"
+          >
+            <Zap className="size-3.5" />
+            Marcar como ganho
+          </Button>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+// ===========================================================================
+// Role dispatcher
+// ===========================================================================
+
+export function PipelinePage() {
+  const { user } = useAuth()
+  if (user?.role === "closer") return <CloserPipelinePage />
+  return <GestorPipelinePage />
 }

@@ -29,9 +29,9 @@ const users: AuthUser[] = [
   { id: "u5", name: "Pedro Henrique", email: "pedro@techvendas.com", role: "sdr", initials: "PH" },
 ]
 
-// During the prototype phase, only the Gestor profile can sign in.
+// During the prototype phase, Gestor and Closer profiles can sign in.
 // Other profiles remain listed for future unlocking but are blocked here.
-export const ENABLED_ROLES: UserRole[] = ["gestor"]
+export const ENABLED_ROLES: UserRole[] = ["gestor", "closer"]
 
 export function isUserEnabled(user: AuthUser): boolean {
   return ENABLED_ROLES.includes(user.role)
